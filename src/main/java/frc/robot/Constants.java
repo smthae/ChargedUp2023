@@ -60,11 +60,17 @@ public final class Constants {
 
     /* Drive Controls */
     public static final double stickDeadband = 0.1;
-    public static final int translationAxis = XboxController.Axis.kRightY.value;
-    public static final int strafeAxis = XboxController.Axis.kRightX.value;
-    public static final int rotationAxis = XboxController.Axis.kLeftX.value;
+    public static final int translationAxis = XboxController.Axis.kLeftY.value;
+    public static final int strafeAxis = XboxController.Axis.kLeftX.value;
+    public static final int rotationAxis = XboxController.Axis.kRightX.value;
     public static final int zeroGyro = XboxController.Button.kStart.value;
     public static final int robotCentric = XboxController.Button.kLeftBumper.value;
+
+    // Orientation Buttons
+    public static final int FaceForward = XboxController.Button.kY.value;
+    public static final int FaceRight = XboxController.Button.kB.value;
+    public static final int FaceBackwards = XboxController.Button.kA.value;
+    public static final int FaceLeft = XboxController.Button.kX.value;
 
     /* Gyro */
     public static final int pigeonID = 21;
