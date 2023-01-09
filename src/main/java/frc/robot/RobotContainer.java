@@ -30,7 +30,9 @@ public class RobotContainer {
   /* Driver Buttons */
   private final JoystickButton zeroGyro = new JoystickButton(driver, Constants.Swerve.zeroGyro);
   private final JoystickButton robotCentric = new JoystickButton(driver, Constants.Swerve.robotCentric);
-  private final JoystickButton perpendicular = new JoystickButton(driver, XboxController.Button.kY.value);
+  // private final JoystickButton perpendicular = new JoystickButton(driver,
+  // XboxController.Button.kY.value);
+  private final JoystickButton NOS = new JoystickButton(driver, Constants.Swerve.NOS);
   private final JoystickButton faceForward = new JoystickButton(driver, Constants.Swerve.FaceForward);
   private final JoystickButton faceRight = new JoystickButton(driver, Constants.Swerve.FaceRight);
   private final JoystickButton faceBackwards = new JoystickButton(driver, Constants.Swerve.FaceBackwards);
@@ -51,6 +53,7 @@ public class RobotContainer {
             () -> -driver.getRawAxis(Constants.Swerve.rotationAxis),
             () -> robotCentric.getAsBoolean(),
             () -> driver.getRightBumper(),
+            () -> NOS.getAsBoolean(),
             () -> faceForward.getAsBoolean(),
             () -> faceRight.getAsBoolean(),
             () -> faceBackwards.getAsBoolean(),
@@ -76,7 +79,7 @@ public class RobotContainer {
     /* Driver Buttons */
     zeroGyro.onTrue(
         new InstantCommand(() -> s_Swerve.zeroGyro()));
-    perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
+    // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
   }
 
   /**

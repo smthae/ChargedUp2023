@@ -17,7 +17,7 @@ public class TeleopSwerve extends CommandBase {
   private final DoubleSupplier rotationSup;
   private final BooleanSupplier robotCentricSup;
   private final BooleanSupplier rightBumper;
-
+  private final BooleanSupplier NOSMode;
   private final BooleanSupplier faceForward;
   private final BooleanSupplier faceRight;
   private final BooleanSupplier faceBackwards;
@@ -40,6 +40,7 @@ public class TeleopSwerve extends CommandBase {
    * @param robotCentricSup whether or not the robot is driving relative to the
    *                        field or relative to itself
    * @param rightBumper     whether or not the rightBumper is held down
+   * @param NOSMode         If true, the power will increase from 60% to 100%
    * @param faceForward     Is the faceForward button pressed?
    * @param faceRight       Is the faceRight button pressed?
    * @param faceBackwards   Is the faceBackwards button pressed?
@@ -52,6 +53,7 @@ public class TeleopSwerve extends CommandBase {
       DoubleSupplier rotationSup,
       BooleanSupplier robotCentricSup,
       BooleanSupplier rightBumper,
+      BooleanSupplier NOSMode,
       BooleanSupplier faceForward,
       BooleanSupplier faceRight,
       BooleanSupplier faceBackwards,
@@ -64,7 +66,7 @@ public class TeleopSwerve extends CommandBase {
     this.rotationSup = rotationSup;
     this.robotCentricSup = robotCentricSup;
     this.rightBumper = rightBumper;
-
+    this.NOSMode = NOSMode;
     this.faceForward = faceForward;
     this.faceRight = faceRight;
     this.faceBackwards = faceBackwards;
@@ -147,6 +149,11 @@ public class TeleopSwerve extends CommandBase {
       translationVal *= 0.2;
       strafeVal *= 0.2;
       rotationVal *= 0.2;
+    } else if (Constants.robotMode == RobotModes.Competition) {
+      if (!this.NOSMode.getAsBoolean()) {
+        translationVal *= 0.6;
+        strafeVal *= 0.6;
+      }
     }
 
     /* Drive */

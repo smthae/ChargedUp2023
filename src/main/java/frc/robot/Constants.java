@@ -65,6 +65,7 @@ public final class Constants {
     public static final int rotationAxis = XboxController.Axis.kRightX.value;
     public static final int zeroGyro = XboxController.Button.kStart.value;
     public static final int robotCentric = XboxController.Button.kLeftBumper.value;
+    public static final int NOS = XboxController.Button.kRightStick.value;
 
     // Orientation Buttons
     public static final int FaceForward = XboxController.Button.kY.value;
