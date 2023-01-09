@@ -31,6 +31,11 @@ public class RobotContainer {
   private final JoystickButton zeroGyro = new JoystickButton(driver, Constants.Swerve.zeroGyro);
   private final JoystickButton robotCentric = new JoystickButton(driver, Constants.Swerve.robotCentric);
   private final JoystickButton perpendicular = new JoystickButton(driver, XboxController.Button.kY.value);
+  private final JoystickButton faceForward = new JoystickButton(driver, Constants.Swerve.FaceForward);
+  private final JoystickButton faceRight = new JoystickButton(driver, Constants.Swerve.FaceRight);
+  private final JoystickButton faceBackwards = new JoystickButton(driver, Constants.Swerve.FaceBackwards);
+  private final JoystickButton faceLeft = new JoystickButton(driver, Constants.Swerve.FaceLeft);
+
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
 
@@ -45,8 +50,11 @@ public class RobotContainer {
             () -> -driver.getRawAxis(Constants.Swerve.strafeAxis),
             () -> -driver.getRawAxis(Constants.Swerve.rotationAxis),
             () -> robotCentric.getAsBoolean(),
-            () -> driver.getPOV(),
-            () -> driver.getRightBumper()));
+            () -> driver.getRightBumper(),
+            () -> faceForward.getAsBoolean(),
+            () -> faceRight.getAsBoolean(),
+            () -> faceBackwards.getAsBoolean(),
+            () -> faceLeft.getAsBoolean()));
 
     // Configure the button bindings
     configureButtonBindings();

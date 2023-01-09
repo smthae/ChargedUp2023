@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -12,13 +11,17 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class TeleopSwerve extends CommandBase {
-  private Swerve swerve;
-  private DoubleSupplier translationSup;
-  private DoubleSupplier strafeSup;
-  private DoubleSupplier rotationSup;
-  private BooleanSupplier robotCentricSup;
-  private DoubleSupplier POVSup;
-  private BooleanSupplier rightBumper;
+  private final Swerve swerve;
+  private final DoubleSupplier translationSup;
+  private final DoubleSupplier strafeSup;
+  private final DoubleSupplier rotationSup;
+  private final BooleanSupplier robotCentricSup;
+  private final BooleanSupplier rightBumper;
+
+  private final BooleanSupplier faceForward;
+  private final BooleanSupplier faceRight;
+  private final BooleanSupplier faceBackwards;
+  private final BooleanSupplier faceLeft;
 
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(Constants.Swerve.translationChangeLimit);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(Constants.Swerve.strafeChangeLimit);
@@ -36,8 +39,11 @@ public class TeleopSwerve extends CommandBase {
    * @param rotationSup     the rotation value
    * @param robotCentricSup whether or not the robot is driving relative to the
    *                        field or relative to itself
-   * @param POVSup          the D Pad on the controller
    * @param rightBumper     whether or not the rightBumper is held down
+   * @param faceForward     Is the faceForward button pressed?
+   * @param faceRight       Is the faceRight button pressed?
+   * @param faceBackwards   Is the faceBackwards button pressed?
+   * @param faceLeft        Is the faceLeft button pressed?
    */
   public TeleopSwerve(
       Swerve swerve,
@@ -45,8 +51,11 @@ public class TeleopSwerve extends CommandBase {
       DoubleSupplier strafeSup,
       DoubleSupplier rotationSup,
       BooleanSupplier robotCentricSup,
-      DoubleSupplier POVSup,
-      BooleanSupplier rightBumper) {
+      BooleanSupplier rightBumper,
+      BooleanSupplier faceForward,
+      BooleanSupplier faceRight,
+      BooleanSupplier faceBackwards,
+      BooleanSupplier faceLeft) {
     this.swerve = swerve;
     addRequirements(swerve);
 
@@ -54,8 +63,51 @@ public class TeleopSwerve extends CommandBase {
     this.strafeSup = strafeSup;
     this.rotationSup = rotationSup;
     this.robotCentricSup = robotCentricSup;
-    this.POVSup = POVSup;
     this.rightBumper = rightBumper;
+
+    this.faceForward = faceForward;
+    this.faceRight = faceRight;
+    this.faceBackwards = faceBackwards;
+    this.faceLeft = faceLeft;
+  }
+
+  /**
+   * A function to set the orientation hold of the robot if any of the face
+   * buttons are pressed
+   * 
+   * @return -1 if no button is pressed, or the angle that the robot is going to
+   *         point to if buttons are pressed.
+   */
+  public int pointTo() {
+    boolean faceForward = this.faceForward.getAsBoolean();
+    boolean faceRight = this.faceRight.getAsBoolean();
+    boolean faceBackwards = this.faceBackwards.getAsBoolean();
+    boolean faceLeft = this.faceLeft.getAsBoolean();
+    int angle = -1;
+
+    if (faceForward && faceRight) {
+      angle = 45;
+    } else if (faceRight && faceBackwards) {
+      angle = 135;
+    } else if (faceBackwards && faceLeft) {
+      angle = 225;
+    } else if (faceLeft && faceForward) {
+      angle = 315;
+    } else if (faceForward) {
+      angle = 0;
+    } else if (faceRight) {
+      angle = 90;
+    } else if (faceBackwards) {
+      angle = 180;
+    } else if (faceLeft) {
+      angle = 270;
+    }
+
+    if (angle >= 0) {
+      this.swerve.setHold(angle);
+    }
+
+    return angle;
   }
 
   @Override
@@ -89,18 +141,12 @@ public class TeleopSwerve extends CommandBase {
         break;
     }
 
+    this.pointTo();
+
     if (Constants.robotMode == RobotModes.Testing) {
       translationVal *= 0.2;
       strafeVal *= 0.2;
       rotationVal *= 0.2;
-    }
-
-    double POVVal = this.POVSup.getAsDouble();
-
-    if (POVVal != -1) {
-      // set the hold position of the robot to whatever orientation is chosen by the
-      // driver
-      this.swerve.setHold(POVVal);
     }
 
     /* Drive */

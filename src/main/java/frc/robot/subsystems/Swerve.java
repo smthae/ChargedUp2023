@@ -62,15 +62,16 @@ public class Swerve extends SubsystemBase {
     /* Custom PID controllers setup */
     this.robotRotationPID = Constants.Swerve.robotRotationPID.getController();
     this.robotRotationPID.enableContinuousInput(-180, 180);
+    this.robotRotationPID.setTolerance(2);
 
     this.targetRotationPID = Constants.Swerve.targetRotationPID.getController();
 
     /* Swerve modules setup */
     mSwerveMods = new SwerveModule[] {
-      new SwerveModule(0, Constants.Swerve.Mod0.constants),
-      new SwerveModule(1, Constants.Swerve.Mod1.constants),
-      new SwerveModule(2, Constants.Swerve.Mod2.constants),
-      new SwerveModule(3, Constants.Swerve.Mod3.constants)
+        new SwerveModule(0, Constants.Swerve.Mod0.constants),
+        new SwerveModule(1, Constants.Swerve.Mod1.constants),
+        new SwerveModule(2, Constants.Swerve.Mod2.constants),
+        new SwerveModule(3, Constants.Swerve.Mod3.constants)
     };
     swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), this.getPositions());
   }
@@ -242,7 +243,7 @@ public class Swerve extends SubsystemBase {
 
   public SwerveModulePosition[] getPositions() {
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
-    
+
     for (SwerveModule mod : mSwerveMods) {
       positions[mod.moduleNumber] = mod.getPosition();
     }
