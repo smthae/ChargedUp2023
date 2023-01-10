@@ -100,6 +100,10 @@ public final class Constants {
     public static final PIDConstants targetRotationPID = new PIDConstants(6, 0, 0.05);
     public static final PIDConstants targetTranslationPID = new PIDConstants(4, 0, 0.005);
 
+    /* Delays */
+    public static final double defenseDelayAfterRotation = Units.millisecondsToSeconds(1000);
+
+    /* Kinematics */
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
         new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
         new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),

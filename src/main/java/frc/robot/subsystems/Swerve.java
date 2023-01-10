@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.List;
+import java.util.concurrent.CompletionStage;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -52,6 +53,9 @@ public class Swerve extends SubsystemBase {
   public final PIDController robotRotationPID;
   private final PIDController targetRotationPID;
   public final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
+
+  private boolean isRotating = false;
+  private int rotationDelayCounter = 0;
 
   public Swerve() {
     /* Gyro setup */
@@ -131,7 +135,7 @@ public class Swerve extends SubsystemBase {
 
     // Clamp the output to the maxSpeed so that the robot doesn't make hole in the
     // wall :D
-    if (isDefense) {
+    if (isDefense && this.shouldDefense(rotation)) {
       missalignment = MathUtil.clamp(
           this.robotRotationPID.calculate(getYaw().getDegrees() % 360,
               this.orientationWhenReleased.getDegrees() % 360),
@@ -189,6 +193,25 @@ public class Swerve extends SubsystemBase {
             this // Requires this drive subsystem
         ));
     return commandGroup;
+  }
+
+  public boolean shouldDefense(double rotation) {
+    if (this.isRotating) {
+      if (rotation == 0) {
+        this.isRotating = false;
+      }
+    } else {
+      if (rotation > 0) {
+        this.isRotating = true;
+        this.rotationDelayCounter = 0;
+      } else {
+        if (rotationDelayCounter / 50 >= Constants.Swerve.defenseDelayAfterRotation) {
+          return true;
+        }
+        this.rotationDelayCounter++;
+      }
+    }
+    return false;
   }
 
   /**
