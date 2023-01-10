@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -11,6 +12,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.hal.ConstantsJNI;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -54,8 +56,9 @@ public class Swerve extends SubsystemBase {
   private final PIDController targetRotationPID;
   public final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
 
-  private boolean isRotating = false;
-  private int rotationDelayCounter = 0;
+  private boolean wasRotationZero = true;
+  private boolean wasTranslationZero = true;
+  private long defenseDelayStart;
 
   public Swerve() {
     /* Gyro setup */
@@ -135,7 +138,7 @@ public class Swerve extends SubsystemBase {
 
     // Clamp the output to the maxSpeed so that the robot doesn't make hole in the
     // wall :D
-    if (isDefense && this.shouldDefense(rotation)) {
+    if (isDefense && this.shouldDefense(rotation, translation)) {
       missalignment = MathUtil.clamp(
           this.robotRotationPID.calculate(getYaw().getDegrees() % 360,
               this.orientationWhenReleased.getDegrees() % 360),
@@ -195,23 +198,52 @@ public class Swerve extends SubsystemBase {
     return commandGroup;
   }
 
-  public boolean shouldDefense(double rotation) {
-    if (this.isRotating) {
-      if (rotation == 0) {
-        this.isRotating = false;
-      }
-    } else {
-      if (rotation > 0) {
-        this.isRotating = true;
-        this.rotationDelayCounter = 0;
-      } else {
-        if (rotationDelayCounter / 50 >= Constants.Swerve.defenseDelayAfterRotation) {
-          return true;
-        }
-        this.rotationDelayCounter++;
-      }
+  /**
+   * 1. if rotation is 0 while it wasn't before this iteration, then start a
+   * counter that is set for 1 second and after defense should be true based on
+   * other rules
+   * 2. if translation norm is 0 while it wasn't before this iteration, then start
+   * a counter that is set for 1 second and after defense should be true based on
+   * other rules
+   * 3. if both rotation and translation are more than 0, then defense should be
+   * false
+   * 4. if only translation norm is more than 0, then defense should be true
+   * 5. if only rotation is more than 0, then defense should be false
+   * 
+   * @param rotation    joystick rotation
+   * @param translation joystick translation value
+   * @return should defense or not
+   */
+  public boolean shouldDefense(double rotation, Translation2d translation) {
+    boolean defense = false;
+    double norm = translation.getNorm();
+
+    if (rotation == 0 && !this.wasRotationZero) {
+      this.defenseDelayStart = System.currentTimeMillis();
+      defense = true;
     }
-    return false;
+    if (norm == 0 && !this.wasTranslationZero) {
+      this.defenseDelayStart = System.currentTimeMillis();
+      defense = true;
+    }
+    if (rotation != 0 && norm != 0) {
+      defense = false;
+    }
+    if (rotation != 0 && norm == 0) {
+      defense = false;
+    }
+    if (rotation == 0 && norm != 0) {
+      defense = true;
+    }
+
+    if (defense && System.currentTimeMillis() - this.defenseDelayStart > Constants.Swerve.defenseDelay) {
+      defense = false;
+    }
+
+    this.wasRotationZero = (rotation == 0);
+    this.wasTranslationZero = (norm == 0);
+
+    return defense;
   }
 
   /**
