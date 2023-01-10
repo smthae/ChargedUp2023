@@ -125,15 +125,18 @@ public class Swerve extends SubsystemBase {
    * @param shoot
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop,
-      boolean shoot) {
+      boolean shoot, boolean isDefense) {
+    double missalignment = 0;
     this.rotationUpdate(rotation);
 
     // Clamp the output to the maxSpeed so that the robot doesn't make hole in the
     // wall :D
-    double missalignment = MathUtil.clamp(
-        this.robotRotationPID.calculate(getYaw().getDegrees() % 360,
-            this.orientationWhenReleased.getDegrees() % 360),
-        -Constants.Swerve.maxSpeed, Constants.Swerve.maxSpeed);
+    if (isDefense) {
+      missalignment = MathUtil.clamp(
+          this.robotRotationPID.calculate(getYaw().getDegrees() % 360,
+              this.orientationWhenReleased.getDegrees() % 360),
+          -Constants.Swerve.maxSpeed, Constants.Swerve.maxSpeed);
+    }
 
     // Shoot? YES :D, check for targets and then reassign the missAlignment value if
     // we
