@@ -53,7 +53,7 @@ public class RobotContainer {
             () -> -driver.getRawAxis(Constants.Swerve.rotationAxis),
             () -> robotCentric.getAsBoolean(),
             () -> driver.getRightBumper(),
-            () -> NOS.getAsBoolean(),
+            () -> driver.getRawAxis(Constants.Swerve.NOS),
             () -> faceForward.getAsBoolean(),
             () -> faceRight.getAsBoolean(),
             () -> faceBackwards.getAsBoolean(),

@@ -17,7 +17,7 @@ public class TeleopSwerve extends CommandBase {
   private final DoubleSupplier rotationSup;
   private final BooleanSupplier robotCentricSup;
   private final BooleanSupplier rightBumper;
-  private final BooleanSupplier NOSMode;
+  private final DoubleSupplier NOSMode;
   private final BooleanSupplier faceForward;
   private final BooleanSupplier faceRight;
   private final BooleanSupplier faceBackwards;
@@ -53,7 +53,7 @@ public class TeleopSwerve extends CommandBase {
       DoubleSupplier rotationSup,
       BooleanSupplier robotCentricSup,
       BooleanSupplier rightBumper,
-      BooleanSupplier NOSMode,
+      DoubleSupplier NOSMode,
       BooleanSupplier faceForward,
       BooleanSupplier faceRight,
       BooleanSupplier faceBackwards,
@@ -150,7 +150,7 @@ public class TeleopSwerve extends CommandBase {
       strafeVal *= 0.2;
       rotationVal *= 0.2;
     } else if (Constants.robotMode == RobotModes.Competition) {
-      if (!this.NOSMode.getAsBoolean()) {
+      if (this.NOSMode.getAsDouble() < 0.1) {
         translationVal *= 0.6;
         strafeVal *= 0.6;
       }

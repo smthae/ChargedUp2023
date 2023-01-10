@@ -37,7 +37,7 @@ public final class Constants {
     Testing
   }
 
-  public static final RobotModes robotMode = RobotModes.Testing;
+  public static final RobotModes robotMode = RobotModes.Competition;
 
   public static final class Vision {
     public static final String cameraName = "gloworm";
@@ -65,7 +65,7 @@ public final class Constants {
     public static final int rotationAxis = XboxController.Axis.kRightX.value;
     public static final int zeroGyro = XboxController.Button.kStart.value;
     public static final int robotCentric = XboxController.Button.kLeftBumper.value;
-    public static final int NOS = XboxController.Button.kRightStick.value;
+    public static final int NOS = 3;
 
     // Orientation Buttons
     public static final int FaceForward = XboxController.Button.kY.value;
