@@ -27,6 +27,8 @@ public class TeleopSwerve extends CommandBase {
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(Constants.Swerve.strafeChangeLimit);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(Constants.Swerve.rotationChangeLimit);
 
+  private boolean rotationButtonsPressed;
+
   /**
    * The default command for Swerve and which is being used for driving, if any
    * other command overrides this one,
@@ -71,6 +73,8 @@ public class TeleopSwerve extends CommandBase {
     this.faceRight = faceRight;
     this.faceBackwards = faceBackwards;
     this.faceLeft = faceLeft;
+
+    this.rotationButtonsPressed = false;
   }
 
   /**
@@ -105,8 +109,14 @@ public class TeleopSwerve extends CommandBase {
       angle = 270;
     }
 
-    if (angle >= 0) {
+    if (angle >= 0 && !this.rotationButtonsPressed) {
       this.swerve.setHold(angle);
+    }
+
+    if (!faceForward && !faceRight && !faceBackwards && !faceLeft) {
+      this.rotationButtonsPressed = false;
+    } else {
+      this.rotationButtonsPressed = true;
     }
 
     return angle;
