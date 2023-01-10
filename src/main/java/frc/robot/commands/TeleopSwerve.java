@@ -13,8 +13,8 @@ import java.util.function.DoubleSupplier;
 public class TeleopSwerve extends CommandBase {
   private final Swerve swerve;
   private final DoubleSupplier translationSup;
-  private final DoubleSupplier strafeSup;
-  private final DoubleSupplier rotationSup;
+  public final DoubleSupplier strafeSup;
+  public DoubleSupplier rotationSup;
   private final BooleanSupplier robotCentricSup;
   private final BooleanSupplier rightBumper;
   private final DoubleSupplier NOSMode;
@@ -145,10 +145,8 @@ public class TeleopSwerve extends CommandBase {
     this.swerve.resetHold();
   }
 
-  @Override
-  public void execute() {
+  public double[] getJoystickValues() {
     double translationVal, strafeVal, rotationVal, dpad;
-
     /* Get Values, Deadband */
     dpad = this.DPad.getAsDouble();
     switch (Constants.Operators.driverMode) {
@@ -170,6 +168,19 @@ public class TeleopSwerve extends CommandBase {
         translationVal = strafeVal = rotationVal = 0;
         break;
     }
+
+    double[] output = new double[] { translationVal, strafeVal, rotationVal, dpad };
+    return output;
+  }
+
+  @Override
+  public void execute() {
+    double translationVal, strafeVal, rotationVal, dpad;
+    double[] joystickValues = this.getJoystickValues();
+    translationVal = joystickValues[0];
+    strafeVal = joystickValues[1];
+    rotationVal = joystickValues[2];
+    dpad = joystickValues[3];
 
     this.pointTo();
     this.applyPOVvalue(dpad);
