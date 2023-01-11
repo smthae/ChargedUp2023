@@ -11,7 +11,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class TeleopSwerve extends CommandBase {
-  private final Swerve swerve;
+  public final Swerve swerve;
   private final DoubleSupplier translationSup;
   public final DoubleSupplier strafeSup;
   public DoubleSupplier rotationSup;
@@ -91,7 +91,7 @@ public class TeleopSwerve extends CommandBase {
    * @return -1 if no button is pressed, or the angle that the robot is going to
    *         point to if buttons are pressed.
    */
-  public int pointTo() {
+  public double pointTo() {
     boolean faceForward = this.faceForward.getAsBoolean();
     boolean faceRight = this.faceRight.getAsBoolean();
     boolean faceBackwards = this.faceBackwards.getAsBoolean();
