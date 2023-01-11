@@ -226,6 +226,10 @@ public class Swerve extends SubsystemBase {
       this.defenseDelayStart = System.currentTimeMillis();
       defense = true;
     }
+    if (rotation == 0 && norm == 0) {
+      defense = true;
+    }
+
     if (rotation != 0 && norm != 0) {
       defense = false;
     }
@@ -236,8 +240,9 @@ public class Swerve extends SubsystemBase {
       defense = true;
     }
 
-    if (defense && System.currentTimeMillis() - this.defenseDelayStart > Constants.Swerve.defenseDelay) {
+    if (defense && System.currentTimeMillis() - this.defenseDelayStart < Constants.Swerve.defenseDelay) {
       defense = false;
+      this.orientationWhenReleased = this.getYaw();
     }
 
     this.wasRotationZero = (rotation == 0);
