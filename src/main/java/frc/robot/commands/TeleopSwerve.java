@@ -198,7 +198,6 @@ public class TeleopSwerve extends CommandBase {
       }
     }
 
-    SmartDashboard.putBoolean("isDefense", isDefense);
     /* Drive */
     swerve.drive(
         new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
