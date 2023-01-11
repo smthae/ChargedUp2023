@@ -217,15 +217,22 @@ public class Swerve extends SubsystemBase {
   public boolean shouldDefense(double rotation, Translation2d translation) {
     boolean defense = false;
     double norm = translation.getNorm();
+    SmartDashboard.putNumber("norm", norm);
 
     if (rotation == 0 && !this.wasRotationZero) {
       this.defenseDelayStart = System.currentTimeMillis();
       defense = true;
+      SmartDashboard.putString("defense detail", "stopped rotating");
     }
     if (norm == 0 && !this.wasTranslationZero) {
       this.defenseDelayStart = System.currentTimeMillis();
       defense = true;
+      SmartDashboard.putString("defense detail", "stopped driving");
     }
+    if (rotation == 0 && norm == 0) {
+      defense = true;
+    }
+
     if (rotation != 0 && norm != 0) {
       defense = false;
     }
@@ -236,8 +243,9 @@ public class Swerve extends SubsystemBase {
       defense = true;
     }
 
-    if (defense && System.currentTimeMillis() - this.defenseDelayStart > Constants.Swerve.defenseDelay) {
+    if (defense && System.currentTimeMillis() - this.defenseDelayStart < Constants.Swerve.defenseDelay) {
       defense = false;
+      this.orientationWhenReleased = this.getYaw();
     }
 
     this.wasRotationZero = (rotation == 0);
