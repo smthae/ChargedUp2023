@@ -57,7 +57,8 @@ public class RobotContainer {
             () -> faceForward.getAsBoolean(),
             () -> faceRight.getAsBoolean(),
             () -> faceBackwards.getAsBoolean(),
-            () -> faceLeft.getAsBoolean()));
+            () -> faceLeft.getAsBoolean(),
+            () -> driver.getPOV()));
 
     // Configure the button bindings
     configureButtonBindings();

@@ -58,14 +58,14 @@ public class PerpendicularTarget extends CommandBase {
           new Translation2d(0,
               translation),
           rotation < 0.15 && rotation > -0.15 ? 0 : rotation,
-          true, true, false);
+          true, true, false, true);
     } else {
       rotation = MathUtil.clamp(rotation, -0.3, 0.3);
       this.swerveSubsystem.drive(
           new Translation2d(0,
               translation),
           rotation,
-          true, true, false);
+          true, true, false, true);
     }
   }
 

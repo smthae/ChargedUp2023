@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import java.util.List;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.TimeUnit;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -10,6 +12,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.hal.ConstantsJNI;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -52,6 +55,10 @@ public class Swerve extends SubsystemBase {
   public final PIDController robotRotationPID;
   private final PIDController targetRotationPID;
   public final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
+
+  private boolean wasRotationZero = true;
+  private boolean wasTranslationZero = true;
+  private long defenseDelayStart;
 
   public Swerve() {
     /* Gyro setup */
@@ -125,15 +132,18 @@ public class Swerve extends SubsystemBase {
    * @param shoot
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop,
-      boolean shoot) {
+      boolean shoot, boolean isDefense) {
+    double missalignment = 0;
     this.rotationUpdate(rotation);
 
     // Clamp the output to the maxSpeed so that the robot doesn't make hole in the
     // wall :D
-    double missalignment = MathUtil.clamp(
-        this.robotRotationPID.calculate(getYaw().getDegrees() % 360,
-            this.orientationWhenReleased.getDegrees() % 360),
-        -Constants.Swerve.maxSpeed, Constants.Swerve.maxSpeed);
+    if (isDefense && this.shouldDefense(rotation, translation)) {
+      missalignment = MathUtil.clamp(
+          this.robotRotationPID.calculate(getYaw().getDegrees() % 360,
+              this.orientationWhenReleased.getDegrees() % 360),
+          -Constants.Swerve.maxSpeed, Constants.Swerve.maxSpeed);
+    }
 
     // Shoot? YES :D, check for targets and then reassign the missAlignment value if
     // we
@@ -186,6 +196,62 @@ public class Swerve extends SubsystemBase {
             this // Requires this drive subsystem
         ));
     return commandGroup;
+  }
+
+  /**
+   * 1. if rotation is 0 while it wasn't before this iteration, then start a
+   * counter that is set for 1 second and after defense should be true based on
+   * other rules
+   * 2. if translation norm is 0 while it wasn't before this iteration, then start
+   * a counter that is set for 1 second and after defense should be true based on
+   * other rules
+   * 3. if both rotation and translation are more than 0, then defense should be
+   * false
+   * 4. if only translation norm is more than 0, then defense should be true
+   * 5. if only rotation is more than 0, then defense should be false
+   * 
+   * @param rotation    joystick rotation
+   * @param translation joystick translation value
+   * @return should defense or not
+   */
+  public boolean shouldDefense(double rotation, Translation2d translation) {
+    boolean defense = false;
+    double norm = translation.getNorm();
+    SmartDashboard.putNumber("norm", norm);
+
+    if (rotation == 0 && !this.wasRotationZero) {
+      this.defenseDelayStart = System.currentTimeMillis();
+      defense = true;
+      SmartDashboard.putString("defense detail", "stopped rotating");
+    }
+    if (norm == 0 && !this.wasTranslationZero) {
+      this.defenseDelayStart = System.currentTimeMillis();
+      defense = true;
+      SmartDashboard.putString("defense detail", "stopped driving");
+    }
+    if (rotation == 0 && norm == 0) {
+      defense = true;
+    }
+
+    if (rotation != 0 && norm != 0) {
+      defense = false;
+    }
+    if (rotation != 0 && norm == 0) {
+      defense = false;
+    }
+    if (rotation == 0 && norm != 0) {
+      defense = true;
+    }
+
+    if (defense && System.currentTimeMillis() - this.defenseDelayStart < Constants.Swerve.defenseDelay) {
+      defense = false;
+      this.orientationWhenReleased = this.getYaw();
+    }
+
+    this.wasRotationZero = (rotation == 0);
+    this.wasTranslationZero = (norm == 0);
+
+    return defense;
   }
 
   /**
