@@ -117,6 +117,8 @@ public class TeleopSwerve extends CommandBase {
       angle = 180;
     } else if (faceLeft) {
       angle = 270;
+    } else if (this.swerve.robotRotationPID.atSetpoint()) {
+      this.defenseOverride = false;
     }
 
     if (angle >= 0 && !this.rotationButtonsPressed) {
@@ -127,6 +129,7 @@ public class TeleopSwerve extends CommandBase {
       this.rotationButtonsPressed = false;
     } else {
       this.rotationButtonsPressed = true;
+      this.defenseOverride = true;
     }
 
     return angle;

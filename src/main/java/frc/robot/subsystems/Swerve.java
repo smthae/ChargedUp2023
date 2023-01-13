@@ -242,7 +242,6 @@ public class Swerve extends SubsystemBase {
 
     if (defense && System.currentTimeMillis() - this.defenseDelayStart < Constants.Swerve.defenseDelay) {
       defense = false;
-      this.orientationWhenReleased = this.getYaw();
     }
 
     this.wasRotationZero = (rotation == 0);
@@ -349,6 +348,7 @@ public class Swerve extends SubsystemBase {
   public void periodic() {
     swerveOdometry.update(getYaw(), getPositions());
     SmartDashboard.putNumber("yaw", getYaw().getDegrees());
+    SmartDashboard.putNumber("orientationHold", this.orientationWhenReleased.getDegrees());
 
     for (SwerveModule mod : mSwerveMods) {
       mod.updateDashboardValues();
