@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.RobotModes;
@@ -28,6 +27,8 @@ public class TeleopSwerve extends CommandBase {
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(Constants.Swerve.translationChangeLimit);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(Constants.Swerve.strafeChangeLimit);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(Constants.Swerve.rotationChangeLimit);
+
+  public boolean defenseOverride = false;
 
   private boolean rotationButtonsPressed;
   private boolean isDefense;
@@ -200,11 +201,13 @@ public class TeleopSwerve extends CommandBase {
 
     /* Drive */
     swerve.drive(
-        new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
+        new Translation2d(translationVal,
+            strafeVal).times(Constants.Swerve.maxSpeed),
         rotationVal * Constants.Swerve.maxAngularVelocity,
         !robotCentricSup.getAsBoolean(),
-        true, // True -> driving based on percent output, False -> driving based on PID,
-              // FeedForward
-        this.rightBumper.getAsBoolean(), this.isDefense);
+        true, // True -> driving based on percent output, False -> driving based on
+        // PID,
+        // FeedForward
+        this.rightBumper.getAsBoolean(), this.isDefense, this.defenseOverride);
   }
 }
