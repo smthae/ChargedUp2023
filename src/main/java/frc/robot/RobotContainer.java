@@ -32,11 +32,11 @@ public class RobotContainer {
   private final JoystickButton robotCentric = new JoystickButton(driver, Constants.Swerve.robotCentric);
   // private final JoystickButton perpendicular = new JoystickButton(driver,
   // XboxController.Button.kY.value);
-  private final JoystickButton NOS = new JoystickButton(driver, Constants.Swerve.NOS);
   private final JoystickButton faceForward = new JoystickButton(driver, Constants.Swerve.FaceForward);
   private final JoystickButton faceRight = new JoystickButton(driver, Constants.Swerve.FaceRight);
   private final JoystickButton faceBackwards = new JoystickButton(driver, Constants.Swerve.FaceBackwards);
   private final JoystickButton faceLeft = new JoystickButton(driver, Constants.Swerve.FaceLeft);
+  private final JoystickButton snakeMode = new JoystickButton(driver, Constants.Swerve.snakeMode);
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -81,6 +81,18 @@ public class RobotContainer {
     zeroGyro.onTrue(
         new InstantCommand(() -> s_Swerve.zeroGyro()));
     // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
+
+    // snakeMode.toggleOnTrue(new SnakeSwerve(s_Swerve,
+    // () -> -driver.getRawAxis(Constants.Swerve.translationAxis),
+    // () -> -driver.getRawAxis(Constants.Swerve.strafeAxis),
+    // () -> robotCentric.getAsBoolean(),
+    // () -> driver.getRightBumper(),
+    // () -> driver.getRawAxis(Constants.Swerve.NOS),
+    // () -> faceForward.getAsBoolean(),
+    // () -> faceRight.getAsBoolean(),
+    // () -> faceBackwards.getAsBoolean(),
+    // () -> faceLeft.getAsBoolean(),
+    // () -> driver.getPOV()));
   }
 
   /**

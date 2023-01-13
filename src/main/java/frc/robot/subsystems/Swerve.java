@@ -132,13 +132,13 @@ public class Swerve extends SubsystemBase {
    * @param shoot
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop,
-      boolean shoot, boolean isDefense) {
+      boolean shoot, boolean isDefense, boolean defenseProtectionOverride) {
     double missalignment = 0;
     this.rotationUpdate(rotation);
 
     // Clamp the output to the maxSpeed so that the robot doesn't make hole in the
     // wall :D
-    if (isDefense && this.shouldDefense(rotation, translation)) {
+    if (defenseProtectionOverride || (isDefense && this.shouldDefense(rotation, translation))) {
       missalignment = MathUtil.clamp(
           this.robotRotationPID.calculate(getYaw().getDegrees() % 360,
               this.orientationWhenReleased.getDegrees() % 360),

@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.RobotModes;
@@ -12,10 +11,10 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class TeleopSwerve extends CommandBase {
-  private final Swerve swerve;
+  public final Swerve swerve;
   private final DoubleSupplier translationSup;
-  private final DoubleSupplier strafeSup;
-  private final DoubleSupplier rotationSup;
+  public final DoubleSupplier strafeSup;
+  public DoubleSupplier rotationSup;
   private final BooleanSupplier robotCentricSup;
   private final BooleanSupplier rightBumper;
   private final DoubleSupplier NOSMode;
@@ -28,6 +27,8 @@ public class TeleopSwerve extends CommandBase {
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(Constants.Swerve.translationChangeLimit);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(Constants.Swerve.strafeChangeLimit);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(Constants.Swerve.rotationChangeLimit);
+
+  public boolean defenseOverride = false;
 
   private boolean rotationButtonsPressed;
   private boolean isDefense;
@@ -92,7 +93,7 @@ public class TeleopSwerve extends CommandBase {
    * @return -1 if no button is pressed, or the angle that the robot is going to
    *         point to if buttons are pressed.
    */
-  public int pointTo() {
+  public double pointTo() {
     boolean faceForward = this.faceForward.getAsBoolean();
     boolean faceRight = this.faceRight.getAsBoolean();
     boolean faceBackwards = this.faceBackwards.getAsBoolean();
@@ -146,10 +147,8 @@ public class TeleopSwerve extends CommandBase {
     this.swerve.resetHold();
   }
 
-  @Override
-  public void execute() {
+  public double[] getJoystickValues() {
     double translationVal, strafeVal, rotationVal, dpad;
-
     /* Get Values, Deadband */
     dpad = this.DPad.getAsDouble();
     switch (Constants.Operators.driverMode) {
@@ -172,6 +171,19 @@ public class TeleopSwerve extends CommandBase {
         break;
     }
 
+    double[] output = new double[] { translationVal, strafeVal, rotationVal, dpad };
+    return output;
+  }
+
+  @Override
+  public void execute() {
+    double translationVal, strafeVal, rotationVal, dpad;
+    double[] joystickValues = this.getJoystickValues();
+    translationVal = joystickValues[0];
+    strafeVal = joystickValues[1];
+    rotationVal = joystickValues[2];
+    dpad = joystickValues[3];
+
     this.pointTo();
     this.applyPOVvalue(dpad);
     this.lastPOVvalue = dpad;
@@ -187,14 +199,15 @@ public class TeleopSwerve extends CommandBase {
       }
     }
 
-    SmartDashboard.putBoolean("isDefense", isDefense);
     /* Drive */
     swerve.drive(
-        new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed),
+        new Translation2d(translationVal,
+            strafeVal).times(Constants.Swerve.maxSpeed),
         rotationVal * Constants.Swerve.maxAngularVelocity,
         !robotCentricSup.getAsBoolean(),
-        true, // True -> driving based on percent output, False -> driving based on PID,
-              // FeedForward
-        this.rightBumper.getAsBoolean(), this.isDefense);
+        true, // True -> driving based on percent output, False -> driving based on
+        // PID,
+        // FeedForward
+        this.rightBumper.getAsBoolean(), this.isDefense, this.defenseOverride);
   }
 }

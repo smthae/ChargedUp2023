@@ -8,8 +8,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -64,6 +62,7 @@ public final class Constants {
     public static final int strafeAxis = XboxController.Axis.kLeftX.value;
     public static final int rotationAxis = XboxController.Axis.kRightX.value;
     public static final int zeroGyro = XboxController.Button.kBack.value;
+    public static final int snakeMode = XboxController.Button.kStart.value;
     public static final int robotCentric = XboxController.Button.kLeftBumper.value;
     public static final int NOS = XboxController.Axis.kRightTrigger.value;
 
