@@ -37,6 +37,7 @@ public class RobotContainer {
   private final JoystickButton faceBackwards = new JoystickButton(driver, Constants.Swerve.FaceBackwards);
   private final JoystickButton faceLeft = new JoystickButton(driver, Constants.Swerve.FaceLeft);
   private final JoystickButton snakeMode = new JoystickButton(driver, Constants.Swerve.snakeMode);
+  private final JoystickButton autoBalance = new JoystickButton(driver, Constants.Swerve.snakeMode);
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -80,6 +81,8 @@ public class RobotContainer {
     /* Driver Buttons */
     zeroGyro.onTrue(
         new InstantCommand(() -> s_Swerve.zeroGyro()));
+    autoBalance.whileTrue(new Balance(s_Swerve));
+
     // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
 
     // snakeMode.toggleOnTrue(new SnakeSwerve(s_Swerve,

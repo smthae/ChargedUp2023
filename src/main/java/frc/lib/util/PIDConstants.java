@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class PIDConstants {
   public double p, i, d;
+  public double tolerance = 0;
   private String subscript;
 
   public PIDConstants(double p, double i, double d) {
@@ -19,8 +20,19 @@ public class PIDConstants {
     this.d = d;
   }
 
+  public PIDConstants(double p, double i, double d, double tolerance) {
+    this.p = p;
+    this.i = i;
+    this.d = d;
+    this.tolerance = tolerance;
+  }
+
   public PIDController getController() {
-    return new PIDController(this.p, this.i, this.d);
+    PIDController controller = new PIDController(this.p, this.i, this.d);
+    if (tolerance != 0) {
+      controller.setTolerance(tolerance);
+    }
+    return controller;
   }
 
   /**
