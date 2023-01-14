@@ -333,6 +333,14 @@ public class Swerve extends SubsystemBase {
     this.orientationWhenReleased = Rotation2d.fromDegrees(360 - angle);
   }
 
+  public void brake() {
+    SwerveModule[] modules = this.mSwerveMods;
+    modules[0].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
+    modules[1].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
+    modules[2].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(315)), true);
+    modules[3].setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)), true);
+  }
+
   /**
    * get the orientation of the robot
    * 
@@ -342,6 +350,15 @@ public class Swerve extends SubsystemBase {
     return (Constants.Swerve.invertGyro)
         ? Rotation2d.fromDegrees(360 - gyro.getYaw())
         : Rotation2d.fromDegrees(gyro.getYaw());
+  }
+
+  /**
+   * Get the pitch from gyro
+   * 
+   * @return the pitch of the robot
+   */
+  public Rotation2d getPitch() {
+    return Rotation2d.fromDegrees(gyro.getPitch());
   }
 
   @Override

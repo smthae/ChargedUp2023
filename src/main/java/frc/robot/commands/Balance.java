@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -18,10 +19,16 @@ public class Balance extends CommandBase {
 
   @Override
   public void execute() {
-    double pitch = this.swerve.gyro.getPitch();
-    double power = this.balanceController.calculate(pitch, 0);
+    double pitch = this.swerve.getPitch().getDegrees();
+    double power = MathUtil.clamp(this.balanceController.calculate(pitch, 0), -1, 1);
 
-    this.swerve.drive(new Translation2d(power, 0), 0, true, true, false, true, true);
+    this.swerve.drive(new Translation2d(power, 0).times(Constants.Swerve.maxSpeed), 0, true, true, false, true, true);
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    this.swerve.brake();
+    
   }
 
   @Override
