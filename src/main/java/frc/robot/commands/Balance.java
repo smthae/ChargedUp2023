@@ -28,7 +28,6 @@ public class Balance extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     this.swerve.brake();
-    
   }
 
   @Override
