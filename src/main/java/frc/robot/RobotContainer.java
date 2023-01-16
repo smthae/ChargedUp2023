@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -38,9 +39,12 @@ public class RobotContainer {
   private final JoystickButton faceLeft = new JoystickButton(driver, Constants.Swerve.FaceLeft);
   private final JoystickButton snakeMode = new JoystickButton(driver, Constants.Swerve.snakeMode);
   private final JoystickButton autoBalance = new JoystickButton(driver, Constants.Swerve.snakeMode);
+  private final POVButton intakeIn = new POVButton(driver, 90);
+  private final POVButton intakeOut = new POVButton(driver, 270);
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
+  private final Wrist wrist = new Wrist();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -82,7 +86,8 @@ public class RobotContainer {
     zeroGyro.onTrue(
         new InstantCommand(() -> s_Swerve.zeroGyro()));
     autoBalance.whileTrue(new Balance(s_Swerve));
-
+    intakeIn.whileTrue(new IntakeIn(wrist));
+    intakeOut.whileTrue(new IntakeOut(wrist));
     // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
 
     // snakeMode.toggleOnTrue(new SnakeSwerve(s_Swerve,
