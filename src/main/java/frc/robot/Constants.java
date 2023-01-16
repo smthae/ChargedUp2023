@@ -54,6 +54,11 @@ public final class Constants {
     public static final ControlModes driverMode = ControlModes.Raw;
   }
 
+  public static final class Wrist {
+    public static final int intakeMotorID = 9;
+    public static final double power = 0.3;
+  }
+
   public static final class Swerve {
 
     /* Drive Controls */
