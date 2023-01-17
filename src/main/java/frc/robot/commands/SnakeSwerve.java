@@ -19,12 +19,11 @@ public class SnakeSwerve extends TeleopSwerve {
       BooleanSupplier faceForward,
       BooleanSupplier faceRight,
       BooleanSupplier faceBackwards,
-      BooleanSupplier faceLeft,
-      DoubleSupplier DPad) {
+      BooleanSupplier faceLeft) {
     super(swerve, translationSup, strafeSup, (DoubleSupplier) () -> 0, robotCentricSup,
         rightBumper, NOSMode,
         faceForward, faceRight,
-        faceBackwards, faceLeft, DPad);
+        faceBackwards, faceLeft);
     this.defenseOverride = true;
   }
 

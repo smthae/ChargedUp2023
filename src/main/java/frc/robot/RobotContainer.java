@@ -62,8 +62,7 @@ public class RobotContainer {
             () -> faceForward.getAsBoolean(),
             () -> faceRight.getAsBoolean(),
             () -> faceBackwards.getAsBoolean(),
-            () -> faceLeft.getAsBoolean(),
-            () -> driver.getPOV()));
+            () -> faceLeft.getAsBoolean()));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -99,8 +98,7 @@ public class RobotContainer {
     // () -> faceForward.getAsBoolean(),
     // () -> faceRight.getAsBoolean(),
     // () -> faceBackwards.getAsBoolean(),
-    // () -> faceLeft.getAsBoolean(),
-    // () -> driver.getPOV()));
+    // () -> faceLeft.getAsBoolean()));
   }
 
   /**

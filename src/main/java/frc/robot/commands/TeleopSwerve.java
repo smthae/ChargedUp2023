@@ -22,7 +22,6 @@ public class TeleopSwerve extends CommandBase {
   private final BooleanSupplier faceRight;
   private final BooleanSupplier faceBackwards;
   private final BooleanSupplier faceLeft;
-  private final DoubleSupplier DPad;
 
   private SlewRateLimiter translationLimiter = new SlewRateLimiter(Constants.Swerve.translationChangeLimit);
   private SlewRateLimiter strafeLimiter = new SlewRateLimiter(Constants.Swerve.strafeChangeLimit);
@@ -32,7 +31,6 @@ public class TeleopSwerve extends CommandBase {
 
   private boolean rotationButtonsPressed;
   private boolean isDefense;
-  private double lastPOVvalue;
 
   /**
    * The default command for Swerve and which is being used for driving, if any
@@ -52,7 +50,6 @@ public class TeleopSwerve extends CommandBase {
    * @param faceRight       Is the faceRight button pressed?
    * @param faceBackwards   Is the faceBackwards button pressed?
    * @param faceLeft        Is the faceLeft button pressed?
-   * @param DPad            DPad values
    */
   public TeleopSwerve(
       Swerve swerve,
@@ -65,8 +62,7 @@ public class TeleopSwerve extends CommandBase {
       BooleanSupplier faceForward,
       BooleanSupplier faceRight,
       BooleanSupplier faceBackwards,
-      BooleanSupplier faceLeft,
-      DoubleSupplier DPad) {
+      BooleanSupplier faceLeft) {
     this.swerve = swerve;
     addRequirements(swerve);
 
@@ -80,7 +76,6 @@ public class TeleopSwerve extends CommandBase {
     this.faceRight = faceRight;
     this.faceBackwards = faceBackwards;
     this.faceLeft = faceLeft;
-    this.DPad = DPad;
 
     this.rotationButtonsPressed = false;
     this.isDefense = true;
@@ -135,15 +130,6 @@ public class TeleopSwerve extends CommandBase {
     return angle;
   }
 
-  public void applyPOVvalue(double pov) {
-    if (pov == this.lastPOVvalue)
-      return;
-
-    if (pov == 180) {
-      this.isDefense = !this.isDefense;
-    }
-  }
-
   @Override
   public void initialize() {
     // Set the hold position to the current orientation of the robot
@@ -151,9 +137,8 @@ public class TeleopSwerve extends CommandBase {
   }
 
   public double[] getJoystickValues() {
-    double translationVal, strafeVal, rotationVal, dpad;
+    double translationVal, strafeVal, rotationVal;
     /* Get Values, Deadband */
-    dpad = this.DPad.getAsDouble();
     switch (Constants.Operators.driverMode) {
       case Raw:
         translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.Swerve.stickDeadband);
@@ -174,22 +159,19 @@ public class TeleopSwerve extends CommandBase {
         break;
     }
 
-    double[] output = new double[] { translationVal, strafeVal, rotationVal, dpad };
+    double[] output = new double[] { translationVal, strafeVal, rotationVal };
     return output;
   }
 
   @Override
   public void execute() {
-    double translationVal, strafeVal, rotationVal, dpad;
+    double translationVal, strafeVal, rotationVal;
     double[] joystickValues = this.getJoystickValues();
     translationVal = joystickValues[0];
     strafeVal = joystickValues[1];
     rotationVal = joystickValues[2];
-    dpad = joystickValues[3];
 
     this.pointTo();
-    this.applyPOVvalue(dpad);
-    this.lastPOVvalue = dpad;
 
     if (Constants.robotMode == RobotModes.Testing) {
       translationVal *= 0.2;
