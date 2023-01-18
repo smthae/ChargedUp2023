@@ -31,16 +31,18 @@ public class RobotContainer {
   /* Driver Buttons */
   private final JoystickButton zeroGyro = new JoystickButton(driver, Constants.Swerve.zeroGyro);
   private final JoystickButton robotCentric = new JoystickButton(driver, Constants.Swerve.robotCentric);
+  private final JoystickButton NOS = new JoystickButton(driver, Constants.Swerve.NOS);
   // private final JoystickButton perpendicular = new JoystickButton(driver,
   // XboxController.Button.kY.value);
   private final JoystickButton faceForward = new JoystickButton(driver, Constants.Swerve.FaceForward);
   private final JoystickButton faceRight = new JoystickButton(driver, Constants.Swerve.FaceRight);
   private final JoystickButton faceBackwards = new JoystickButton(driver, Constants.Swerve.FaceBackwards);
   private final JoystickButton faceLeft = new JoystickButton(driver, Constants.Swerve.FaceLeft);
-  private final JoystickButton snakeMode = new JoystickButton(driver, Constants.Swerve.snakeMode);
+  // private final JoystickButton snakeMode = new JoystickButton(driver,
+  // Constants.Swerve.snakeMode);
   private final JoystickButton autoBalance = new JoystickButton(driver, Constants.Swerve.snakeMode);
-  private final POVButton intakeIn = new POVButton(driver, 90);
-  private final POVButton intakeOut = new POVButton(driver, 270);
+  private final JoystickButton fallenConeIntake = new JoystickButton(driver, Constants.Swerve.fallenConeIntake);
+  private final JoystickButton cubeIntake = new JoystickButton(driver, Constants.Swerve.cubeIntake);
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -57,8 +59,7 @@ public class RobotContainer {
             () -> -driver.getRawAxis(Constants.Swerve.strafeAxis),
             () -> -driver.getRawAxis(Constants.Swerve.rotationAxis),
             () -> robotCentric.getAsBoolean(),
-            () -> driver.getRightBumper(),
-            () -> driver.getRawAxis(Constants.Swerve.NOS),
+            () -> NOS.getAsBoolean(),
             () -> faceForward.getAsBoolean(),
             () -> faceRight.getAsBoolean(),
             () -> faceBackwards.getAsBoolean(),
@@ -85,8 +86,9 @@ public class RobotContainer {
     zeroGyro.onTrue(
         new InstantCommand(() -> s_Swerve.zeroGyro()));
     autoBalance.whileTrue(new Balance(s_Swerve));
-    intakeIn.whileTrue(new IntakeIn(wrist));
-    intakeOut.whileTrue(new IntakeOut(wrist));
+    fallenConeIntake.and(() -> cubeIntake.getAsBoolean()).whileTrue(new IntakeIn(wrist));
+    fallenConeIntake.whileTrue(new IntakeIn(wrist));
+    cubeIntake.whileTrue(new IntakeIn(wrist));
     // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
 
     // snakeMode.toggleOnTrue(new SnakeSwerve(s_Swerve,

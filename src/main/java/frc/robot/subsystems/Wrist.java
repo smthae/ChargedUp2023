@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -10,6 +11,8 @@ public class Wrist extends SubsystemBase {
   private final TalonFX intakeMotor = new TalonFX(Constants.Wrist.intakeMotorID);
 
   public Wrist() {
+    this.intakeMotor.configVoltageCompSaturation(Constants.Swerve.voltageComp);
+    this.intakeMotor.enableVoltageCompensation(true);
   }
 
   public void intakeIn() {

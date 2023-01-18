@@ -15,13 +15,12 @@ public class SnakeSwerve extends TeleopSwerve {
       DoubleSupplier strafeSup,
       BooleanSupplier robotCentricSup,
       BooleanSupplier rightBumper,
-      DoubleSupplier NOSMode,
+      BooleanSupplier NOSMode,
       BooleanSupplier faceForward,
       BooleanSupplier faceRight,
       BooleanSupplier faceBackwards,
       BooleanSupplier faceLeft) {
-    super(swerve, translationSup, strafeSup, (DoubleSupplier) () -> 0, robotCentricSup,
-        rightBumper, NOSMode,
+    super(swerve, translationSup, strafeSup, (DoubleSupplier) () -> 0, robotCentricSup, NOSMode,
         faceForward, faceRight,
         faceBackwards, faceLeft);
     this.defenseOverride = true;

@@ -16,8 +16,7 @@ public class TeleopSwerve extends CommandBase {
   public final DoubleSupplier strafeSup;
   public DoubleSupplier rotationSup;
   private final BooleanSupplier robotCentricSup;
-  private final BooleanSupplier rightBumper;
-  private final DoubleSupplier NOSMode;
+  private final BooleanSupplier NOSMode;
   private final BooleanSupplier faceForward;
   private final BooleanSupplier faceRight;
   private final BooleanSupplier faceBackwards;
@@ -44,7 +43,6 @@ public class TeleopSwerve extends CommandBase {
    * @param rotationSup     the rotation value
    * @param robotCentricSup whether or not the robot is driving relative to the
    *                        field or relative to itself
-   * @param rightBumper     whether or not the rightBumper is held down
    * @param NOSMode         If true, the power will increase from 60% to 100%
    * @param faceForward     Is the faceForward button pressed?
    * @param faceRight       Is the faceRight button pressed?
@@ -57,8 +55,7 @@ public class TeleopSwerve extends CommandBase {
       DoubleSupplier strafeSup,
       DoubleSupplier rotationSup,
       BooleanSupplier robotCentricSup,
-      BooleanSupplier rightBumper,
-      DoubleSupplier NOSMode,
+      BooleanSupplier NOSMode,
       BooleanSupplier faceForward,
       BooleanSupplier faceRight,
       BooleanSupplier faceBackwards,
@@ -70,7 +67,6 @@ public class TeleopSwerve extends CommandBase {
     this.strafeSup = strafeSup;
     this.rotationSup = rotationSup;
     this.robotCentricSup = robotCentricSup;
-    this.rightBumper = rightBumper;
     this.NOSMode = NOSMode;
     this.faceForward = faceForward;
     this.faceRight = faceRight;
@@ -178,7 +174,7 @@ public class TeleopSwerve extends CommandBase {
       strafeVal *= 0.2;
       rotationVal *= 0.2;
     } else if (Constants.robotMode == RobotModes.Competition) {
-      if (this.NOSMode.getAsDouble() < 0.1) {
+      if (!this.NOSMode.getAsBoolean()) {
         translationVal *= 0.6;
         strafeVal *= 0.6;
       }
@@ -190,9 +186,8 @@ public class TeleopSwerve extends CommandBase {
             strafeVal).times(Constants.Swerve.maxSpeed),
         rotationVal * Constants.Swerve.maxAngularVelocity,
         !robotCentricSup.getAsBoolean(),
-        true, // True -> driving based on percent output, False -> driving based on
-        // PID,
-        // FeedForward
-        this.rightBumper.getAsBoolean(), this.isDefense, this.defenseOverride);
+        true, // True -> driving based on percent output, False -> driving based on PID and
+              // FeedForward
+        this.isDefense, this.defenseOverride);
   }
 }

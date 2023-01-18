@@ -36,7 +36,7 @@ public class Balance extends CommandBase {
       power = -MathUtil.clamp(this.balanceController.calculate(this.swerve.getPitch().getDegrees(), 0), -1, 1);
     }
 
-    this.swerve.drive(new Translation2d(power, 0).times(Constants.Swerve.maxSpeed), 0, true, true, false, true, true);
+    this.swerve.drive(new Translation2d(power, 0).times(Constants.Swerve.maxSpeed), 0, true, true, true, true);
   }
 
   @Override

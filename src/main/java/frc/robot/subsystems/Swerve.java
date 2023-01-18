@@ -129,10 +129,9 @@ public class Swerve extends SubsystemBase {
    * @param rotation
    * @param fieldRelative
    * @param isOpenLoop    True -> no PID, False -> PID
-   * @param shoot
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop,
-      boolean shoot, boolean isDefense, boolean defenseProtectionOverride) {
+      boolean isDefense, boolean defenseProtectionOverride) {
     double missalignment = 0;
     this.rotationUpdate(rotation);
 
@@ -148,12 +147,12 @@ public class Swerve extends SubsystemBase {
     // Shoot? YES :D, check for targets and then reassign the missAlignment value if
     // we
     // have to turn to the target!
-    if (shoot) {
-      // this.camera.setLED(VisionLEDMode.kOn);
-      missalignment = this.checkTargets(missalignment);
-    } else {
-      // this.camera.setLED(VisionLEDMode.kOff);
-    }
+    // if (shoot) {
+    // this.camera.setLED(VisionLEDMode.kOn);
+    // missalignment = this.checkTargets(missalignment);
+    // } else {
+    // this.camera.setLED(VisionLEDMode.kOff);
+    // }
 
     SmartDashboard.putNumber("Missalignment speed PID", missalignment);
 

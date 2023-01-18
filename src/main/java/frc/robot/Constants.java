@@ -51,12 +51,12 @@ public final class Constants {
 
   public static final class Operators {
     public static final int driver = 0;
-    public static final ControlModes driverMode = ControlModes.Raw;
+    public static final ControlModes driverMode = ControlModes.Slew;
   }
 
   public static final class Wrist {
     public static final int intakeMotorID = 9;
-    public static final double power = 0.3;
+    public static final double power = 1;
   }
 
   public static final class Swerve {
@@ -69,7 +69,9 @@ public final class Constants {
     public static final int zeroGyro = XboxController.Button.kBack.value;
     public static final int snakeMode = XboxController.Button.kStart.value;
     public static final int robotCentric = XboxController.Button.kLeftBumper.value;
-    public static final int NOS = XboxController.Axis.kRightTrigger.value;
+    public static final int NOS = XboxController.Button.kRightBumper.value;
+    public static final int fallenConeIntake = XboxController.Axis.kLeftTrigger.value;
+    public static final int cubeIntake = XboxController.Axis.kRightTrigger.value;
 
     // Orientation Buttons
     public static final int FaceForward = XboxController.Button.kY.value;
@@ -132,7 +134,7 @@ public final class Constants {
     public static final double maxAngularVelocity = 11.5;
     public static final double translationChangeLimit = 20.0;
     public static final double strafeChangeLimit = 20.0;
-    public static final double rotationChangeLimit = 20.0;
+    public static final double rotationChangeLimit = 5.0;
 
     /* Neutral Modes */
     public static final IdleMode angleNeutralMode = IdleMode.kBrake;
