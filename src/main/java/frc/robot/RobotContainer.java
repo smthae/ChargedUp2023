@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.autos.*;
@@ -26,23 +27,7 @@ import frc.robot.subsystems.*;
 public class RobotContainer {
 
   /* Controllers */
-  private final XboxController driver = new XboxController(Constants.Operators.driver);
-
-  /* Driver Buttons */
-  private final JoystickButton zeroGyro = new JoystickButton(driver, Constants.Swerve.zeroGyro);
-  private final JoystickButton robotCentric = new JoystickButton(driver, Constants.Swerve.robotCentric);
-  private final JoystickButton NOS = new JoystickButton(driver, Constants.Swerve.NOS);
-  // private final JoystickButton perpendicular = new JoystickButton(driver,
-  // XboxController.Button.kY.value);
-  private final JoystickButton faceForward = new JoystickButton(driver, Constants.Swerve.FaceForward);
-  private final JoystickButton faceRight = new JoystickButton(driver, Constants.Swerve.FaceRight);
-  private final JoystickButton faceBackwards = new JoystickButton(driver, Constants.Swerve.FaceBackwards);
-  private final JoystickButton faceLeft = new JoystickButton(driver, Constants.Swerve.FaceLeft);
-  // private final JoystickButton snakeMode = new JoystickButton(driver,
-  // Constants.Swerve.snakeMode);
-  private final JoystickButton autoBalance = new JoystickButton(driver, Constants.Swerve.snakeMode);
-  private final JoystickButton fallenConeIntake = new JoystickButton(driver, Constants.Swerve.fallenConeIntake);
-  private final JoystickButton cubeIntake = new JoystickButton(driver, Constants.Swerve.cubeIntake);
+  private final CommandXboxController driver = new CommandXboxController(Constants.Operators.driver);
 
   /* Subsystems */
   private final Swerve s_Swerve = new Swerve();
@@ -52,18 +37,17 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    s_Swerve.setDefaultCommand(
-        new TeleopSwerve(
-            s_Swerve,
-            () -> -driver.getRawAxis(Constants.Swerve.translationAxis),
-            () -> -driver.getRawAxis(Constants.Swerve.strafeAxis),
-            () -> -driver.getRawAxis(Constants.Swerve.rotationAxis),
-            () -> robotCentric.getAsBoolean(),
-            () -> NOS.getAsBoolean(),
-            () -> faceForward.getAsBoolean(),
-            () -> faceRight.getAsBoolean(),
-            () -> faceBackwards.getAsBoolean(),
-            () -> faceLeft.getAsBoolean()));
+    s_Swerve.setDefaultCommand(new TeleopSwerve(
+        s_Swerve,
+        () -> -driver.getLeftY(),
+        () -> -driver.getLeftX(),
+        () -> -driver.getRightX(),
+        () -> driver.leftBumper().getAsBoolean(),
+        () -> driver.rightBumper().getAsBoolean(),
+        () -> driver.y().getAsBoolean(),
+        () -> driver.b().getAsBoolean(),
+        () -> driver.a().getAsBoolean(),
+        () -> driver.x().getAsBoolean()));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -83,12 +67,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Driver Buttons */
-    zeroGyro.onTrue(
-        new InstantCommand(() -> s_Swerve.zeroGyro()));
-    autoBalance.whileTrue(new Balance(s_Swerve));
-    fallenConeIntake.and(() -> cubeIntake.getAsBoolean()).whileTrue(new IntakeIn(wrist));
-    fallenConeIntake.whileTrue(new IntakeIn(wrist));
-    cubeIntake.whileTrue(new IntakeIn(wrist));
+    driver.back().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+    driver.start().whileTrue(new Balance(s_Swerve));
+    driver.leftTrigger().and(() -> driver.rightTrigger().getAsBoolean()).whileTrue(new IntakeIn(wrist));
+    driver.leftTrigger().whileTrue(new IntakeIn(wrist));
+    driver.rightBumper().whileTrue(new IntakeIn(wrist));
     // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
 
     // snakeMode.toggleOnTrue(new SnakeSwerve(s_Swerve,

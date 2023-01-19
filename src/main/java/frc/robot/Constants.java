@@ -105,7 +105,7 @@ public final class Constants {
     public static final PIDConstants robotRotationPID = new PIDConstants(0.1, 0, 0.00005);
     public static final PIDConstants targetRotationPID = new PIDConstants(6, 0, 0.05);
     public static final PIDConstants targetTranslationPID = new PIDConstants(4, 0, 0.005);
-    public static final PIDConstants balancePID = new PIDConstants(0.05, 0, 0.005);
+    public static final PIDConstants balancePID = new PIDConstants(0.01, 0, 0.005);
 
     /* Delays (milliseconds) */
     public static final long defenseDelay = 1000;
