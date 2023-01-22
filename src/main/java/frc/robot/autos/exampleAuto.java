@@ -19,33 +19,33 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import org.photonvision.common.hardware.VisionLEDMode;
 
 public class exampleAuto extends SequentialCommandGroup {
-  public exampleAuto(Swerve s_Swerve) {
-    List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("test",
-        new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+    public exampleAuto(Swerve s_Swerve) {
+        List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("test",
+                new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+                        Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
-    HashMap<String, Command> eventMap = new HashMap<>();
+        HashMap<String, Command> eventMap = new HashMap<>();
 
-    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(s_Swerve::getPose, s_Swerve::resetOdometry,
-        Constants.Swerve.swerveKinematics,
-        new PIDConstants(Constants.AutoConstants.translationPID.p, Constants.AutoConstants.translationPID.i,
-            Constants.AutoConstants.translationPID.d),
-        new PIDConstants(Constants.AutoConstants.rotationPID.p, Constants.AutoConstants.rotationPID.i,
-            Constants.AutoConstants.rotationPID.d),
-        s_Swerve::setModuleStates,
-        eventMap,
-        s_Swerve);
+        SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(s_Swerve::getPose, s_Swerve::resetOdometry,
+                Constants.Swerve.swerveKinematics,
+                new PIDConstants(Constants.AutoConstants.translationPID.p, Constants.AutoConstants.translationPID.i,
+                        Constants.AutoConstants.translationPID.d),
+                new PIDConstants(Constants.AutoConstants.rotationPID.p, Constants.AutoConstants.rotationPID.i,
+                        Constants.AutoConstants.rotationPID.d),
+                s_Swerve::setModuleStates,
+                eventMap,
+                s_Swerve);
 
-    addCommands(new SequentialCommandGroup(
-        new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOn)),
-        autoBuilder.fullAuto(pathGroup),
-        new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOff)),
-        new PerpendicularTarget(s_Swerve)));
-    // addCommands(new InstantCommand(() ->
-    // s_Swerve.resetOdometry(pathGroup.get(0).getInitialHolonomicPose())),
-    // autoBuilder.followPathWithEvents(pathGroup.get(0)),
-    // new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOn)),
-    // autoBuilder.followPathWithEvents(pathGroup.get(1)),
-    // new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOff)));
-  }
+        addCommands(new SequentialCommandGroup(
+                new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOn)),
+                autoBuilder.fullAuto(pathGroup),
+                new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOff)),
+                new PerpendicularTarget(s_Swerve)));
+        // addCommands(new InstantCommand(() ->
+        // s_Swerve.resetOdometry(pathGroup.get(0).getInitialHolonomicPose())),
+        // autoBuilder.followPathWithEvents(pathGroup.get(0)),
+        // new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOn)),
+        // autoBuilder.followPathWithEvents(pathGroup.get(1)),
+        // new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOff)));
+    }
 }

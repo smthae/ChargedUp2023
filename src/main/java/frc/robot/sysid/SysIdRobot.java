@@ -2,14 +2,19 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot;
+package frc.robot.sysid;
 
-import edu.wpi.first.cameraserver.CameraServer;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.config.CTREConfigs;
+import frc.lib.logging.SysIdMechanism;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,11 +25,10 @@ import frc.lib.config.CTREConfigs;
  * build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class SysIdRobot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommand;
-  private RobotContainer m_robotContainer;
-  private boolean runningAuton = false;
+  private SysIdRobotContainer m_robotContainer;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -34,36 +38,64 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    ctreConfigs = new CTREConfigs();
     LiveWindow.disableAllTelemetry();
-    m_robotContainer = new RobotContainer();
-    CameraServer.startAutomaticCapture();
+    ctreConfigs = new CTREConfigs();
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
+    // autonomous chooser on the dashboard.
+    m_robotContainer = new SysIdRobotContainer();
   }
 
+  /**
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like
+   * diagnostics that you want ran during disabled, autonomous, teleoperated and
+   * test.
+   *
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and
+   * SmartDashboard integrated updating.
+   */
   @Override
   public void robotPeriodic() {
+    // Runs the Scheduler. This is responsible for polling buttons, adding
+    // newly-scheduled
+    // commands, running already-scheduled commands, removing finished or
+    // interrupted commands,
+    // and running subsystem periodic() methods. This must be called from the
+    // robot's periodic
+    // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    if (m_robotContainer.sysidMech != null) {
+      SysIdMechanism mech = (SysIdMechanism) m_robotContainer.mechChooser.getSelected();
+      m_robotContainer.sysidMech.setMotorControllers(0, List.of(mech.getMotor()));
+      m_robotContainer.sysidMech.sendData();
+    } else if (m_robotContainer.sysidDrive != null) {
+      ArrayList<CANSparkMax> motors = new ArrayList<CANSparkMax>(m_robotContainer.s_Swerve.getLeftMotors());
+      for (CANSparkMax motorFx : m_robotContainer.s_Swerve.getRightMotors()) {
+        motors.add(motorFx);
+      }
+      m_robotContainer.sysidDrive.setMotorControllers(0, motors);
+      m_robotContainer.sysidDrive.sendData();
+    }
   }
 
   @Override
   public void disabledPeriodic() {
-    if (!runningAuton) {
-      m_robotContainer.disabledActions();
-    }
   }
 
   /**
    * This autonomous runs the autonomous command selected by your
-   * {@link RobotContainer} class.
+   * {@link SysIdRobotContainer} class.
    */
   @Override
   public void autonomousInit() {
-    runningAuton = true;
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -80,7 +112,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    runningAuton = false;
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

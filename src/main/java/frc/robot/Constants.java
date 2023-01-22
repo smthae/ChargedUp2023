@@ -32,7 +32,8 @@ public final class Constants {
 
   public static enum RobotModes {
     Competition,
-    Testing
+    Testing,
+    SysID
   }
 
   public static final RobotModes robotMode = RobotModes.Competition;

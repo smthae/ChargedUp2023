@@ -5,7 +5,6 @@ import java.util.List;
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-import com.revrobotics.CANSparkMax;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
@@ -18,11 +17,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -54,6 +53,7 @@ public class Swerve extends SubsystemBase {
   public final PIDController robotRotationPID;
   private final PIDController targetRotationPID;
   public final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
+  private Field2d field = new Field2d();
 
   private boolean wasRotationZero = true;
   private boolean wasTranslationZero = true;
@@ -80,6 +80,7 @@ public class Swerve extends SubsystemBase {
         new SwerveModule(3, Constants.Swerve.Mod3.constants)
     };
     swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), this.getPositions());
+    SmartDashboard.putData("Field", field);
   }
 
   /**
@@ -363,33 +364,10 @@ public class Swerve extends SubsystemBase {
     return Rotation2d.fromDegrees(gyro.getRoll());
   }
 
-  public List<CANSparkMax> getLeftMotors() {
-    return List.of(this.mSwerveMods[0].getDriveMotor(), this.mSwerveMods[2].getDriveMotor());
-  }
-
-  public List<CANSparkMax> getRightMotors() {
-    return List.of(this.mSwerveMods[1].getDriveMotor(), this.mSwerveMods[3].getDriveMotor());
-  }
-
-  public double getGyroRate() {
-    return 0;
-  }
-
-  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(this.mSwerveMods[0].getSpeed(), this.mSwerveMods[1].getSpeed());
-  }
-
-  public double getLeftDistanceMeters() {
-    return this.mSwerveMods[0].getDistance();
-  }
-
-  public double getRightDistanceMeters() {
-    return this.mSwerveMods[1].getDistance();
-  }
-
   @Override
   public void periodic() {
     swerveOdometry.update(getYaw(), getPositions());
+    field.setRobotPose(swerveOdometry.getPoseMeters());
     SmartDashboard.putNumber("yaw", getYaw().getDegrees());
     SmartDashboard.putNumber("orientationHold", this.orientationWhenReleased.getDegrees());
 

@@ -2,7 +2,7 @@ package frc.lib.logging;
 
 public class SysIdGeneralMechanismLogger extends SysIdLogger {
     private double primaryMotorVoltage = 0.0;
-    
+
     public double getMotorVoltage() {
         return primaryMotorVoltage;
     }
@@ -27,7 +27,8 @@ public class SysIdGeneralMechanismLogger extends SysIdLogger {
         primaryMotorVoltage = 0.0;
     }
 
+    @Override
     boolean isWrongMechanism() {
-        return  mechanism != "Arm" && mechanism != "Elevator" && mechanism != "Simple";
+        return !mechanism.equals("Arm") && !mechanism.equals("Elevator") && !mechanism.equals("Simple");
     }
 }
