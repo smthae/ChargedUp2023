@@ -4,13 +4,18 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.server.PathPlannerServer;
+import java.util.List;
 
+import com.pathplanner.lib.server.PathPlannerServer;
+import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.config.CTREConfigs;
+import frc.lib.logging.SysIdMechanism;
 import frc.robot.Constants.RobotModes;
 
 /**
@@ -27,6 +32,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private boolean runningAuton = false;
+  public static boolean sysidActive = true;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -44,6 +50,8 @@ public class Robot extends TimedRobot {
     if (Constants.robotMode == RobotModes.Testing) {
       PathPlannerServer.startServer(5811);
     }
+
+    CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -72,6 +80,22 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    if (sysidActive) {
+      if (m_robotContainer.sysidMech != null) {
+        SysIdMechanism mech = (SysIdMechanism) m_robotContainer.mechChooser.getSelected();
+        m_robotContainer.sysidMech.setMotorControllers(0, List.of(mech.getMotor()));
+        m_robotContainer.sysidMech.sendData();
+      } else if (m_robotContainer.sysidDrive != null) {
+        List<CANSparkMax> motors = m_robotContainer.s_Swerve.getLeftMotors();
+        // motors.addAll(m_robotContainer.driveSub.getRightMotors());
+        for (CANSparkMax motorFx : m_robotContainer.s_Swerve.getRightMotors()) {
+          motors.add(motorFx);
+        }
+        m_robotContainer.sysidDrive.setMotorControllers(0, motors);
+        m_robotContainer.sysidDrive.sendData();
+      }
+
+    }
   }
 
   @Override

@@ -1,18 +1,16 @@
 package frc.robot.subsystems;
 
 import java.util.List;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.TimeUnit;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.revrobotics.CANSparkMax;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.hal.ConstantsJNI;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -20,6 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -362,6 +361,30 @@ public class Swerve extends SubsystemBase {
 
   public Rotation2d getRoll() {
     return Rotation2d.fromDegrees(gyro.getRoll());
+  }
+
+  public List<CANSparkMax> getLeftMotors() {
+    return List.of(this.mSwerveMods[0].getDriveMotor(), this.mSwerveMods[2].getDriveMotor());
+  }
+
+  public List<CANSparkMax> getRightMotors() {
+    return List.of(this.mSwerveMods[1].getDriveMotor(), this.mSwerveMods[3].getDriveMotor());
+  }
+
+  public double getGyroRate() {
+    return 0;
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(this.mSwerveMods[0].getSpeed(), this.mSwerveMods[1].getSpeed());
+  }
+
+  public double getLeftDistanceMeters() {
+    return this.mSwerveMods[0].getDistance();
+  }
+
+  public double getRightDistanceMeters() {
+    return this.mSwerveMods[1].getDistance();
   }
 
   @Override

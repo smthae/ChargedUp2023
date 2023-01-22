@@ -186,14 +186,22 @@ public class SwerveModule {
   }
 
   public SwerveModuleState getState() {
-    return new SwerveModuleState(this.driveEncoder.getVelocity(), this.getAngle());
+    return new SwerveModuleState(this.getSpeed(), this.getAngle());
+  }
+
+  public double getSpeed() {
+    return this.driveEncoder.getVelocity();
+  }
+
+  public double getDistance() {
+    return this.driveEncoder.getPosition() * Constants.Swerve.wheelCircumference;
   }
 
   public SwerveModulePosition getPosition() {
-    double distance = this.driveEncoder.getPosition() * Constants.Swerve.wheelCircumference;
+    return new SwerveModulePosition(this.getDistance(), this.getAngle());
+  }
 
-    return new SwerveModulePosition(
-      distance, this.getAngle()
-    );
+  public CANSparkMax getDriveMotor() {
+    return this.driveMotor;
   }
 }
