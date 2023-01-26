@@ -30,6 +30,7 @@ public class RobotContainer {
   /* Subsystems */
   final Swerve s_Swerve = new Swerve();
   final Wrist wrist = new Wrist();
+  final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -92,6 +93,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new exampleAuto(s_Swerve);
+    return new exampleAuto(s_Swerve, poseEstimator);
   }
 }

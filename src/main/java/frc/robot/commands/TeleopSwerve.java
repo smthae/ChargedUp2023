@@ -177,6 +177,7 @@ public class TeleopSwerve extends CommandBase {
       if (!this.NOSMode.getAsBoolean()) {
         translationVal *= 0.6;
         strafeVal *= 0.6;
+        rotationVal *= 0.6;
       }
     }
 

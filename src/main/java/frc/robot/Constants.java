@@ -8,6 +8,8 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -46,8 +48,8 @@ public final class Constants {
     public static final List<Pose3d> targetPoses = Collections.unmodifiableList(List.of(
         new Pose3d(3.0, 1.165, 0.287 + 0.165, new Rotation3d(0, 0, Units.degreesToRadians(180.0))),
         new Pose3d(3.0, 0.0, 0.287 + .165, new Rotation3d(0, 0, Units.degreesToRadians(180.0)))));
-    public static final Matrix<N3, N1> visionMeasurementStdDevs = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.5, 0.5,
-        Units.degreesToRadians(7));
+
+    public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
   }
 
   public static final class Operators {

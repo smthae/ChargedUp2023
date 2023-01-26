@@ -18,7 +18,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -33,7 +32,6 @@ import frc.robot.Constants;
 /**
  * Swerve subsystem
  *
- * @param swerveOdometry
  * @param mSwerveMods             Swerve modules constants
  * @param gyro                    The gyroscope
  * @param orientationWhenReleased The orientation of the robot when the rotation
@@ -45,7 +43,6 @@ import frc.robot.Constants;
  * @param camera
  */
 public class Swerve extends SubsystemBase {
-  public SwerveDriveOdometry swerveOdometry;
   public SwerveModule[] mSwerveMods;
   public Pigeon2 gyro;
   public Rotation2d orientationWhenReleased;
@@ -53,7 +50,6 @@ public class Swerve extends SubsystemBase {
   public final PIDController robotRotationPID;
   private final PIDController targetRotationPID;
   public final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
-  private Field2d field = new Field2d();
 
   private boolean wasRotationZero = true;
   private boolean wasTranslationZero = true;
@@ -79,8 +75,6 @@ public class Swerve extends SubsystemBase {
         new SwerveModule(2, Constants.Swerve.Mod2.constants),
         new SwerveModule(3, Constants.Swerve.Mod3.constants)
     };
-    swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), this.getPositions());
-    SmartDashboard.putData("Field", field);
   }
 
   /**
@@ -175,27 +169,28 @@ public class Swerve extends SubsystemBase {
     }
   }
 
-  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
-    var commandGroup = new SequentialCommandGroup();
+  // public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean
+  // isFirstPath) {
+  // var commandGroup = new SequentialCommandGroup();
 
-    commandGroup.addCommands(new InstantCommand(() -> {
-      // Reset odometry for the first path you run during auto
-      if (isFirstPath) {
-        this.resetOdometry(traj.getInitialHolonomicPose());
-      }
-    }),
-        new PPSwerveControllerCommand(
-            traj,
-            this::getPose, // Pose supplier
-            Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
-            Constants.AutoConstants.translationPID.getController(),
-            Constants.AutoConstants.translationPID.getController(),
-            Constants.AutoConstants.rotationPID.getController(),
-            this::setModuleStates, // Module states consumer
-            this // Requires this drive subsystem
-        ));
-    return commandGroup;
-  }
+  // commandGroup.addCommands(new InstantCommand(() -> {
+  // // Reset odometry for the first path you run during auto
+  // if (isFirstPath) {
+  // this.resetOdometry(traj.getInitialHolonomicPose());
+  // }
+  // }),
+  // new PPSwerveControllerCommand(
+  // traj,
+  // this::getPose, // Pose supplier
+  // Constants.Swerve.swerveKinematics, // SwerveDriveKinematics
+  // Constants.AutoConstants.translationPID.getController(),
+  // Constants.AutoConstants.translationPID.getController(),
+  // Constants.AutoConstants.rotationPID.getController(),
+  // this::setModuleStates, // Module states consumer
+  // this // Requires this drive subsystem
+  // ));
+  // return commandGroup;
+  // }
 
   /**
    * 1. if rotation is 0 while it wasn't before this iteration, then start a
@@ -261,25 +256,6 @@ public class Swerve extends SubsystemBase {
     for (SwerveModule mod : mSwerveMods) {
       mod.setDesiredState(desiredStates[mod.moduleNumber], false);
     }
-  }
-
-  /**
-   * Function used in auto to get an estimate of where the bot is on the field in
-   * auto
-   * 
-   * @return The position of the robot in
-   */
-  public Pose2d getPose() {
-    return swerveOdometry.getPoseMeters();
-  }
-
-  /**
-   * set swerveOdometry of the robot when requested to the desired position
-   * 
-   * @param pose
-   */
-  public void resetOdometry(Pose2d pose) {
-    swerveOdometry.resetPosition(getYaw(), getPositions(), pose);
   }
 
   /** Reset the module encoder values */
@@ -366,8 +342,6 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
-    swerveOdometry.update(getYaw(), getPositions());
-    field.setRobotPose(swerveOdometry.getPoseMeters());
     SmartDashboard.putNumber("yaw", getYaw().getDegrees());
     SmartDashboard.putNumber("orientationHold", this.orientationWhenReleased.getDegrees());
 
