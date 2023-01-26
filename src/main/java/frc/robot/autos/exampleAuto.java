@@ -43,7 +43,7 @@ public class exampleAuto extends SequentialCommandGroup {
         new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOn)),
         autoBuilder.fullAuto(pathGroup),
         new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOff)),
-        new PerpendicularTarget(s_Swerve)));
+        new PerpendicularTarget(s_Swerve, poseEstimator::getCurrentPose)));
     // addCommands(new InstantCommand(() ->
     // s_Swerve.resetOdometry(pathGroup.get(0).getInitialHolonomicPose())),
     // autoBuilder.followPathWithEvents(pathGroup.get(0)),

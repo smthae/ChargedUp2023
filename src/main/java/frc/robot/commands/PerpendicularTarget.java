@@ -1,77 +1,138 @@
 package frc.robot.commands;
 
-import java.util.List;
+import java.util.function.Supplier;
 
-import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
 public class PerpendicularTarget extends CommandBase {
-  private final Swerve swerveSubsystem;
-  private final PIDController targetTranslationPID = Constants.Swerve.targetTranslationPID.getController();
-  private final PIDController robotRotationPID = Constants.Swerve.robotRotationPID.getController();
 
-  public PerpendicularTarget(Swerve swerveSubsystem) {
-    this.swerveSubsystem = swerveSubsystem;
-    this.robotRotationPID.enableContinuousInput(-90, 90);
-    this.robotRotationPID.setP(0.05);
-    this.robotRotationPID.setTolerance(5);
+  private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
+  private static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
+  private static final TrapezoidProfile.Constraints OMEGA_CONSTRAINTS = new TrapezoidProfile.Constraints(8, 8);
 
-    this.targetTranslationPID.setTolerance(0.05);
+  private static final int TAG_TO_CHASE = 2;
+  private static final Transform3d TAG_TO_GOAL = new Transform3d(
+      new Translation3d(1.5, 0.0, 0.0),
+      new Rotation3d(0.0, 0.0, Math.PI));
 
-    addRequirements(swerveSubsystem);
+  private final Swerve swerve;
+  private final Supplier<Pose2d> poseProvider;
+
+  private final ProfiledPIDController xController = new ProfiledPIDController(3, 0, 0, X_CONSTRAINTS);
+  private final ProfiledPIDController yController = new ProfiledPIDController(3, 0, 0, Y_CONSTRAINTS);
+  private final ProfiledPIDController omegaController = new ProfiledPIDController(2, 0, 0, OMEGA_CONSTRAINTS);
+
+  private PhotonTrackedTarget lastTarget;
+
+  public PerpendicularTarget(
+      Swerve swerve,
+      Supplier<Pose2d> poseProvider) {
+    this.swerve = swerve;
+    this.poseProvider = poseProvider;
+
+    xController.setTolerance(0.2);
+    yController.setTolerance(0.2);
+    omegaController.setTolerance(Units.degreesToRadians(3));
+    omegaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    addRequirements(swerve);
+  }
+
+  @Override
+  public void initialize() {
+    lastTarget = null;
+    var robotPose = poseProvider.get();
+    omegaController.reset(robotPose.getRotation().getRadians());
+    xController.reset(robotPose.getX());
+    yController.reset(robotPose.getY());
   }
 
   @Override
   public void execute() {
-    PhotonPipelineResult results = this.swerveSubsystem.camera.getLatestResult();
-    if (!results.hasTargets())
-      return;
+    var robotPose2d = poseProvider.get();
+    var robotPose = new Pose3d(
+        robotPose2d.getX(),
+        robotPose2d.getY(),
+        0.0,
+        new Rotation3d(0.0, 0.0, robotPose2d.getRotation().getRadians()));
 
-    List<PhotonTrackedTarget> targets = results.getTargets();
-    PhotonTrackedTarget target = targets.get(0);
+    var photonRes = swerve.camera.getLatestResult();
+    if (photonRes.hasTargets()) {
+      // Find the tag we want to chase
+      var targetOpt = photonRes.getTargets().stream()
+          .filter(t -> t.getFiducialId() == TAG_TO_CHASE)
+          .filter(t -> !t.equals(lastTarget) && t.getPoseAmbiguity() <= .2 && t.getPoseAmbiguity() != -1)
+          .findFirst();
+      if (targetOpt.isPresent()) {
+        var target = targetOpt.get();
+        // This is new target data, so recalculate the goal
+        lastTarget = target;
 
-    int targetID = target.getFiducialId();
-    Transform3d bestCameraToTarget = target.getBestCameraToTarget();
-    bestCameraToTarget = bestCameraToTarget.inverse();
+        // Transform the robot's pose to find the camera's pose
+        var cameraPose = robotPose.transformBy(Constants.Vision.robotToCamera);
 
-    SmartDashboard.putNumber("target id", targetID);
-    SmartDashboard.putNumber("target x", bestCameraToTarget.getX());
-    SmartDashboard.putNumber("target Y", bestCameraToTarget.getY());
-    this.swerveSubsystem.orientationWhenReleased = this.swerveSubsystem.getYaw();
+        // Trasnform the camera's pose to the target's pose
+        var camToTarget = target.getBestCameraToTarget();
+        var targetPose = cameraPose.transformBy(camToTarget);
 
-    double rotation = this.robotRotationPID.calculate(bestCameraToTarget.getRotation().getZ() * (180 / Math.PI), 0);
-    double translation = -this.targetTranslationPID.calculate(bestCameraToTarget.getY(), 0);
-    translation = MathUtil.clamp(translation, -1, 1);
+        // Transform the tag's pose to set our goal
+        var goalPose = targetPose.transformBy(TAG_TO_GOAL).toPose2d();
 
-    if (this.targetTranslationPID.atSetpoint()) {
-      rotation = MathUtil.clamp(rotation, -0.5, 0.5);
-      this.swerveSubsystem.drive(
-          new Translation2d(0,
-              translation),
-          rotation < 0.15 && rotation > -0.15 ? 0 : rotation,
-          true, true, true, false);
+        // Drive
+        xController.setGoal(goalPose.getX());
+        yController.setGoal(goalPose.getY());
+        omegaController.setGoal(goalPose.getRotation().getRadians());
+      }
+    }
+
+    if (lastTarget == null) {
+      // No target has been visible
+      swerve.brake();
     } else {
-      rotation = MathUtil.clamp(rotation, -0.3, 0.3);
-      this.swerveSubsystem.drive(
-          new Translation2d(0,
-              translation),
-          rotation,
-          true, true, true, false);
+      // Drive to the target
+      var xSpeed = xController.calculate(robotPose.getX());
+      if (xController.atGoal()) {
+        xSpeed = 0;
+      }
+
+      var ySpeed = yController.calculate(robotPose.getY());
+      if (yController.atGoal()) {
+        ySpeed = 0;
+      }
+
+      var omegaSpeed = omegaController.calculate(robotPose2d.getRotation().getRadians());
+      if (omegaController.atGoal()) {
+        omegaSpeed = 0;
+      }
+
+      SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
+          ChassisSpeeds.fromFieldRelativeSpeeds(
+              xSpeed, ySpeed,
+              omegaSpeed,
+              robotPose2d.getRotation()));
+      this.swerve.setModuleStates(swerveModuleStates);
+
     }
   }
 
   @Override
-  public boolean isFinished() {
-    return this.robotRotationPID.atSetpoint() && this.targetTranslationPID.atSetpoint();
+  public void end(boolean interrupted) {
+    swerve.brake();
   }
 
 }
