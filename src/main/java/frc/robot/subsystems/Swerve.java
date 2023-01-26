@@ -49,13 +49,15 @@ public class Swerve extends SubsystemBase {
   private double rotationControllerSpeed = 0.0;
   public final PIDController robotRotationPID;
   private final PIDController targetRotationPID;
-  public final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
-
   private boolean wasRotationZero = true;
   private boolean wasTranslationZero = true;
   private long defenseDelayStart;
+  private final PhotonCamera camera;
 
-  public Swerve() {
+  public Swerve(PhotonCamera camera) {
+    /* Vision */
+    this.camera = camera;
+
     /* Gyro setup */
     gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.Swerve.pigeonCanBUS);
     gyro.configFactoryDefault();

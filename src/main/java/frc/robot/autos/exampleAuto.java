@@ -17,17 +17,19 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import org.photonvision.PhotonCamera;
 import org.photonvision.common.hardware.VisionLEDMode;
 
 public class exampleAuto extends SequentialCommandGroup {
-  public exampleAuto(Swerve s_Swerve, PoseEstimator poseEstimator) {
+  public exampleAuto(Swerve s_Swerve, PhotonCamera camera, PoseEstimator poseEstimator) {
     List<PathPlannerTrajectory> pathGroup = PathPlanner.loadPathGroup("test",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
     HashMap<String, Command> eventMap = new HashMap<>();
 
-    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose, poseEstimator::setCurrentPose,
+    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
+        poseEstimator::setCurrentPose,
         Constants.Swerve.swerveKinematics,
         new PIDConstants(Constants.AutoConstants.translationPID.p,
             Constants.AutoConstants.translationPID.i,
@@ -40,10 +42,10 @@ public class exampleAuto extends SequentialCommandGroup {
         s_Swerve);
 
     addCommands(new SequentialCommandGroup(
-        new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOn)),
+        new InstantCommand(() -> camera.setLED(VisionLEDMode.kOn)),
         autoBuilder.fullAuto(pathGroup),
-        new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOff)),
-        new PerpendicularTarget(s_Swerve, poseEstimator::getCurrentPose)));
+        new InstantCommand(() -> camera.setLED(VisionLEDMode.kOff)),
+        new PerpendicularTarget(s_Swerve, camera, poseEstimator::getCurrentPose)));
     // addCommands(new InstantCommand(() ->
     // s_Swerve.resetOdometry(pathGroup.get(0).getInitialHolonomicPose())),
     // autoBuilder.followPathWithEvents(pathGroup.get(0)),

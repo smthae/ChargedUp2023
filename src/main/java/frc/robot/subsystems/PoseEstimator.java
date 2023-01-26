@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
@@ -22,9 +24,12 @@ public class PoseEstimator extends SubsystemBase {
   private final Field2d field2d = new Field2d();
   private double previousPipelineTimestamp = 0;
   private AprilTagFieldLayout aprilTagFieldLayout;
+  private final PhotonCamera camera;
 
-  public PoseEstimator(Swerve swerve) {
+  public PoseEstimator(Swerve swerve, PhotonCamera camera) {
     this.swerve = swerve;
+    this.camera = camera;
+
     try {
       aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
       var alliance = DriverStation.getAlliance();
@@ -44,7 +49,7 @@ public class PoseEstimator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    var pipelineResult = this.swerve.camera.getLatestResult();
+    var pipelineResult = this.camera.getLatestResult();
     var resultTimestamp = pipelineResult.getTimestampSeconds();
     if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
       previousPipelineTimestamp = resultTimestamp;

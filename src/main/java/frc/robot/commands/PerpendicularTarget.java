@@ -38,11 +38,15 @@ public class PerpendicularTarget extends CommandBase {
   private final ProfiledPIDController omegaController = new ProfiledPIDController(2, 0, 0, OMEGA_CONSTRAINTS);
 
   private PhotonTrackedTarget lastTarget;
+  private final PhotonCamera camera;
 
   public PerpendicularTarget(
       Swerve swerve,
+      PhotonCamera camera,
       Supplier<Pose2d> poseProvider) {
+
     this.swerve = swerve;
+    this.camera = camera;
     this.poseProvider = poseProvider;
 
     xController.setTolerance(0.2);
@@ -71,7 +75,7 @@ public class PerpendicularTarget extends CommandBase {
         0.0,
         new Rotation3d(0.0, 0.0, robotPose2d.getRotation().getRadians()));
 
-    var photonRes = swerve.camera.getLatestResult();
+    var photonRes = camera.getLatestResult();
     if (photonRes.hasTargets()) {
       // Find the tag we want to chase
       var targetOpt = photonRes.getTargets().stream()

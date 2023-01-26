@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,9 +30,10 @@ public class RobotContainer {
   private final CommandXboxController driver = new CommandXboxController(Constants.Operators.driver);
 
   /* Subsystems */
-  final Swerve s_Swerve = new Swerve();
+  final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
+  final Swerve s_Swerve = new Swerve(camera);
   final Wrist wrist = new Wrist();
-  final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve);
+  final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve, camera);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -93,6 +96,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new exampleAuto(s_Swerve, poseEstimator);
+    return new exampleAuto(s_Swerve, camera, poseEstimator);
   }
 }
