@@ -70,7 +70,7 @@ public class RobotContainer {
     driver.start().whileTrue(new Balance(s_Swerve));
     driver.leftTrigger().and(() -> driver.rightTrigger().getAsBoolean()).whileTrue(new IntakeIn(wrist));
     driver.leftTrigger().whileTrue(new IntakeIn(wrist));
-    driver.rightBumper().whileTrue(new IntakeIn(wrist));
+    driver.rightTrigger().whileTrue(new IntakeOut(wrist));
     // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
 
     // snakeMode.toggleOnTrue(new SnakeSwerve(s_Swerve,
