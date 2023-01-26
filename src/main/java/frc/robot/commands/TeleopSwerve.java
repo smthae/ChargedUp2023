@@ -22,10 +22,6 @@ public class TeleopSwerve extends CommandBase {
   private final BooleanSupplier faceBackwards;
   private final BooleanSupplier faceLeft;
 
-  private SlewRateLimiter translationLimiter = new SlewRateLimiter(Constants.Swerve.translationChangeLimit);
-  private SlewRateLimiter strafeLimiter = new SlewRateLimiter(Constants.Swerve.strafeChangeLimit);
-  private SlewRateLimiter rotationLimiter = new SlewRateLimiter(Constants.Swerve.rotationChangeLimit);
-
   public boolean defenseOverride = false;
 
   private boolean rotationButtonsPressed;
@@ -135,25 +131,9 @@ public class TeleopSwerve extends CommandBase {
   public double[] getJoystickValues() {
     double translationVal, strafeVal, rotationVal;
     /* Get Values, Deadband */
-    switch (Constants.Operators.driverMode) {
-      case Raw:
-        translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.Swerve.stickDeadband);
-        strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.Swerve.stickDeadband);
-        rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.Swerve.stickDeadband);
-        break;
-
-      case Slew:
-        translationVal = translationLimiter
-            .calculate(MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.Swerve.stickDeadband));
-        strafeVal = strafeLimiter
-            .calculate(MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.Swerve.stickDeadband));
-        rotationVal = rotationLimiter
-            .calculate(MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.Swerve.stickDeadband));
-        break;
-      default:
-        translationVal = strafeVal = rotationVal = 0;
-        break;
-    }
+    translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.Swerve.stickDeadband);
+    strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.Swerve.stickDeadband);
+    rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.Swerve.stickDeadband);
 
     double[] output = new double[] { translationVal, strafeVal, rotationVal };
     return output;

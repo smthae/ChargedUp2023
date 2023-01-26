@@ -1,8 +1,5 @@
 package frc.robot;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.MatBuilder;
@@ -10,7 +7,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -20,17 +17,11 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.XboxController;
 import frc.lib.util.PIDConstants;
 import frc.lib.util.SVAConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
-
-  public static enum ControlModes {
-    Slew,
-    Raw,
-  }
 
   public static enum RobotModes {
     Competition,
@@ -44,17 +35,20 @@ public final class Constants {
     public static final String cameraName = "gloworm";
     public static final Transform3d cameraToRobot = new Transform3d(new Translation3d(-0.32, 0, 0), new Rotation3d());
     public static final Transform3d robotToCamera = cameraToRobot.inverse();
-
-    public static final List<Pose3d> targetPoses = Collections.unmodifiableList(List.of(
-        new Pose3d(3.0, 1.165, 0.287 + 0.165, new Rotation3d(0, 0, Units.degreesToRadians(180.0))),
-        new Pose3d(3.0, 0.0, 0.287 + .165, new Rotation3d(0, 0, Units.degreesToRadians(180.0)))));
-
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
+
+    public static final TrapezoidProfile.Constraints TRANSLATION_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
+    public static final TrapezoidProfile.Constraints ROTATION_CONSTRAINTS = new TrapezoidProfile.Constraints(8, 8);
+
+    /* Custom PID Controllers for Vision */
+    public static final ProfiledPIDController translationController = new ProfiledPIDController(3, 0, 0,
+        TRANSLATION_CONSTRAINTS);
+    public static final ProfiledPIDController rotationController = new ProfiledPIDController(2, 0, 0,
+        ROTATION_CONSTRAINTS);
   }
 
   public static final class Operators {
     public static final int driver = 0;
-    public static final ControlModes driverMode = ControlModes.Slew;
   }
 
   public static final class Wrist {
@@ -63,31 +57,13 @@ public final class Constants {
   }
 
   public static final class Swerve {
-
     /* Drive Controls */
     public static final double stickDeadband = 0.1;
-    public static final int translationAxis = XboxController.Axis.kLeftY.value;
-    public static final int strafeAxis = XboxController.Axis.kLeftX.value;
-    public static final int rotationAxis = XboxController.Axis.kRightX.value;
-    public static final int zeroGyro = XboxController.Button.kBack.value;
-    public static final int snakeMode = XboxController.Button.kStart.value;
-    public static final int robotCentric = XboxController.Button.kLeftBumper.value;
-    public static final int NOS = XboxController.Button.kRightBumper.value;
-    public static final int fallenConeIntake = XboxController.Axis.kLeftTrigger.value;
-    public static final int cubeIntake = XboxController.Axis.kRightTrigger.value;
-
-    // Orientation Buttons
-    public static final int FaceForward = XboxController.Button.kY.value;
-    public static final int FaceRight = XboxController.Button.kB.value;
-    public static final int FaceBackwards = XboxController.Button.kA.value;
-    public static final int FaceLeft = XboxController.Button.kX.value;
 
     /* Gyro */
     public static final int pigeonID = 21;
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
     public static final String pigeonCanBUS = "canivore3161";
-    public static final Matrix<N1, N1> localMeasurementsStdDevs = new MatBuilder<>(Nat.N1(), Nat.N1())
-        .fill(Units.degreesToRadians(1));
 
     /* Drivetrain Constants */
     public static final double trackWidth = Units.inchesToMeters(23.0);
@@ -98,16 +74,12 @@ public final class Constants {
     public static final Matrix<N3, N1> stateStdDevs = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.05, 0.05,
         Units.degreesToRadians(2));
 
-    public static final double openLoopRamp = 0.25;
-    public static final double closedLoopRamp = 0.0;
-
     public static final double driveGearRatio = (6.75 / 1.0); // 6.75:1
     public static final double angleGearRatio = 150.0 / 7.0; // 150/7:1
 
     /* Custom PID Controllers */
     public static final PIDConstants robotRotationPID = new PIDConstants(0.1, 0, 0.00005);
-    public static final PIDConstants targetRotationPID = new PIDConstants(6, 0, 0.05);
-    public static final PIDConstants targetTranslationPID = new PIDConstants(4, 0, 0.005);
+    public static final PIDConstants translationPID = new PIDConstants(4, 0, 0.005);
     public static final PIDConstants balancePID = new PIDConstants(0.01, 0, 0.005);
 
     /* Delays (milliseconds) */
@@ -135,9 +107,6 @@ public final class Constants {
     /* Swerve Profiling Values */
     public static final double maxSpeed = 4.5; // meters per second
     public static final double maxAngularVelocity = 11.5;
-    public static final double translationChangeLimit = 20.0;
-    public static final double strafeChangeLimit = 20.0;
-    public static final double rotationChangeLimit = 5.0;
 
     /* Neutral Modes */
     public static final IdleMode angleNeutralMode = IdleMode.kBrake;

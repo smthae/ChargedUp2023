@@ -19,40 +19,31 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
-public class PerpendicularTarget extends CommandBase {
-
-  private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
-  private static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
-  private static final TrapezoidProfile.Constraints OMEGA_CONSTRAINTS = new TrapezoidProfile.Constraints(8, 8);
-
-  private static final int TAG_TO_CHASE = 2;
-  private static final Transform3d TAG_TO_GOAL = new Transform3d(
-      new Translation3d(1.5, 0.0, 0.0),
-      new Rotation3d(0.0, 0.0, Math.PI));
-
+public class AlignAprilTag extends CommandBase {
+  private final int tagToChase;
+  private final Transform3d tagToGoal;
   private final Swerve swerve;
   private final Supplier<Pose2d> poseProvider;
-
-  private final ProfiledPIDController xController = new ProfiledPIDController(3, 0, 0, X_CONSTRAINTS);
-  private final ProfiledPIDController yController = new ProfiledPIDController(3, 0, 0, Y_CONSTRAINTS);
-  private final ProfiledPIDController omegaController = new ProfiledPIDController(2, 0, 0, OMEGA_CONSTRAINTS);
-
   private PhotonTrackedTarget lastTarget;
   private final PhotonCamera camera;
+  private final ProfiledPIDController xController = Constants.Vision.translationController;
+  private final ProfiledPIDController yController = Constants.Vision.translationController;
+  private final ProfiledPIDController rotationController = Constants.Vision.rotationController;
 
-  public PerpendicularTarget(
+  public AlignAprilTag(
       Swerve swerve,
       PhotonCamera camera,
-      Supplier<Pose2d> poseProvider) {
-
+      Supplier<Pose2d> poseProvider, int tagToChase, Transform3d tagToGoal) {
     this.swerve = swerve;
     this.camera = camera;
     this.poseProvider = poseProvider;
+    this.tagToChase = tagToChase;
+    this.tagToGoal = tagToGoal;
 
     xController.setTolerance(0.2);
     yController.setTolerance(0.2);
-    omegaController.setTolerance(Units.degreesToRadians(3));
-    omegaController.enableContinuousInput(-Math.PI, Math.PI);
+    rotationController.setTolerance(Units.degreesToRadians(3));
+    rotationController.enableContinuousInput(-Math.PI, Math.PI);
 
     addRequirements(swerve);
   }
@@ -61,7 +52,7 @@ public class PerpendicularTarget extends CommandBase {
   public void initialize() {
     lastTarget = null;
     var robotPose = poseProvider.get();
-    omegaController.reset(robotPose.getRotation().getRadians());
+    rotationController.reset(robotPose.getRotation().getRadians());
     xController.reset(robotPose.getX());
     yController.reset(robotPose.getY());
   }
@@ -79,7 +70,7 @@ public class PerpendicularTarget extends CommandBase {
     if (photonRes.hasTargets()) {
       // Find the tag we want to chase
       var targetOpt = photonRes.getTargets().stream()
-          .filter(t -> t.getFiducialId() == TAG_TO_CHASE)
+          .filter(t -> t.getFiducialId() == tagToChase)
           .filter(t -> !t.equals(lastTarget) && t.getPoseAmbiguity() <= .2 && t.getPoseAmbiguity() != -1)
           .findFirst();
       if (targetOpt.isPresent()) {
@@ -95,12 +86,12 @@ public class PerpendicularTarget extends CommandBase {
         var targetPose = cameraPose.transformBy(camToTarget);
 
         // Transform the tag's pose to set our goal
-        var goalPose = targetPose.transformBy(TAG_TO_GOAL).toPose2d();
+        var goalPose = targetPose.transformBy(tagToGoal).toPose2d();
 
         // Drive
         xController.setGoal(goalPose.getX());
         yController.setGoal(goalPose.getY());
-        omegaController.setGoal(goalPose.getRotation().getRadians());
+        rotationController.setGoal(goalPose.getRotation().getRadians());
       }
     }
 
@@ -119,8 +110,8 @@ public class PerpendicularTarget extends CommandBase {
         ySpeed = 0;
       }
 
-      var omegaSpeed = omegaController.calculate(robotPose2d.getRotation().getRadians());
-      if (omegaController.atGoal()) {
+      var omegaSpeed = rotationController.calculate(robotPose2d.getRotation().getRadians());
+      if (rotationController.atGoal()) {
         omegaSpeed = 0;
       }
 

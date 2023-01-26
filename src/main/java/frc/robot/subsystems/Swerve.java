@@ -1,30 +1,18 @@
 package frc.robot.subsystems;
 
-import java.util.List;
-
 import com.ctre.phoenix.sensors.Pigeon2;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.SwerveModule;
 import frc.robot.Constants;
@@ -48,7 +36,6 @@ public class Swerve extends SubsystemBase {
   public Rotation2d orientationWhenReleased;
   private double rotationControllerSpeed = 0.0;
   public final PIDController robotRotationPID;
-  private final PIDController targetRotationPID;
   private boolean wasRotationZero = true;
   private boolean wasTranslationZero = true;
   private long defenseDelayStart;
@@ -67,8 +54,6 @@ public class Swerve extends SubsystemBase {
     this.robotRotationPID = Constants.Swerve.robotRotationPID.getController();
     this.robotRotationPID.enableContinuousInput(-180, 180);
     this.robotRotationPID.setTolerance(2);
-
-    this.targetRotationPID = Constants.Swerve.targetRotationPID.getController();
 
     /* Swerve modules setup */
     mSwerveMods = new SwerveModule[] {
@@ -93,32 +78,6 @@ public class Swerve extends SubsystemBase {
   }
 
   /**
-   * Checks for any targets from the camera and if there was any, it would return
-   * the new missAlignment value for the rotation of the robot
-   * 
-   * @param missAlignment
-   * @return A new value for missAlignment if there is any targets
-   */
-  public double checkTargets(double missAlignment) {
-    PhotonPipelineResult results = this.camera.getLatestResult();
-    if (results.hasTargets()) {
-      List<PhotonTrackedTarget> targets = results.getTargets();
-      PhotonTrackedTarget target = targets.get(0);
-
-      int targetID = target.getFiducialId();
-      Transform3d bestCameraToTarget = target.getBestCameraToTarget();
-      SmartDashboard.putNumber("target id", targetID);
-      SmartDashboard.putNumber("target x", bestCameraToTarget.getX());
-      SmartDashboard.putNumber("target Y", bestCameraToTarget.getY());
-      this.orientationWhenReleased = this.getYaw();
-
-      return this.targetRotationPID.calculate(-bestCameraToTarget.getY(), 0);
-    }
-
-    return missAlignment;
-  }
-
-  /**
    * The main function used for driving the robot
    * 
    * @param translation
@@ -139,16 +98,6 @@ public class Swerve extends SubsystemBase {
               this.orientationWhenReleased.getDegrees() % 360),
           -Constants.Swerve.maxSpeed, Constants.Swerve.maxSpeed);
     }
-
-    // Shoot? YES :D, check for targets and then reassign the missAlignment value if
-    // we
-    // have to turn to the target!
-    // if (shoot) {
-    // this.camera.setLED(VisionLEDMode.kOn);
-    // missalignment = this.checkTargets(missalignment);
-    // } else {
-    // this.camera.setLED(VisionLEDMode.kOff);
-    // }
 
     SmartDashboard.putNumber("Missalignment speed PID", missalignment);
 
