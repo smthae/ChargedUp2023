@@ -17,18 +17,30 @@ public class Wrist extends SubsystemBase {
   private final TalonFX intakeMotor = new TalonFX(Constants.Wrist.intakeMotorID);
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+  private double power = Constants.Wrist.power;
 
   public Wrist() {
     this.intakeMotor.configVoltageCompSaturation(Constants.Swerve.voltageComp);
     this.intakeMotor.enableVoltageCompensation(true);
+    SmartDashboard.putNumber("wrist power", this.power);
+  }
+
+  public void updatePower() {
+    double newPower = SmartDashboard.getNumber("wrist power", power);
+    if (newPower != this.power) {
+      this.power = newPower;
+    }
   }
 
   public void intakeIn() {
-    this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.power);
+    this.updatePower();
+    this.intakeMotor.set(ControlMode.PercentOutput, this.power);
   }
 
   public void intakeOut() {
-    this.intakeMotor.set(ControlMode.PercentOutput, -Constants.Wrist.power);
+    this.updatePower();
+
+    this.intakeMotor.set(ControlMode.PercentOutput, -this.power);
   }
 
   public void intakeStop() {

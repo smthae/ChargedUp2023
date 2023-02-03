@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,7 +39,9 @@ public class Robot extends TimedRobot {
     ctreConfigs = new CTREConfigs();
     LiveWindow.disableAllTelemetry();
     m_robotContainer = new RobotContainer();
-    CameraServer.startAutomaticCapture();
+    UsbCamera camera = CameraServer.startAutomaticCapture();
+    camera.setPixelFormat(PixelFormat.kYUYV);
+    camera.setResolution(320, 240);
   }
 
   @Override

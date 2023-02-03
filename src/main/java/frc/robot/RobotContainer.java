@@ -4,10 +4,19 @@
 
 package frc.robot;
 
+import java.util.Hashtable;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.photonvision.PhotonCamera;
 
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.pathplanner.lib.PathPlanner;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -35,6 +44,9 @@ public class RobotContainer {
   final Wrist wrist = new Wrist();
   final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve, camera);
 
+  /* Auto */
+  Hashtable<String, AutoImpl> autoCommands = new Hashtable<String, AutoImpl>();
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -44,7 +56,7 @@ public class RobotContainer {
         s_Swerve,
         () -> -driver.getLeftY(),
         () -> -driver.getLeftX(),
-        () -> -driver.getRightX(),
+        () -> driver.getRightX(),
         () -> driver.leftBumper().getAsBoolean(),
         () -> driver.rightBumper().getAsBoolean(),
         () -> driver.y().getAsBoolean(),
@@ -54,6 +66,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    configureAutoCommands();
+    sendAutoCommands();
   }
 
   /** Actions that we want to do when the robot is disabled. */
@@ -89,6 +103,28 @@ public class RobotContainer {
     // () -> faceLeft.getAsBoolean()));
   }
 
+  public void configureAutoCommands() {
+    this.autoCommands.put("Example auto 1", new exampleAuto(s_Swerve, camera, poseEstimator));
+    this.autoCommands.put("Example auto 2", new exampleAuto2(s_Swerve, camera, poseEstimator));
+    this.autoCommands.put("Example auto 3", new exampleAuto3(s_Swerve, camera, poseEstimator));
+  }
+
+  public void sendAutoCommands() {
+    SmartDashboard.putString("selectedAuto", "");
+    JSONObject autoJSON = new JSONObject();
+
+    this.autoCommands.forEach((key, value) -> {
+      JSONArray translation = new JSONArray();
+      Pose2d initialHolonomicPose = value.getInitialHolonomicPose();
+      translation.add(initialHolonomicPose.getX());
+      translation.add(initialHolonomicPose.getY());
+
+      autoJSON.put(key, translation);
+    });
+
+    SmartDashboard.putString("autos", autoJSON.toJSONString());
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -96,6 +132,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new exampleAuto(s_Swerve, camera, poseEstimator);
+    String selectedAuto = SmartDashboard.getString("selectedAuto", "default");
+    if (selectedAuto.equals("default") || !this.autoCommands.containsKey(selectedAuto)) {
+      return new DefaultAuto();
+    }
+
+    return this.autoCommands.get(selectedAuto).getCommand();
   }
 }

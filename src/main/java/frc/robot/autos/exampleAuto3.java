@@ -24,19 +24,18 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import org.photonvision.PhotonCamera;
 import org.photonvision.common.hardware.VisionLEDMode;
 
-public class exampleAuto implements AutoImpl {
-
+public class exampleAuto3 implements AutoImpl {
   private final SwerveAutoBuilder autoBuilder;
   private final List<PathPlannerTrajectory> pathGroup;
   private final PhotonCamera camera;
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
 
-  public exampleAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator) {
+  public exampleAuto3(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator) {
     this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
-    pathGroup = PathPlanner.loadPathGroup("test",
+    pathGroup = PathPlanner.loadPathGroup("test3",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
@@ -53,15 +52,7 @@ public class exampleAuto implements AutoImpl {
             Constants.AutoConstants.rotationPID.d),
         swerve::setModuleStates,
         eventMap,
-        true,
         swerve);
-
-    // addCommands(new InstantCommand(() ->
-    // s_Swerve.resetOdometry(pathGroup.get(0).getInitialHolonomicPose())),
-    // autoBuilder.followPathWithEvents(pathGroup.get(0)),
-    // new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOn)),
-    // autoBuilder.followPathWithEvents(pathGroup.get(1)),
-    // new InstantCommand(() -> s_Swerve.camera.setLED(VisionLEDMode.kOff)));
   }
 
   public Pose2d getInitialHolonomicPose() {
