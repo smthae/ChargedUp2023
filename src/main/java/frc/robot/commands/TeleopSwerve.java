@@ -108,10 +108,6 @@ public class TeleopSwerve extends CommandBase {
       this.defenseOverride = false;
     }
 
-    if (angle >= 0 && !this.rotationButtonsPressed) {
-      this.swerve.setHold(angle);
-    }
-
     if (!faceForward && !faceRight && !faceBackwards && !faceLeft) {
       this.rotationButtonsPressed = false;
     } else {
@@ -119,6 +115,9 @@ public class TeleopSwerve extends CommandBase {
       this.defenseOverride = true;
     }
 
+    if (angle != -1 && !this.rotationButtonsPressed) {
+      this.swerve.setHold(angle);
+    }
     return angle;
   }
 
