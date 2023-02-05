@@ -1,13 +1,12 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,6 +22,16 @@ public class Wrist extends SubsystemBase {
     this.intakeMotor.configVoltageCompSaturation(Constants.Swerve.voltageComp);
     this.intakeMotor.enableVoltageCompensation(true);
     SmartDashboard.putNumber("wrist power", this.power);
+
+    TalonFXConfiguration intakeMotorConfiguration = new TalonFXConfiguration();
+    intakeMotorConfiguration.supplyCurrLimit = new SupplyCurrentLimitConfiguration(
+        true,
+        30,
+        40,
+        0.1);
+
+    intakeMotor.configFactoryDefault();
+    intakeMotor.configAllSettings(intakeMotorConfiguration);
   }
 
   public void updatePower() {
@@ -39,7 +48,6 @@ public class Wrist extends SubsystemBase {
 
   public void intakeOut() {
     this.updatePower();
-
     this.intakeMotor.set(ControlMode.PercentOutput, -this.power);
   }
 
