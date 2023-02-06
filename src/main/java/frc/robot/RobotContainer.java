@@ -56,7 +56,7 @@ public class RobotContainer {
         s_Swerve,
         () -> -driver.getLeftY(),
         () -> -driver.getLeftX(),
-        () -> driver.getRightX(),
+        () -> -driver.getRightX(),
         () -> driver.leftBumper().getAsBoolean(),
         () -> driver.rightBumper().getAsBoolean(),
         () -> driver.y().getAsBoolean(),

@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.RobotModes;
@@ -21,7 +22,7 @@ public class TeleopSwerve extends CommandBase {
   private final BooleanSupplier faceRight;
   private final BooleanSupplier faceBackwards;
   private final BooleanSupplier faceLeft;
-  private final SlewRateLimiter rotationLiRateLimiter = new SlewRateLimiter(0.1, 0.1, 0);
+  private final SlewRateLimiter rotationLiRateLimiter = new SlewRateLimiter(0.1);
 
   public boolean defenseOverride = false;
 
@@ -165,7 +166,7 @@ public class TeleopSwerve extends CommandBase {
     swerve.drive(
         new Translation2d(translationVal,
             strafeVal).times(Constants.Swerve.maxSpeed),
-        rotationLiRateLimiter.calculate(rotationVal) * Constants.Swerve.maxAngularVelocity,
+        (rotationVal != 0 ? rotationLiRateLimiter.calculate(rotationVal) : 0) * Constants.Swerve.maxAngularVelocity,
         !robotCentricSup.getAsBoolean(),
         true, // True -> driving based on percent output, False -> driving based on PID and
               // FeedForward
