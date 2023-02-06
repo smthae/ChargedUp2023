@@ -21,6 +21,7 @@ public class TeleopSwerve extends CommandBase {
   private final BooleanSupplier faceRight;
   private final BooleanSupplier faceBackwards;
   private final BooleanSupplier faceLeft;
+  private final SlewRateLimiter rotationLiRateLimiter = new SlewRateLimiter(0.1, 0.1, 0);
 
   public boolean defenseOverride = false;
 
@@ -164,7 +165,7 @@ public class TeleopSwerve extends CommandBase {
     swerve.drive(
         new Translation2d(translationVal,
             strafeVal).times(Constants.Swerve.maxSpeed),
-        rotationVal * Constants.Swerve.maxAngularVelocity,
+        rotationLiRateLimiter.calculate(rotationVal) * Constants.Swerve.maxAngularVelocity,
         !robotCentricSup.getAsBoolean(),
         true, // True -> driving based on percent output, False -> driving based on PID and
               // FeedForward
