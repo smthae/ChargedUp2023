@@ -110,6 +110,10 @@ public class TeleopSwerve extends CommandBase {
       this.defenseOverride = false;
     }
 
+    if (angle != -1 && !this.rotationButtonsPressed) {
+      this.swerve.setHold(angle);
+    }
+
     if (!faceForward && !faceRight && !faceBackwards && !faceLeft) {
       this.rotationButtonsPressed = false;
     } else {
@@ -117,9 +121,6 @@ public class TeleopSwerve extends CommandBase {
       this.defenseOverride = true;
     }
 
-    if (angle != -1 && !this.rotationButtonsPressed) {
-      this.swerve.setHold(angle);
-    }
     return angle;
   }
 
@@ -158,7 +159,7 @@ public class TeleopSwerve extends CommandBase {
       if (!this.NOSMode.getAsBoolean()) {
         translationVal *= 0.6;
         strafeVal *= 0.6;
-        rotationVal *= 0.6;
+        rotationVal *= 0.3;
       }
     }
 
@@ -166,7 +167,7 @@ public class TeleopSwerve extends CommandBase {
     swerve.drive(
         new Translation2d(translationVal,
             strafeVal).times(Constants.Swerve.maxSpeed),
-        (rotationVal != 0 ? rotationLiRateLimiter.calculate(rotationVal) : 0) * Constants.Swerve.maxAngularVelocity,
+        rotationVal * Constants.Swerve.maxAngularVelocity,
         !robotCentricSup.getAsBoolean(),
         true, // True -> driving based on percent output, False -> driving based on PID and
               // FeedForward

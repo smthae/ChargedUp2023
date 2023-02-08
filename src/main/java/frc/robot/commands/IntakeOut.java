@@ -1,0 +1,40 @@
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.PieceType;
+import frc.robot.subsystems.Wrist;
+
+public class IntakeOut extends CommandBase {
+  private final Wrist wrist;
+  private boolean auto = false;
+
+  public IntakeOut(Wrist wrist) {
+    this.wrist = wrist;
+  }
+
+  public IntakeOut(Wrist wrist, boolean auto) {
+    this.wrist = wrist;
+    this.auto = auto;
+  }
+
+  @Override
+  public void initialize() {
+    this.wrist.intakeOut();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    this.wrist.intakeStop();
+  }
+
+  @Override
+  public boolean isFinished() {
+    if (this.auto) {
+      PieceType gamePieceType = this.wrist.getGamPieceType();
+      if (gamePieceType == PieceType.AIR) {
+        return true;
+      }
+    }
+    return false;
+  }
+}

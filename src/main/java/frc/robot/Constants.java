@@ -22,6 +22,11 @@ import frc.lib.util.SVAConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+  public static enum PieceType {
+    CONE,
+    CUBE,
+    AIR
+  }
 
   public static enum RobotModes {
     Competition,
@@ -32,8 +37,9 @@ public final class Constants {
   public static final RobotModes robotMode = RobotModes.Competition;
 
   public static final class Vision {
-    public static final String cameraName = "gloworm";
-    public static final Transform3d cameraToRobot = new Transform3d(new Translation3d(-0.32, 0, 0), new Rotation3d());
+    public static final String cameraName = "OV5647";
+    public static final Transform3d cameraToRobot = new Transform3d(new Translation3d(-0.30, -0.26, 0),
+        new Rotation3d(0, Units.degreesToRadians(80), 0));
     public static final Transform3d robotToCamera = cameraToRobot.inverse();
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
@@ -181,8 +187,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 0.5;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
+    public static final double kMaxSpeedMetersPerSecond = 4;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 6;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 

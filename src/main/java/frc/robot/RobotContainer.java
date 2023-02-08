@@ -14,6 +14,9 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.pathplanner.lib.PathPlanner;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -104,9 +107,17 @@ public class RobotContainer {
   }
 
   public void configureAutoCommands() {
-    this.autoCommands.put("Example auto 1", new exampleAuto(s_Swerve, camera, poseEstimator));
+    this.autoCommands.put("1 cone sus", new exampleAuto(s_Swerve, camera, poseEstimator, wrist));
     this.autoCommands.put("Example auto 2", new exampleAuto2(s_Swerve, camera, poseEstimator));
     this.autoCommands.put("Example auto 3", new exampleAuto3(s_Swerve, camera, poseEstimator));
+  }
+
+  public void configureTestCommands() {
+    SmartDashboard.putData("Reset Pose Estimator", new InstantCommand(() -> {
+      this.poseEstimator.resetFieldPosition();
+    }));
+    SmartDashboard.putData("Go to home",
+        new GoToPosition(s_Swerve, poseEstimator, new Transform3d(new Translation3d(), new Rotation3d())));
   }
 
   public void sendAutoCommands() {

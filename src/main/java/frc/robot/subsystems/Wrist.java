@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.PieceType;
 
 public class Wrist extends SubsystemBase {
   private final TalonFX intakeMotor = new TalonFX(Constants.Wrist.intakeMotorID);
@@ -26,8 +27,8 @@ public class Wrist extends SubsystemBase {
     TalonFXConfiguration intakeMotorConfiguration = new TalonFXConfiguration();
     intakeMotorConfiguration.supplyCurrLimit = new SupplyCurrentLimitConfiguration(
         true,
-        30,
-        40,
+        7,
+        8,
         0.1);
 
     intakeMotor.configFactoryDefault();
@@ -43,45 +44,61 @@ public class Wrist extends SubsystemBase {
 
   public void intakeIn() {
     this.updatePower();
-    this.intakeMotor.set(ControlMode.PercentOutput, this.power);
+    this.intakeMotor.set(ControlMode.PercentOutput, -this.power);
   }
 
   public void intakeOut() {
     this.updatePower();
-    this.intakeMotor.set(ControlMode.PercentOutput, -this.power);
+    this.intakeMotor.set(ControlMode.PercentOutput, this.power);
   }
 
   public void intakeStop() {
     this.intakeMotor.set(ControlMode.PercentOutput, 0);
   }
 
-  @Override
-  public void periodic() {
+  public PieceType getGamPieceType() {
     Color detectedColor = colorSensor.getColor();
+    PieceType output;
+
     int proximity = colorSensor.getProximity();
     if (proximity < 55) {
-      SmartDashboard.putBoolean("CONE", false);
-      SmartDashboard.putBoolean("CUBE", false);
-      return;
-    }
-
-    SmartDashboard.putNumber("Red", detectedColor.red);
-    SmartDashboard.putNumber("Green", detectedColor.green);
-    SmartDashboard.putNumber("Blue", detectedColor.blue);
-    SmartDashboard.putNumber("Proximity", proximity);
-    if (detectedColor.red > 0.17 && detectedColor.red < 0.33 && detectedColor.green > 0.27 && detectedColor.green < 0.48
-        && detectedColor.blue < 0.49 && detectedColor.blue > 0.27) {
-      SmartDashboard.putBoolean("CUBE", true);
-      SmartDashboard.putBoolean("CONE", false);
-
-    } else if (detectedColor.red > 0.31 && detectedColor.red < 0.40 && detectedColor.green > 0.45
-        && detectedColor.green < 0.55 && detectedColor.blue > 0 && detectedColor.blue < 0.23) {
-      SmartDashboard.putBoolean("CONE", true);
-      SmartDashboard.putBoolean("CUBE", false);
-
+      output = PieceType.AIR;
     } else {
-      SmartDashboard.putBoolean("CONE", false);
-      SmartDashboard.putBoolean("CUBE", false);
+      SmartDashboard.putNumber("Red", detectedColor.red);
+      SmartDashboard.putNumber("Green", detectedColor.green);
+      SmartDashboard.putNumber("Blue", detectedColor.blue);
+      SmartDashboard.putNumber("Proximity", proximity);
+      if (detectedColor.red > 0.17 && detectedColor.red < 0.33 && detectedColor.green > 0.27
+          && detectedColor.green < 0.48
+          && detectedColor.blue < 0.49 && detectedColor.blue > 0.27) {
+        output = PieceType.CUBE;
+      } else if (detectedColor.red > 0.31 && detectedColor.red < 0.40 && detectedColor.green > 0.45
+          && detectedColor.green < 0.55 && detectedColor.blue > 0 && detectedColor.blue < 0.23) {
+        output = PieceType.CONE;
+      } else {
+        output = PieceType.AIR;
+      }
+    }
+    return output;
+  }
+
+  @Override
+  public void periodic() {
+    PieceType gamePieceType = this.getGamPieceType();
+
+    switch (gamePieceType) {
+      case AIR:
+        SmartDashboard.putString("color sensor", "Nothing - AIR");
+        break;
+
+      case CONE:
+        SmartDashboard.putString("color sensor", "CONE");
+        break;
+      case CUBE:
+        SmartDashboard.putString("color sensor", "CUBE");
+        break;
+      default:
+        break;
     }
   }
 }

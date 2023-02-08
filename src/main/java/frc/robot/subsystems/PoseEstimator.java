@@ -33,6 +33,7 @@ public class PoseEstimator extends SubsystemBase {
     try {
       aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
       var alliance = DriverStation.getAlliance();
+      SmartDashboard.putString("alliance", alliance == Alliance.Blue ? "blue" : "red");
       aprilTagFieldLayout.setOrigin(alliance == Alliance.Blue ? OriginPosition.kBlueAllianceWallRightSide
           : OriginPosition.kRedAllianceWallRightSide);
     } catch (Exception e) {
@@ -60,10 +61,12 @@ public class PoseEstimator extends SubsystemBase {
       if (target.getPoseAmbiguity() <= 0.2 && fiducialId >= 0 && tagPose.isPresent()) {
         var targetPos = tagPose.get();
         Transform3d camToTarget = target.getBestCameraToTarget();
+        SmartDashboard.putString("tag to camera", camToTarget.toString());
         Pose3d camPose = targetPos.transformBy(camToTarget.inverse());
 
         var visionMeasurement = camPose.transformBy(Constants.Vision.cameraToRobot);
-        this.swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(), resultTimestamp);
+        // this.swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(),
+        // resultTimestamp);
       }
     }
 

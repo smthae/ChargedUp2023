@@ -8,9 +8,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
-import frc.robot.commands.AlignAprilTag;
+import frc.robot.commands.GoToPosition;
+import frc.robot.commands.IntakeIn;
+import frc.robot.commands.IntakeOut;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Wrist;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +25,6 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.common.hardware.VisionLEDMode;
 
 public class exampleAuto implements AutoImpl {
 
@@ -31,16 +33,20 @@ public class exampleAuto implements AutoImpl {
   private final PhotonCamera camera;
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
+  private final Wrist wrist;
 
-  public exampleAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator) {
+  public exampleAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Wrist wrist) {
     this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
+    this.wrist = wrist;
+
     pathGroup = PathPlanner.loadPathGroup("test",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
     HashMap<String, Command> eventMap = new HashMap<>();
+    // eventMap.put("intakein", new IntakeIn(wrist, true));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
         poseEstimator::setCurrentPose,
@@ -70,12 +76,14 @@ public class exampleAuto implements AutoImpl {
 
   public Command getCommand() {
     return new SequentialCommandGroup(
-        new InstantCommand(() -> camera.setLED(VisionLEDMode.kOn)),
-        autoBuilder.fullAuto(pathGroup),
-        new InstantCommand(() -> camera.setLED(VisionLEDMode.kOff))
+        autoBuilder.fullAuto(pathGroup));
+    // return new SequentialCommandGroup(
+    // new InstantCommand(() -> camera.setLED(VisionLEDMode.kOn)),
+    // autoBuilder.fullAuto(pathGroup),
+    // new InstantCommand(() -> camera.setLED(VisionLEDMode.kOff))
     // new AlignAprilTag(swerve, camera, poseEstimator::getCurrentPose, 2,
     // new Transform3d(new Translation3d(1.5, 0, 0),
     // new Rotation3d(0, 0, Math.PI)))
-    );
+    // );
   }
 }
