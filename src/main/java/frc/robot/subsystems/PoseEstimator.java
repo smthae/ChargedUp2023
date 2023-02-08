@@ -32,10 +32,6 @@ public class PoseEstimator extends SubsystemBase {
 
     try {
       aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-      var alliance = DriverStation.getAlliance();
-      SmartDashboard.putString("alliance", alliance == Alliance.Blue ? "blue" : "red");
-      aprilTagFieldLayout.setOrigin(alliance == Alliance.Blue ? OriginPosition.kBlueAllianceWallRightSide
-          : OriginPosition.kRedAllianceWallRightSide);
     } catch (Exception e) {
       DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());
       aprilTagFieldLayout = null;
@@ -46,6 +42,13 @@ public class PoseEstimator extends SubsystemBase {
         Constants.Vision.visionMeasurementStdDevs);
 
     SmartDashboard.putData("Field", field2d);
+  }
+
+  public void updateOrigin() {
+    var alliance = DriverStation.getAlliance();
+    SmartDashboard.putString("alliance", alliance == Alliance.Blue ? "blue" : "red");
+    aprilTagFieldLayout.setOrigin(alliance == Alliance.Blue ? OriginPosition.kBlueAllianceWallRightSide
+        : OriginPosition.kRedAllianceWallRightSide);
   }
 
   @Override
