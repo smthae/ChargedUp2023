@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.PieceType;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -40,6 +41,7 @@ public class RobotContainer {
 
   /* Controllers */
   private final CommandXboxController driver = new CommandXboxController(Constants.Operators.driver);
+  private final CommandXboxController operator = new CommandXboxController(1);
 
   /* Subsystems */
   final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
@@ -67,9 +69,13 @@ public class RobotContainer {
         () -> driver.a().getAsBoolean(),
         () -> driver.x().getAsBoolean()));
 
+    wrist.setDefaultCommand(
+        new WristControl(wrist, () -> operator.getLeftTriggerAxis(), () -> operator.getRightTriggerAxis()));
+
     // Configure the button bindings
     configureButtonBindings();
     configureAutoCommands();
+    configureTestCommands();
     sendAutoCommands();
   }
 
@@ -89,9 +95,19 @@ public class RobotContainer {
     /* Driver Buttons */
     driver.back().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
     driver.start().whileTrue(new Balance(s_Swerve));
-    driver.leftTrigger().and(() -> driver.rightTrigger().getAsBoolean()).whileTrue(new IntakeIn(wrist));
-    driver.leftTrigger().whileTrue(new IntakeIn(wrist));
+    driver.leftTrigger().and(() -> driver.rightTrigger().getAsBoolean()).whileTrue(new IntakeIn(wrist, this.s_Swerve));
+    driver.leftTrigger().whileTrue(new IntakeIn(wrist, this.s_Swerve));
     driver.rightTrigger().whileTrue(new IntakeOut(wrist));
+
+    operator.y().onTrue(new InstantCommand(() -> {
+      wrist.setWristSetpoint(180);
+      wrist.currentPiece = PieceType.CUBE;
+    }));
+    operator.a().onTrue(new InstantCommand(() -> {
+      wrist.setWristSetpoint(15);
+      wrist.currentPiece = PieceType.CONE;
+    }));
+    operator.back().onTrue(new InstantCommand(() -> wrist.resetWristEncoder()));
     // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
 
     // snakeMode.toggleOnTrue(new SnakeSwerve(s_Swerve,
@@ -116,8 +132,11 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Pose Estimator", new InstantCommand(() -> {
       this.poseEstimator.resetFieldPosition();
     }));
-    SmartDashboard.putData("Go to home",
-        new GoToPosition(s_Swerve, poseEstimator, new Transform3d(new Translation3d(), new Rotation3d())));
+    GoToPosition goHome = new GoToPosition(s_Swerve, poseEstimator,
+        new Transform3d(new Translation3d(), new Rotation3d()));
+    goHome.setDebug(true);
+
+    SmartDashboard.putData("Go to home", goHome);
   }
 
   public void sendAutoCommands() {
@@ -145,7 +164,7 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     String selectedAuto = SmartDashboard.getString("selectedAuto", "default");
     if (selectedAuto.equals("default") || !this.autoCommands.containsKey(selectedAuto)) {
-      return new DefaultAuto();
+      return new DefaultAuto(this.wrist);
     }
 
     return this.autoCommands.get(selectedAuto).getCommand();

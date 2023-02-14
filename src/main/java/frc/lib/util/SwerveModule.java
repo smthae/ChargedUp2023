@@ -194,7 +194,7 @@ public class SwerveModule {
   }
 
   public double getDistance() {
-    return this.driveEncoder.getPosition() * Constants.Swerve.wheelCircumference;
+    return this.driveEncoder.getPosition();
   }
 
   public SwerveModulePosition getPosition() {

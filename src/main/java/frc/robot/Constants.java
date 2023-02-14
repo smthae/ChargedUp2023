@@ -59,6 +59,11 @@ public final class Constants {
 
   public static final class Wrist {
     public static final int intakeMotorID = 9;
+    public static final int wristMotorID = 29;
+
+    public static final PIDConstants wristRotationPID = new PIDConstants(0.003, 0, 0.05);
+    public static final double wristGearRatio = 40;
+
     public static final double power = 1;
   }
 
@@ -86,10 +91,10 @@ public final class Constants {
     /* Custom PID Controllers */
     public static final PIDConstants robotRotationPID = new PIDConstants(0.1, 0, 0.00005);
     public static final PIDConstants translationPID = new PIDConstants(4, 0, 0.005);
-    public static final PIDConstants balancePID = new PIDConstants(0.01, 0, 0.005);
+    public static final PIDConstants balancePID = new PIDConstants(0.04, 0, 0.05, 10);
 
     /* Delays (milliseconds) */
-    public static final long defenseDelay = 1000;
+    public static final long defenseDelay = 100;
 
     /* Kinematics */
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
@@ -187,8 +192,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 4;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 6;
+    public static final double kMaxSpeedMetersPerSecond = 0.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 

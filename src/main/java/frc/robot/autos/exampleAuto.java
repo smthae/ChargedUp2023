@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.Constants.PieceType;
 import frc.robot.commands.GoToPosition;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
@@ -40,13 +41,15 @@ public class exampleAuto implements AutoImpl {
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
     this.wrist = wrist;
+    this.wrist.currentPiece = PieceType.CONE;
 
-    pathGroup = PathPlanner.loadPathGroup("test",
+    pathGroup = PathPlanner.loadPathGroup("test4",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
     HashMap<String, Command> eventMap = new HashMap<>();
-    // eventMap.put("intakein", new IntakeIn(wrist, true));
+    eventMap.put("intakein",
+        new SequentialCommandGroup(new IntakeIn(wrist, true), new InstantCommand(() -> wrist.setWristSetpoint(300))));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
         poseEstimator::setCurrentPose,
@@ -76,7 +79,7 @@ public class exampleAuto implements AutoImpl {
 
   public Command getCommand() {
     return new SequentialCommandGroup(
-        autoBuilder.fullAuto(pathGroup));
+        autoBuilder.fullAuto(pathGroup), new IntakeOut(wrist, true));
     // return new SequentialCommandGroup(
     // new InstantCommand(() -> camera.setLED(VisionLEDMode.kOn)),
     // autoBuilder.fullAuto(pathGroup),

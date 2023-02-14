@@ -68,13 +68,13 @@ public class PoseEstimator extends SubsystemBase {
         Pose3d camPose = targetPos.transformBy(camToTarget.inverse());
 
         var visionMeasurement = camPose.transformBy(Constants.Vision.cameraToRobot);
-        // this.swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(),
-        // resultTimestamp);
+        this.swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(),
+            resultTimestamp);
       }
     }
 
     this.swerveDrivePoseEstimator.update(this.swerve.getYaw(), this.swerve.getPositions());
-
+    SmartDashboard.putString("Estimated Pose", this.getCurrentPose().toString());
     field2d.setRobotPose(getCurrentPose());
   }
 

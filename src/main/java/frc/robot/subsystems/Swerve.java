@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.CustomThreads;
 import frc.lib.util.SwerveModule;
 import frc.robot.Constants;
 
@@ -40,6 +41,7 @@ public class Swerve extends SubsystemBase {
   private boolean wasTranslationZero = true;
   private long defenseDelayStart;
   private final PhotonCamera camera;
+  private Translation2d centerOfRotation = new Translation2d();
 
   public Swerve(PhotonCamera camera) {
     /* Vision */
@@ -71,8 +73,11 @@ public class Swerve extends SubsystemBase {
    * @param rotation the value of the rotation axis
    */
   public void rotationUpdate(double rotation) {
-    if (this.rotationControllerSpeed != 0.0) {
-      this.orientationWhenReleased = getYaw();
+    if (this.rotationControllerSpeed != 0.0 && rotation == 0) {
+      CustomThreads.setTimeout(() -> {
+        this.orientationWhenReleased = getYaw();
+
+      }, 100);
     }
     this.rotationControllerSpeed = rotation;
   }
@@ -108,7 +113,8 @@ public class Swerve extends SubsystemBase {
                 translation.getX(), translation.getY(),
                 rotation + (Constants.Swerve.driveInvert ? missalignment : -missalignment),
                 getYaw())
-            : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
+            : new ChassisSpeeds(translation.getX(), translation.getY(), rotation),
+        this.centerOfRotation);
 
     // Get rid of tiny tiny movements in the wheels to have more consistent driving
     // experience
@@ -243,6 +249,11 @@ public class Swerve extends SubsystemBase {
   public void zeroGyro() {
     gyro.setYaw(0);
     this.orientationWhenReleased = Rotation2d.fromDegrees(0);
+
+    // CustomThreads.setTimeout(() -> {
+    // this.orientationWhenReleased = Rotation2d.fromDegrees(0);
+    // }, 20);
+
   }
 
   /** reset position hold value to whatever the gyro is */
@@ -289,6 +300,14 @@ public class Swerve extends SubsystemBase {
 
   public Rotation2d getRoll() {
     return Rotation2d.fromDegrees(gyro.getRoll());
+  }
+
+  public void resetCoR() {
+    this.centerOfRotation = new Translation2d();
+  }
+
+  public void setCoR(Translation2d translation) {
+    this.centerOfRotation = translation;
   }
 
   @Override

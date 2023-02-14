@@ -7,6 +7,7 @@ import frc.robot.subsystems.Wrist;
 public class IntakeOut extends CommandBase {
   private final Wrist wrist;
   private boolean auto = false;
+  private PieceType pieceType = PieceType.AIR;
 
   public IntakeOut(Wrist wrist) {
     this.wrist = wrist;
@@ -19,7 +20,8 @@ public class IntakeOut extends CommandBase {
 
   @Override
   public void initialize() {
-    this.wrist.intakeOut();
+    this.pieceType = this.wrist.getGamPieceType();
+    this.wrist.intakeOut(this.pieceType);
   }
 
   @Override

@@ -4,14 +4,17 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.lib.util.PIDConstants;
 import frc.robot.Constants;
 import frc.robot.subsystems.Swerve;
 
 public class Balance extends CommandBase {
   private final Swerve swerve;
   private final PIDController balanceController = Constants.Swerve.balancePID.getController();
+  private final PIDController smootherController = (new PIDConstants(0.05, 0, 0.05, 5)).getController();
 
-  public Balance(Swerve swerve) {
+  public Balance(
+      Swerve swerve) {
     this.swerve = swerve;
 
     this.addRequirements(swerve);
@@ -35,8 +38,15 @@ public class Balance extends CommandBase {
       this.swerve.setHold(270);
       power = -MathUtil.clamp(this.balanceController.calculate(this.swerve.getPitch().getDegrees(), 0), -1, 1);
     }
-
-    this.swerve.drive(new Translation2d(power, 0).times(Constants.Swerve.maxSpeed), 0, true, true, true, true);
+    if (this.balanceController.atSetpoint()) {
+      power = MathUtil.clamp(this.smootherController.calculate(this.swerve.getRoll().getDegrees(), 0), -0.1, 0.1);
+      this.swerve.drive(new Translation2d(power, 0), 0, true, true, true, true);
+      if (this.smootherController.atSetpoint()) {
+        this.swerve.brake();
+      }
+    } else {
+      this.swerve.drive(new Translation2d(power, 0), 0, true, true, true, true);
+    }
   }
 
   @Override
