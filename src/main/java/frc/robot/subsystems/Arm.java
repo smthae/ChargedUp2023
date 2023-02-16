@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,6 +33,7 @@ public class Arm extends SubsystemBase {
     this.armLeader.enableVoltageCompensation(Constants.Swerve.voltageComp);
     this.armLeader.setSmartCurrentLimit(Constants.Arm.currentLimit);
     this.armLeader.setInverted(false);
+    this.armLeader.setIdleMode(IdleMode.kBrake);
 
     // Arm follower
     this.armFollower.restoreFactoryDefaults();
@@ -39,6 +41,7 @@ public class Arm extends SubsystemBase {
     this.armFollower.setSmartCurrentLimit(Constants.Arm.currentLimit);
     this.armFollower.follow(this.armLeader);
     this.armFollower.setInverted(true);
+    this.armLeader.setIdleMode(IdleMode.kBrake);
 
     /* End Motors setup */
 
