@@ -10,9 +10,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.photonvision.PhotonCamera;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.pathplanner.lib.PathPlanner;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -47,6 +44,7 @@ public class RobotContainer {
   final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
   final Swerve s_Swerve = new Swerve(camera);
   final Wrist wrist = new Wrist();
+  final Arm arm = new Arm();
   public final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve, camera);
 
   /* Auto */
@@ -70,7 +68,10 @@ public class RobotContainer {
         () -> driver.x().getAsBoolean()));
 
     wrist.setDefaultCommand(
-        new WristControl(wrist, () -> operator.getLeftTriggerAxis(), () -> operator.getRightTriggerAxis()));
+        new WristControl(wrist, () -> operator.getRightY()));
+
+    arm.setDefaultCommand(
+        new ArmManualControl(arm, () -> operator.getLeftY()));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -108,6 +109,7 @@ public class RobotContainer {
       wrist.currentPiece = PieceType.CONE;
     }));
     operator.back().onTrue(new InstantCommand(() -> wrist.resetWristEncoder()));
+    operator.start().onTrue(new InstantCommand(() -> arm.resetArmEncoder()));
     // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
 
     // snakeMode.toggleOnTrue(new SnakeSwerve(s_Swerve,

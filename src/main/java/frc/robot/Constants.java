@@ -7,7 +7,9 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -57,6 +59,18 @@ public final class Constants {
     public static final int driver = 0;
   }
 
+  public static final class Arm {
+    public static final int leaderMotorID = 31;
+    public static final int followerMotorID = 32;
+    public static final ArmFeedforward armFF = new ArmFeedforward(0, 0.92, 1.09, 0.04); // until we have some empirical
+                                                                                        // measurement, kS will be added
+    public static final PIDConstants armPID = new PIDConstants(0.1, 0, 0.05);
+    public static final double armMaxOutput = 0.3;
+
+    public static final int currentLimit = 40;
+    public static final int gearRatio = 1; // IDK, must be updated checked but 1 is fine for testing
+  }
+
   public static final class Wrist {
     public static final int intakeMotorID = 9;
     public static final int wristMotorID = 29;
@@ -64,7 +78,7 @@ public final class Constants {
     public static final PIDConstants wristRotationPID = new PIDConstants(0.003, 0, 0.05);
     public static final double wristGearRatio = 40;
 
-    public static final double power = 1;
+    public static final double intakePower = 1;
   }
 
   public static final class Swerve {
@@ -74,7 +88,7 @@ public final class Constants {
     /* Gyro */
     public static final int pigeonID = 21;
     public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
-    public static final String pigeonCanBUS = "canivore3161";
+    public static final String pigeonCanBUS = "rio";
 
     /* Drivetrain Constants */
     public static final double trackWidth = Units.inchesToMeters(23.0);
@@ -136,11 +150,11 @@ public final class Constants {
 
     /* Front Left Module - Module 0 */
     public static final class Mod0 {
-      public static final int driveMotorID = 2;
-      public static final int angleMotorID = 1;
-      public static final int canCoderID = 23;
-      public static final String cancoderCANBUS = "canivore3161"; // change to "rio" if it's on rio
-      public static final double angleOffset = 146.0;
+      public static final int driveMotorID = 14;
+      public static final int angleMotorID = 13;
+      public static final int canCoderID = 22;
+      public static final String cancoderCANBUS = "rio"; // change to "rio" if it's on rio
+      public static final double angleOffset = 22.5;
       public static final PIDConstants anglePID = new PIDConstants(0.02, 0.0, 0.005);
       public static final PIDConstants drivePID = new PIDConstants(0.1, 0.0, 0.000);
       public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.6797, 0.17176);
@@ -150,11 +164,11 @@ public final class Constants {
 
     /* Front Right Module - Module 1 */
     public static final class Mod1 {
-      public static final int driveMotorID = 4;
-      public static final int angleMotorID = 3;
-      public static final int canCoderID = 24;
-      public static final String cancoderCANBUS = "canivore3161";
-      public static final double angleOffset = 324.0;
+      public static final int driveMotorID = 16;
+      public static final int angleMotorID = 15;
+      public static final int canCoderID = 23;
+      public static final String cancoderCANBUS = "rio";
+      public static final double angleOffset = 237.0;
       public static final PIDConstants anglePID = new PIDConstants(0.02, 0.0, 0.005);
       public static final PIDConstants drivePID = new PIDConstants(0.1, 0.0, 0.000);
       public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.6797, 0.17176);
@@ -164,11 +178,11 @@ public final class Constants {
 
     /* Back Left Module - Module 2 */
     public static final class Mod2 {
-      public static final int driveMotorID = 8;
-      public static final int angleMotorID = 7;
-      public static final int canCoderID = 22;
-      public static final String cancoderCANBUS = "canivore3161";
-      public static final double angleOffset = 290.0;
+      public static final int driveMotorID = 12;
+      public static final int angleMotorID = 11;
+      public static final int canCoderID = 25;
+      public static final String cancoderCANBUS = "rio";
+      public static final double angleOffset = 181.0;
       public static final PIDConstants anglePID = new PIDConstants(0.02, 0.0, 0.005);
       public static final PIDConstants drivePID = new PIDConstants(0.1, 0.0, 0.000);
       public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.6797, 0.17176);
@@ -178,11 +192,11 @@ public final class Constants {
 
     /* Back Right Module - Module 3 */
     public static final class Mod3 {
-      public static final int driveMotorID = 6;
-      public static final int angleMotorID = 5;
-      public static final int canCoderID = 25;
-      public static final String cancoderCANBUS = "canivore3161";
-      public static final double angleOffset = 90.0;
+      public static final int driveMotorID = 18;
+      public static final int angleMotorID = 17;
+      public static final int canCoderID = 24;
+      public static final String cancoderCANBUS = "rio";
+      public static final double angleOffset = 52.0;
       public static final PIDConstants anglePID = new PIDConstants(0.02, 0.0, 0.005);
       public static final PIDConstants drivePID = new PIDConstants(0.1, 0.0, 0.000);
       public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.6797, 0.17176);

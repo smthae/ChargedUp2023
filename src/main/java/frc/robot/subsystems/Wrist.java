@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.revrobotics.CANSparkMax;
@@ -11,19 +10,17 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.util.CustomThreads;
 import frc.lib.util.PIDConstants;
 import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
 
 public class Wrist extends SubsystemBase {
   private final TalonFX intakeMotor = new TalonFX(Constants.Wrist.intakeMotorID);
-  private double power = Constants.Wrist.power;
+  private double intakePower = Constants.Wrist.intakePower;
 
   private final CANSparkMax wristMotor = new CANSparkMax(Constants.Wrist.wristMotorID, MotorType.kBrushless);
   private final RelativeEncoder wristEncoder;
@@ -38,7 +35,7 @@ public class Wrist extends SubsystemBase {
   public Wrist() {
     this.intakeMotor.configVoltageCompSaturation(Constants.Swerve.voltageComp);
     this.intakeMotor.enableVoltageCompensation(true);
-    SmartDashboard.putNumber("wrist power", this.power);
+    SmartDashboard.putNumber("intake power", this.intakePower);
 
     this.wristMotor.restoreFactoryDefaults();
     this.wristMotor.enableVoltageCompensation(Constants.Swerve.voltageComp);
@@ -67,27 +64,27 @@ public class Wrist extends SubsystemBase {
   }
 
   public void updatePower() {
-    double newPower = SmartDashboard.getNumber("wrist power", power);
-    if (newPower != this.power) {
-      this.power = newPower;
+    double newPower = SmartDashboard.getNumber("wrist power", intakePower);
+    if (newPower != this.intakePower) {
+      this.intakePower = newPower;
     }
   }
 
   public void intakeIn(PieceType gamePiece) {
     this.updatePower();
     if (gamePiece == PieceType.CONE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -this.power);
+      this.intakeMotor.set(ControlMode.PercentOutput, -this.intakePower);
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, this.power);
+      this.intakeMotor.set(ControlMode.PercentOutput, this.intakePower);
     }
   }
 
   public void intakeOut(PieceType gamePiece) {
     this.updatePower();
     if (gamePiece == PieceType.CONE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, this.power);
+      this.intakeMotor.set(ControlMode.PercentOutput, this.intakePower);
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -this.power);
+      this.intakeMotor.set(ControlMode.PercentOutput, -this.intakePower);
     }
   }
 
