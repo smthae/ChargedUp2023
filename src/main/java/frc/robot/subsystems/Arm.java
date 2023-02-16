@@ -32,15 +32,13 @@ public class Arm extends SubsystemBase {
     this.armLeader.restoreFactoryDefaults();
     this.armLeader.enableVoltageCompensation(Constants.Swerve.voltageComp);
     this.armLeader.setSmartCurrentLimit(Constants.Arm.currentLimit);
-    this.armLeader.setInverted(false);
     this.armLeader.setIdleMode(IdleMode.kBrake);
 
     // Arm follower
     this.armFollower.restoreFactoryDefaults();
     this.armFollower.enableVoltageCompensation(Constants.Swerve.voltageComp);
     this.armFollower.setSmartCurrentLimit(Constants.Arm.currentLimit);
-    this.armFollower.follow(this.armLeader);
-    this.armFollower.setInverted(true);
+    this.armFollower.follow(this.armLeader, true);
     this.armLeader.setIdleMode(IdleMode.kBrake);
 
     /* End Motors setup */
