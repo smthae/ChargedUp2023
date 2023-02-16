@@ -76,7 +76,7 @@ public class Swerve extends SubsystemBase {
     if (this.rotationControllerSpeed != 0.0 && rotation == 0) {
       CustomThreads.setTimeout(() -> {
         this.orientationWhenReleased = getYaw();
-      }, 100);
+      }, 90);
     }
     this.rotationControllerSpeed = rotation;
   }
