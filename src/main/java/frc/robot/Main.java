@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.sysid.SysIdRobot;
 
 /**
  * Do NOT add any static variables to this class, or any initialization at all.
@@ -25,10 +24,6 @@ public final class Main {
    * If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
-    if (Constants.robotMode == Constants.RobotModes.SysID) {
-      RobotBase.startRobot(SysIdRobot::new);
-      return;
-    }
     RobotBase.startRobot(Robot::new);
   }
 }

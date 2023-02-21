@@ -44,7 +44,7 @@ public class IntakeIn extends CommandBase {
     if (this.auto)
       return;
 
-    PieceType gamePiece = this.wrist.getGamPieceType();
+    PieceType gamePiece = this.wrist.getGamePieceType();
     if (gamePiece != PieceType.AIR) {
       this.wrist.intakeStop();
     } else {
@@ -55,7 +55,7 @@ public class IntakeIn extends CommandBase {
   @Override
   public boolean isFinished() {
     if (this.auto) {
-      PieceType gamePieceType = this.wrist.getGamPieceType();
+      PieceType gamePieceType = this.wrist.getGamePieceType();
       if (gamePieceType == PieceType.CUBE) {
         if (this.delayCounterStart != 0 && (System.currentTimeMillis() - this.delayCounterStart >= this.delay)) {
           return true;

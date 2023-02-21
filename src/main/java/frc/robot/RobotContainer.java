@@ -110,18 +110,7 @@ public class RobotContainer {
     }));
     operator.back().onTrue(new InstantCommand(() -> wrist.resetWristEncoder()));
     operator.start().onTrue(new InstantCommand(() -> arm.resetArmEncoder()));
-    // perpendicular.onTrue(new PerpendicularTarget(s_Swerve));
 
-    // snakeMode.toggleOnTrue(new SnakeSwerve(s_Swerve,
-    // () -> -driver.getRawAxis(Constants.Swerve.translationAxis),
-    // () -> -driver.getRawAxis(Constants.Swerve.strafeAxis),
-    // () -> robotCentric.getAsBoolean(),
-    // () -> driver.getRightBumper(),
-    // () -> driver.getRawAxis(Constants.Swerve.NOS),
-    // () -> faceForward.getAsBoolean(),
-    // () -> faceRight.getAsBoolean(),
-    // () -> faceBackwards.getAsBoolean(),
-    // () -> faceLeft.getAsBoolean()));
   }
 
   public void configureAutoCommands() {

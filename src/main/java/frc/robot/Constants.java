@@ -9,7 +9,6 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,9 +18,10 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.lib.util.PIDConstants;
 import frc.lib.util.SVAConstants;
 import frc.lib.util.SwerveModuleConstants;
+import frc.lib.util.PIDConstants;
+import frc.lib.util.ProfiledPIDConstants;
 
 public final class Constants {
   public static enum PieceType {
@@ -32,11 +32,10 @@ public final class Constants {
 
   public static enum RobotModes {
     Competition,
-    Testing,
-    SysID
+    Debug
   }
 
-  public static final RobotModes robotMode = RobotModes.Competition;
+  public static final RobotModes robotMode = RobotModes.Debug;
 
   public static final class Vision {
     public static final String cameraName = "OV5647";
@@ -62,21 +61,27 @@ public final class Constants {
   public static final class Arm {
     public static final int leaderMotorID = 31;
     public static final int followerMotorID = 32;
+    public static final int encoderDIOPort = 0;
+    public static final double encoderOffset = 0; // TBD
     public static final ArmFeedforward armFF = new ArmFeedforward(0, 0.92, 1.09, 0.04); // until we have some empirical
                                                                                         // measurement, kS will be added
-    public static final PIDConstants armPID = new PIDConstants(0.1, 0, 0.05);
+    public static final ProfiledPIDConstants armPID = new ProfiledPIDConstants(0.05, 0, 0.02, 0.2, 0.04, 2);
     public static final double armMaxOutput = 0.3;
+    public static final double kMaxVelocityRadPerSecond = 0.3;
+    public static final double kMaxAccelerationRadPerSecSquared = 0.1;
 
     public static final int currentLimit = 40;
-    public static final int gearRatio = 1; // IDK, must be updated checked but 1 is fine for testing
+    public static final double gearRatio = 56 / 1.0; // 56:1
   }
 
   public static final class Wrist {
     public static final int intakeMotorID = 9;
     public static final int wristMotorID = 29;
 
-    public static final PIDConstants wristRotationPID = new PIDConstants(0.003, 0, 0.05);
+    public static final ProfiledPIDConstants wristRotationPID = new ProfiledPIDConstants(0.005, 0, 0.05, 0.1, 0.3);
     public static final double wristGearRatio = 40;
+    public static final double encoderOffset = 0; // TBD
+    public static final int encoderDIOPort = 1;
 
     public static final double intakePower = 1;
   }
@@ -105,7 +110,7 @@ public final class Constants {
     /* Custom PID Controllers */
     public static final PIDConstants robotRotationPID = new PIDConstants(0.1, 0, 0.00005);
     public static final PIDConstants translationPID = new PIDConstants(4, 0, 0.005);
-    public static final PIDConstants balancePID = new PIDConstants(0.04, 0, 0.05, 10);
+    public static final ProfiledPIDConstants balancePID = new ProfiledPIDConstants(0.05, 0, 0.02, 0.1, 0.02, 2);
 
     /* Delays (milliseconds) */
     public static final long defenseDelay = 100;

@@ -22,7 +22,6 @@ public class TeleopSwerve extends CommandBase {
   private final BooleanSupplier faceRight;
   private final BooleanSupplier faceBackwards;
   private final BooleanSupplier faceLeft;
-  private final SlewRateLimiter rotationLiRateLimiter = new SlewRateLimiter(0.1);
 
   public boolean defenseOverride = false;
 
@@ -151,16 +150,10 @@ public class TeleopSwerve extends CommandBase {
 
     this.pointTo();
 
-    if (Constants.robotMode == RobotModes.Testing) {
-      translationVal *= 0.2;
-      strafeVal *= 0.2;
-      rotationVal *= 0.2;
-    } else if (Constants.robotMode == RobotModes.Competition) {
-      if (!this.NOSMode.getAsBoolean()) {
-        translationVal *= 0.6;
-        strafeVal *= 0.6;
-        rotationVal *= 0.3;
-      }
+    if (!this.NOSMode.getAsBoolean()) {
+      translationVal *= 0.6;
+      strafeVal *= 0.6;
+      rotationVal *= 0.3;
     }
 
     /* Drive */
