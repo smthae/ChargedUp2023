@@ -1,9 +1,6 @@
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -13,6 +10,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.Constants.RobotModes;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
 
@@ -23,7 +21,6 @@ public class GoToPosition extends CommandBase {
   private final ProfiledPIDController xController = Constants.Vision.translationController;
   private final ProfiledPIDController yController = Constants.Vision.translationController;
   private final ProfiledPIDController rotationController = Constants.Vision.rotationController;
-  private boolean debug = false;
 
   public GoToPosition(
       Swerve swerve,
@@ -41,43 +38,38 @@ public class GoToPosition extends CommandBase {
     addRequirements(swerve);
   }
 
-  public void setDebug(boolean debug) {
-    this.debug = debug;
-  }
-
   @Override
   public void initialize() {
     var robotPose = this.poseEstimator.getCurrentPose();
     rotationController.reset(robotPose.getRotation().getRadians());
     xController.reset(robotPose.getX());
     yController.reset(robotPose.getY());
+
+    rotationController.setGoal(this.position.getRotation().getY());
+    xController.setGoal(this.position.getX());
+    yController.setGoal(this.position.getY());
   }
 
   @Override
   public void execute() {
     var robotPose2d = this.poseEstimator.getCurrentPose();
-    var robotPose = new Pose3d(
-        robotPose2d.getX(),
-        robotPose2d.getY(),
-        0.0,
-        new Rotation3d(0.0, 0.0, robotPose2d.getRotation().getRadians()));
 
-    var xSpeed = xController.calculate(this.position.getX());
-    // if (xController.atGoal()) {
-    // xSpeed = 0;
-    // }
+    var xSpeed = xController.calculate(robotPose2d.getX());
+    if (xController.atGoal()) {
+      xSpeed = 0;
+    }
 
-    var ySpeed = yController.calculate(this.position.getY());
-    // if (yController.atGoal()) {
-    // ySpeed = 0;
-    // }
+    var ySpeed = yController.calculate(robotPose2d.getY());
+    if (yController.atGoal()) {
+      ySpeed = 0;
+    }
 
-    var omegaSpeed = rotationController.calculate(this.position.getRotation().getY());
-    // if (rotationController.atGoal()) {
-    // omegaSpeed = 0;
-    // }
+    var omegaSpeed = rotationController.calculate(robotPose2d.getRotation().getRadians());
+    if (rotationController.atGoal()) {
+      omegaSpeed = 0;
+    }
 
-    if (debug) {
+    if (Constants.robotMode == RobotModes.Debug) {
       SmartDashboard.putNumber("X target", xSpeed);
       SmartDashboard.putNumber("Y target", ySpeed);
       SmartDashboard.putNumber("Omega target", omegaSpeed);
@@ -88,7 +80,8 @@ public class GoToPosition extends CommandBase {
             xSpeed, ySpeed,
             omegaSpeed,
             robotPose2d.getRotation()));
-    this.swerve.setModuleStates(swerveModuleStates);
+
+    // this.swerve.setModuleStates(swerveModuleStates);
   }
 
   @Override
@@ -98,7 +91,7 @@ public class GoToPosition extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return this.xController.atSetpoint() && this.yController.atSetpoint() && this.rotationController.atSetpoint();
+    return this.xController.atGoal() && this.yController.atGoal() && this.rotationController.atGoal();
   }
 
 }

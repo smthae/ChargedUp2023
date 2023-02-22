@@ -5,11 +5,14 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.PIDConstants;
+import frc.lib.util.ProfiledPIDConstants;
 import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
@@ -22,7 +25,8 @@ public class Arm extends SubsystemBase {
   private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(Constants.Arm.encoderDIOPort);
 
   // Motion Control
-  private final ProfiledPIDController armRotationPID = Constants.Arm.armPID.getController();
+  private final ProfiledPIDConstants armPidConstants = Constants.Arm.armPID;
+  private ProfiledPIDController armRotationPID = Constants.Arm.armPID.getController();
   private double armSetPoint = 0;
 
   public Arm() {
@@ -45,7 +49,7 @@ public class Arm extends SubsystemBase {
 
     // Encoder
     this.armEncoder = this.armLeader.getEncoder();
-    this.armEncoder.setPositionConversionFactor(Constants.Arm.gearRatio);
+    this.armEncoder.setPositionConversionFactor(360 / Constants.Arm.gearRatio);
     this.absoluteEncoder.setPositionOffset(Constants.Arm.encoderOffset);
     if (this.absoluteEncoder.isConnected()) {
       this.armEncoder.setPosition(this.absoluteEncoder.getDistance() - Constants.Arm.encoderOffset);
@@ -56,6 +60,8 @@ public class Arm extends SubsystemBase {
     // PID
     SmartDashboard.putNumber("Arm rotation setpoint", 0);
     SmartDashboard.putNumber("Arm rotation encoder", 0);
+
+    this.armPidConstants.sendDashboard("arm pid");
   }
 
   public void resetArmEncoder() {
@@ -69,6 +75,7 @@ public class Arm extends SubsystemBase {
 
   public void setArmSetpoint(double angle) {
     this.armSetPoint = angle;
+    this.armRotationPID.setGoal(angle);
   }
 
   public double getArmSetpoint() {
@@ -78,18 +85,26 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     double pidOutput, feedforward;
+    this.armPidConstants.retrieveDashboard(this.armRotationPID);
 
     if (this.absoluteEncoder.isConnected()) {
-      pidOutput = this.armRotationPID.calculate(this.absoluteEncoder.getDistance(), this.armSetPoint / 360);
+      pidOutput = this.armRotationPID.calculate(this.absoluteEncoder.getDistance() * 360);
       feedforward = Constants.Arm.armFF.calculate(this.absoluteEncoder.getDistance(), 0);
     } else {
-      pidOutput = this.armRotationPID.calculate(this.armEncoder.getPosition(), this.armSetPoint / 360);
+      pidOutput = this.armRotationPID.calculate(this.armEncoder.getPosition());
       feedforward = Constants.Arm.armFF.calculate(this.armEncoder.getPosition(), 0);
     }
 
+    SmartDashboard.putNumber("Arm pid output", pidOutput);
+    SmartDashboard.putNumber("Arm + feedforward", pidOutput + feedforward);
+    // pidOutput = this.armRotationPID.calculate(this.armEncoder.getPosition(),
+    // this.armSetPoint);
+
     SmartDashboard.putNumber("Arm rotation encoder", this.armEncoder.getPosition());
     SmartDashboard.putNumber("Arm rotation setpoint", this.armSetPoint);
+    SmartDashboard.putNumber("Arm pid output", pidOutput);
 
-    this.armLeader.set(pidOutput + feedforward);
+    this.armLeader.set(pidOutput);
+    // this.armLeader.set(pidOutput + feedforward);
   }
 }

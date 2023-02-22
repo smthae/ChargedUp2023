@@ -44,13 +44,13 @@ public final class Constants {
     public static final Transform3d robotToCamera = cameraToRobot.inverse();
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
-    public static final TrapezoidProfile.Constraints TRANSLATION_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
-    public static final TrapezoidProfile.Constraints ROTATION_CONSTRAINTS = new TrapezoidProfile.Constraints(8, 8);
+    public static final TrapezoidProfile.Constraints TRANSLATION_CONSTRAINTS = new TrapezoidProfile.Constraints(5, 2);
+    public static final TrapezoidProfile.Constraints ROTATION_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
 
     /* Custom PID Controllers for Vision */
-    public static final ProfiledPIDController translationController = new ProfiledPIDController(3, 0, 0,
+    public static final ProfiledPIDController translationController = new ProfiledPIDController(3, 0, 0.2,
         TRANSLATION_CONSTRAINTS);
-    public static final ProfiledPIDController rotationController = new ProfiledPIDController(2, 0, 0,
+    public static final ProfiledPIDController rotationController = new ProfiledPIDController(3, 0, 0.2,
         ROTATION_CONSTRAINTS);
   }
 
@@ -65,13 +65,13 @@ public final class Constants {
     public static final double encoderOffset = 0; // TBD
     public static final ArmFeedforward armFF = new ArmFeedforward(0, 0.92, 1.09, 0.04); // until we have some empirical
                                                                                         // measurement, kS will be added
-    public static final ProfiledPIDConstants armPID = new ProfiledPIDConstants(0.05, 0, 0.02, 0.2, 0.04, 2);
+    public static final ProfiledPIDConstants armPID = new ProfiledPIDConstants(0.09, 0, 0.02, 0.2, 0.09, 2);
     public static final double armMaxOutput = 0.3;
     public static final double kMaxVelocityRadPerSecond = 0.3;
     public static final double kMaxAccelerationRadPerSecSquared = 0.1;
 
     public static final int currentLimit = 40;
-    public static final double gearRatio = 56 / 1.0; // 56:1
+    public static final double gearRatio = 56; // 56:1
   }
 
   public static final class Wrist {
@@ -83,7 +83,7 @@ public final class Constants {
     public static final double encoderOffset = 0; // TBD
     public static final int encoderDIOPort = 1;
 
-    public static final double intakePower = 1;
+    public static final double intakePower = 0.5;
   }
 
   public static final class Swerve {

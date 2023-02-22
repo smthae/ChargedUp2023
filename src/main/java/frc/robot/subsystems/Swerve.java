@@ -74,6 +74,7 @@ public class Swerve extends SubsystemBase {
    */
   public void rotationUpdate(double rotation) {
     if (this.rotationControllerSpeed != 0.0 && rotation == 0) {
+
       CustomThreads.setTimeout(() -> {
         this.orientationWhenReleased = getYaw();
       }, 90);

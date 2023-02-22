@@ -51,7 +51,7 @@ public class Wrist extends SubsystemBase {
 
     // Encoder
     this.wristEncoder = this.wristMotor.getEncoder();
-    this.wristEncoder.setPositionConversionFactor(Constants.Wrist.wristGearRatio);
+    this.wristEncoder.setPositionConversionFactor(360 / Constants.Wrist.wristGearRatio);
     this.wristAbsoluteEncoder.setPositionOffset(Constants.Wrist.encoderOffset);
     if (this.wristAbsoluteEncoder.isConnected()) {
       this.wristEncoder.setPosition(this.wristAbsoluteEncoder.getDistance() - Constants.Wrist.encoderOffset);
@@ -95,12 +95,12 @@ public class Wrist extends SubsystemBase {
   }
 
   public PieceType getGamePieceType() {
-
     if (colorSensor.isConnected()) {
       Color detectedColor = colorSensor.getColor();
       PieceType output;
 
       int proximity = colorSensor.getProximity();
+
       if (proximity < 55) {
         output = PieceType.AIR;
       } else {
@@ -128,6 +128,7 @@ public class Wrist extends SubsystemBase {
 
   public void setWristSetpoint(double value) {
     this.wristSetPoint = value;
+    this.wristRotationPID.setGoal(value);
   }
 
   public double getWristSetpoint() {
@@ -149,7 +150,14 @@ public class Wrist extends SubsystemBase {
     SmartDashboard.putNumber("Wrist relative encoder", this.wristEncoder.getPosition());
     SmartDashboard.putNumber("Wrist absolute encoder", this.wristAbsoluteEncoder.getDistance());
 
-    this.wristMotor.set(this.wristRotationPID.calculate(this.wristAbsoluteEncoder.getDistance(), this.wristSetPoint));
+    double power = 0;
+    if (this.wristAbsoluteEncoder.isConnected()) {
+      power = this.wristRotationPID.calculate(this.wristAbsoluteEncoder.getDistance());
+    } else {
+      power = this.wristRotationPID.calculate(this.wristEncoder.getPosition());
+    }
+    SmartDashboard.putNumber("wrist pid output", power);
+    // this.wristMotor.set(power);
 
     PieceType gamePieceType = this.getGamePieceType();
 

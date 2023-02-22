@@ -123,11 +123,14 @@ public class RobotContainer {
     SmartDashboard.putData("Reset Pose Estimator", new InstantCommand(() -> {
       this.poseEstimator.resetFieldPosition();
     }));
-    GoToPosition goHome = new GoToPosition(s_Swerve, poseEstimator,
-        new Transform3d(new Translation3d(), new Rotation3d()));
-    goHome.setDebug(true);
-
-    SmartDashboard.putData("Go to home", goHome);
+    SmartDashboard.putData("Go to Position", new GoToPosition(s_Swerve, poseEstimator,
+        new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
+            FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));
+    operator.y()
+        .whileTrue(
+            new GoToPosition(s_Swerve, poseEstimator,
+                new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
+                    FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));
   }
 
   public void sendAutoCommands() {

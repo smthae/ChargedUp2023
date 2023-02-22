@@ -22,7 +22,7 @@ public class ArmManualControl extends CommandBase {
   @Override
   public void execute() {
     double y = MathUtil.applyDeadband(this.ySupplier.getAsDouble(), Constants.Swerve.stickDeadband);
-    double change = (maximumDisplacement * y) / 50;
+    double change = y / 50;
 
     this.arm.setArmSetpoint(this.arm.getArmSetpoint() + change);
   }
