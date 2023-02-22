@@ -104,7 +104,7 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm rotation setpoint", this.armSetPoint);
     SmartDashboard.putNumber("Arm pid output", pidOutput);
 
-    this.armLeader.set(pidOutput);
+//    this.armLeader.set(pidOutput);
     // this.armLeader.set(pidOutput + feedforward);
   }
 }

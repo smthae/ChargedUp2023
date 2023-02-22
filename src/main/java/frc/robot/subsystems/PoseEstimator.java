@@ -58,23 +58,24 @@ public class PoseEstimator extends SubsystemBase {
     if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
       previousPipelineTimestamp = resultTimestamp;
       var target = pipelineResult.getBestTarget();
-      var fiducialId = target.getFiducialId();
+      var fiduciaryId = target.getFiducialId();
       Optional<Pose3d> tagPose = aprilTagFieldLayout == null ? Optional.empty()
-          : aprilTagFieldLayout.getTagPose(fiducialId);
-      if (target.getPoseAmbiguity() <= 0.2 && fiducialId >= 0 && tagPose.isPresent()) {
+          : aprilTagFieldLayout.getTagPose(fiduciaryId);
+      if (target.getPoseAmbiguity() <= 0.2 && fiduciaryId >= 0 && tagPose.isPresent()) {
         var targetPos = tagPose.get();
         Transform3d camToTarget = target.getBestCameraToTarget();
-        SmartDashboard.putString("tag to camera", camToTarget.toString());
+        SmartDashboard.putNumber("tag to camera", camToTarget.getY() + Constants.Vision.cameraToRobot.getY());
         Pose3d camPose = targetPos.transformBy(camToTarget.inverse());
 
         var visionMeasurement = camPose.transformBy(Constants.Vision.cameraToRobot);
+
         this.swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(),
             resultTimestamp);
       }
     }
 
     this.swerveDrivePoseEstimator.update(this.swerve.getYaw(), this.swerve.getPositions());
-    SmartDashboard.putString("Estimated Pose", this.getCurrentPose().toString());
+    SmartDashboard.putString("Estimated Pose", this.getFormattedPose());
     field2d.setRobotPose(getCurrentPose());
   }
 
@@ -89,7 +90,7 @@ public class PoseEstimator extends SubsystemBase {
         newPose);
   }
 
-  private String getFomattedPose() {
+  private String getFormattedPose() {
     var pose = getCurrentPose();
     return String.format("(%.2f, %.2f) %.2f degrees",
         pose.getX(),

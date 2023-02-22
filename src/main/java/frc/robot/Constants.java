@@ -39,8 +39,8 @@ public final class Constants {
 
   public static final class Vision {
     public static final String cameraName = "OV5647";
-    public static final Transform3d cameraToRobot = new Transform3d(new Translation3d(-0.30, -0.26, 0),
-        new Rotation3d(0, Units.degreesToRadians(80), 0));
+    public static final Transform3d cameraToRobot = new Transform3d(new Translation3d(0, -0.15, Units.inchesToMeters(19)),
+        new Rotation3d(0, Units.degreesToRadians(90), 0));
     public static final Transform3d robotToCamera = cameraToRobot.inverse();
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 

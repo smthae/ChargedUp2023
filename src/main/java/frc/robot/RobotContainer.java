@@ -68,10 +68,10 @@ public class RobotContainer {
         () -> driver.x().getAsBoolean()));
 
     wrist.setDefaultCommand(
-        new WristControl(wrist, () -> operator.getRightY()));
+        new WristControl(wrist, operator::getRightY));
 
     arm.setDefaultCommand(
-        new ArmManualControl(arm, () -> operator.getLeftY()));
+        new ArmManualControl(arm, operator::getLeftY));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -94,7 +94,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     /* Driver Buttons */
-    driver.back().onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
+    driver.back().onTrue(new InstantCommand(s_Swerve::zeroGyro));
     driver.start().whileTrue(new Balance(s_Swerve));
     driver.leftTrigger().and(() -> driver.rightTrigger().getAsBoolean()).whileTrue(new IntakeIn(wrist, this.s_Swerve));
     driver.leftTrigger().whileTrue(new IntakeIn(wrist, this.s_Swerve));
@@ -108,8 +108,8 @@ public class RobotContainer {
       wrist.setWristSetpoint(15);
       wrist.currentPiece = PieceType.CONE;
     }));
-    operator.back().onTrue(new InstantCommand(() -> wrist.resetWristEncoder()));
-    operator.start().onTrue(new InstantCommand(() -> arm.resetArmEncoder()));
+    operator.back().onTrue(new InstantCommand(wrist::resetWristEncoder));
+    operator.start().onTrue(new InstantCommand(arm::resetArmEncoder));
 
   }
 
@@ -120,9 +120,7 @@ public class RobotContainer {
   }
 
   public void configureTestCommands() {
-    SmartDashboard.putData("Reset Pose Estimator", new InstantCommand(() -> {
-      this.poseEstimator.resetFieldPosition();
-    }));
+    SmartDashboard.putData("Reset Pose Estimator", new InstantCommand(this.poseEstimator::resetFieldPosition));
     SmartDashboard.putData("Go to Position", new GoToPosition(s_Swerve, poseEstimator,
         new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
             FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));

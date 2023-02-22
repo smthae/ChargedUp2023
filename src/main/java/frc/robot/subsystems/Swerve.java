@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.MathUtil;
@@ -18,19 +19,7 @@ import frc.lib.util.CustomThreads;
 import frc.lib.util.SwerveModule;
 import frc.robot.Constants;
 
-/**
- * Swerve subsystem
- *
- * @param mSwerveMods             Swerve modules constants
- * @param gyro                    The gyroscope
- * @param orientationWhenReleased The orientation of the robot when the rotation
- *                                axis' value is 0
- * @param rotationControllerSpeed the tmp value to check determine when the
- *                                rotation value becomes 0
- * @param robotRotationPID        PID controller for position hold
- * @param targetRotationPID       PID controller for vision
- * @param camera
- */
+
 public class Swerve extends SubsystemBase {
   public SwerveModule[] mSwerveMods;
   public Pigeon2 gyro;
@@ -42,6 +31,7 @@ public class Swerve extends SubsystemBase {
   private long defenseDelayStart;
   private final PhotonCamera camera;
   private Translation2d centerOfRotation = new Translation2d();
+
 
   public Swerve(PhotonCamera camera) {
     /* Vision */
