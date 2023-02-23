@@ -22,6 +22,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Go to Position": "Command",
       "/SmartDashboard/Go to home": "Command",
       "/SmartDashboard/Reset Pose Estimator": "Command"
     }

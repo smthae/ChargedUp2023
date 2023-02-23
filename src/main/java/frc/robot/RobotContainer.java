@@ -67,11 +67,8 @@ public class RobotContainer {
         () -> driver.a().getAsBoolean(),
         () -> driver.x().getAsBoolean()));
 
-    wrist.setDefaultCommand(
-        new WristControl(wrist, operator::getRightY));
-
     arm.setDefaultCommand(
-        new ArmManualControl(arm, operator::getLeftY));
+        new ArmManualControl(arm, wrist, operator::getLeftY, operator::getRightY));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -109,7 +106,7 @@ public class RobotContainer {
       wrist.currentPiece = PieceType.CONE;
     }));
     operator.back().onTrue(new InstantCommand(wrist::resetWristEncoder));
-    operator.start().onTrue(new InstantCommand(arm::resetArmEncoder));
+    // operator.start().onTrue(new InstantCommand(arm::resetArmEncoder));
 
   }
 

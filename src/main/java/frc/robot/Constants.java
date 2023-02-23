@@ -18,6 +18,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.lib.math.ArmKinematics;
 import frc.lib.util.SVAConstants;
 import frc.lib.util.SwerveModuleConstants;
 import frc.lib.util.PIDConstants;
@@ -39,7 +40,8 @@ public final class Constants {
 
   public static final class Vision {
     public static final String cameraName = "OV5647";
-    public static final Transform3d cameraToRobot = new Transform3d(new Translation3d(0, -0.15, Units.inchesToMeters(19)),
+    public static final Transform3d cameraToRobot = new Transform3d(
+        new Translation3d(0, -0.15, Units.inchesToMeters(19)),
         new Rotation3d(0, Units.degreesToRadians(90), 0));
     public static final Transform3d robotToCamera = cameraToRobot.inverse();
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
@@ -62,21 +64,22 @@ public final class Constants {
     public static final int leaderMotorID = 31;
     public static final int followerMotorID = 32;
     public static final int encoderDIOPort = 0;
-    public static final double encoderOffset = 0; // TBD
+    public static final double encoderOffset = Units.degreesToRadians(300); // Encoder reading when the arm is parallel to the ground.
     public static final ArmFeedforward armFF = new ArmFeedforward(0, 0.92, 1.09, 0.04); // until we have some empirical
                                                                                         // measurement, kS will be added
-    public static final ProfiledPIDConstants armPID = new ProfiledPIDConstants(0.09, 0, 0.02, 0.2, 0.09, 2);
+    public static final PIDConstants armPID = new PIDConstants(0.1, 0, 0.05, 2);
     public static final double armMaxOutput = 0.3;
     public static final double kMaxVelocityRadPerSecond = 0.3;
     public static final double kMaxAccelerationRadPerSecSquared = 0.1;
 
     public static final int currentLimit = 40;
     public static final double gearRatio = 56; // 56:1
+    public static final ArmKinematics kinematics = new ArmKinematics(3, 0.5);
   }
 
   public static final class Wrist {
     public static final int intakeMotorID = 9;
-    public static final int wristMotorID = 29;
+    public static final int wristMotorID = 33;
 
     public static final ProfiledPIDConstants wristRotationPID = new ProfiledPIDConstants(0.005, 0, 0.05, 0.1, 0.3);
     public static final double wristGearRatio = 40;
