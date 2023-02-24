@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
@@ -30,6 +31,7 @@ public class Arm extends SubsystemBase {
   private PIDController armRotationPID = Constants.Arm.armPID.getController();
 
   private double armSetpoint = 0;
+
 
   public Arm() {
     /* Motors setup */
@@ -61,11 +63,14 @@ public class Arm extends SubsystemBase {
   }
 
   public double getEncoderPosition() {
-    return Units.degreesToRadians(this.absoluteEncoder.getDistance() * 360);
+    return Units.degreesToRadians(this.absoluteEncoder.getDistance() * (360 / 4));
+  }
+
+  public double getEncoderPositionWithOffset() {
+    return this.getEncoderPosition() - Constants.Arm.encoderOffset;
   }
 
   /**
-   * 
    * @param angle in degrees PLS
    */
   public void setArmSetpoint(double angle) {
@@ -73,7 +78,7 @@ public class Arm extends SubsystemBase {
   }
 
   public double getArmSetpoint() {
-    return armSetpoint;
+    return armSetpoint - Constants.Arm.encoderOffset + Units.degreesToRadians(90);
   }
 
   @Override
@@ -81,18 +86,18 @@ public class Arm extends SubsystemBase {
     double pidOutput, feedforward;
     this.armPidConstants.retrieveDashboard(this.armRotationPID);
 
-    pidOutput = this.armRotationPID
-        .calculate(this.getEncoderPosition(), this.armSetpoint);
+    pidOutput = MathUtil.clamp(this.armRotationPID
+            .calculate(this.getEncoderPosition(), this.armSetpoint), -Constants.Arm.armMaxOutput, Constants.Arm.armMaxOutput);
 
     feedforward = Constants.Arm.armFF.calculate(
-        this.getEncoderPosition() - Constants.Arm.encoderOffset, 0);
+            this.getEncoderPosition() - Constants.Arm.encoderOffset, 0);
 
-    SmartDashboard.putNumber("Arm absolute encoder", this.absoluteEncoder.getDistance() * 360);
-    SmartDashboard.putNumber("Arm absolute encoder with offset", this.absoluteEncoder.getDistance() * 360 - Units.radiansToDegrees(Constants.Arm.encoderOffset));
+    SmartDashboard.putNumber("Arm absolute encoder", Units.radiansToDegrees(this.getEncoderPosition()));
+    SmartDashboard.putNumber("Arm absolute encoder with offset", Units.radiansToDegrees(this.getEncoderPosition()) - Units.radiansToDegrees(Constants.Arm.encoderOffset));
     SmartDashboard.putNumber("Arm pid output", pidOutput);
     SmartDashboard.putNumber("Arm pid + ff", pidOutput + feedforward);
-    SmartDashboard.putNumber("Arm rotation setpoint", this.getArmSetpoint());
+    SmartDashboard.putNumber("Arm rotation setpoint", Units.radiansToDegrees(this.getArmSetpoint()));
     // this.armLeader.set(MathUtil.clamp(pidOutput, -0.3, 0.3));
-    // this.armLeader.set(pidOutput + feedforward);
+    this.armLeader.set(pidOutput + feedforward / 12);
   }
 }

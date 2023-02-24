@@ -11,7 +11,9 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,15 +32,15 @@ public class Wrist extends SubsystemBase {
 
   // Encoder
   private final RelativeEncoder wristEncoder;
-  private final DutyCycleEncoder wristAbsoluteEncoder = new DutyCycleEncoder(Constants.Wrist.encoderDIOPort);
 
   // PID
-  private final ProfiledPIDController wristRotationPID = Constants.Wrist.wristRotationPID.getController();
+  private final PIDController wristRotationPID = Constants.Wrist.wristRotationPID.getController();
+  public double wristRelativeToGround = -90;
   private double wristSetPoint = 0;
 
   // Color sensor
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+  public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   public PieceType currentPiece = PieceType.AIR;
 
   public Wrist() {
@@ -48,16 +50,12 @@ public class Wrist extends SubsystemBase {
     this.wristMotor.restoreFactoryDefaults();
     this.wristMotor.enableVoltageCompensation(Constants.Swerve.voltageComp);
     this.wristMotor.setSmartCurrentLimit(30);
+    this.wristMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
     // Encoder
     this.wristEncoder = this.wristMotor.getEncoder();
     this.wristEncoder.setPositionConversionFactor(360 / Constants.Wrist.wristGearRatio);
-    this.wristAbsoluteEncoder.setPositionOffset(Constants.Wrist.encoderOffset);
-    if (this.wristAbsoluteEncoder.isConnected()) {
-      this.wristEncoder.setPosition(this.wristAbsoluteEncoder.getDistance() - Constants.Wrist.encoderOffset);
-    } else {
-      this.wristEncoder.setPosition(0);
-    }
+    this.wristEncoder.setPosition(180 + 30);
 
     SmartDashboard.putNumber("Wrist rotation setpoint", 0);
     SmartDashboard.putNumber("Wrist rotation encoder", 0);
@@ -76,8 +74,10 @@ public class Wrist extends SubsystemBase {
 
   public void intakeIn(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
+      SmartDashboard.putNumber("Fuc", -this.intakePower);
       this.intakeMotor.set(ControlMode.PercentOutput, -this.intakePower);
     } else if (gamePiece == PieceType.CUBE) {
+      SmartDashboard.putNumber("Fuc", this.intakePower);
       this.intakeMotor.set(ControlMode.PercentOutput, this.intakePower);
     }
   }
@@ -100,7 +100,6 @@ public class Wrist extends SubsystemBase {
       PieceType output;
 
       int proximity = colorSensor.getProximity();
-
       if (proximity < 55) {
         output = PieceType.AIR;
       } else {
@@ -109,11 +108,11 @@ public class Wrist extends SubsystemBase {
         SmartDashboard.putNumber("Blue", detectedColor.blue);
         SmartDashboard.putNumber("Proximity", proximity);
         if (detectedColor.red > 0.17 && detectedColor.red < 0.33 && detectedColor.green > 0.27
-            && detectedColor.green < 0.48
-            && detectedColor.blue < 0.49 && detectedColor.blue > 0.27) {
+                && detectedColor.green < 0.48
+                && detectedColor.blue < 0.49 && detectedColor.blue > 0.27) {
           output = PieceType.CUBE;
         } else if (detectedColor.red > 0.31 && detectedColor.red < 0.40 && detectedColor.green > 0.45
-            && detectedColor.green < 0.55 && detectedColor.blue > 0 && detectedColor.blue < 0.23) {
+                && detectedColor.green < 0.55 && detectedColor.blue > 0 && detectedColor.blue < 0.23) {
           output = PieceType.CONE;
         } else {
           output = PieceType.AIR;
@@ -128,7 +127,6 @@ public class Wrist extends SubsystemBase {
 
   public void setWristSetpoint(double value) {
     this.wristSetPoint = value;
-    this.wristRotationPID.setGoal(value);
   }
 
   public double getWristSetpoint() {
@@ -148,16 +146,11 @@ public class Wrist extends SubsystemBase {
   public void periodic() {
 
     SmartDashboard.putNumber("Wrist relative encoder", this.wristEncoder.getPosition());
-    SmartDashboard.putNumber("Wrist absolute encoder", this.wristAbsoluteEncoder.getDistance());
+    SmartDashboard.putNumber("Wrist setpoint", this.wristSetPoint);
 
     double power = 0;
-    if (this.wristAbsoluteEncoder.isConnected()) {
-      power = this.wristRotationPID.calculate(this.wristAbsoluteEncoder.getDistance());
-    } else {
-      power = this.wristRotationPID.calculate(this.wristEncoder.getPosition());
-    }
+    power = this.wristRotationPID.calculate(Units.degreesToRadians(this.wristEncoder.getPosition()), this.wristSetPoint);
     SmartDashboard.putNumber("wrist pid output", power);
-    // this.wristMotor.set(power);
 
     PieceType gamePieceType = this.getGamePieceType();
 

@@ -31,11 +31,9 @@ public class IntakeOut extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    if (this.auto) {
-      PieceType gamePieceType = this.wrist.getGamePieceType();
-      if (gamePieceType == PieceType.AIR) {
-        return true;
-      }
+    PieceType gamePieceType = this.wrist.getGamePieceType();
+    if (gamePieceType == PieceType.AIR) {
+      return true;
     }
     return false;
   }

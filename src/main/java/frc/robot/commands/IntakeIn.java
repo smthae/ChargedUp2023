@@ -40,31 +40,19 @@ public class IntakeIn extends CommandBase {
   }
 
   @Override
-  public void execute() {
-    if (this.auto)
-      return;
-
-    PieceType gamePiece = this.wrist.getGamePieceType();
-    if (gamePiece != PieceType.AIR) {
-      this.wrist.intakeStop();
-    } else {
-      this.wrist.intakeIn(gamePiece);
-    }
-  }
-
-  @Override
   public boolean isFinished() {
-    if (this.auto) {
-      PieceType gamePieceType = this.wrist.getGamePieceType();
-      if (gamePieceType == PieceType.CUBE) {
-        if (this.delayCounterStart != 0 && (System.currentTimeMillis() - this.delayCounterStart >= this.delay)) {
-          return true;
-        } else {
-          this.delayCounterStart = System.currentTimeMillis();
-        }
-      } else if (gamePieceType == PieceType.CONE) {
+    if (this.wrist.colorSensor.getProximity() > 60) {
+      return true;
+    }
+    PieceType gamePieceType = this.wrist.getGamePieceType();
+    if (gamePieceType == PieceType.CUBE) {
+      if (this.delayCounterStart != 0 && (System.currentTimeMillis() - this.delayCounterStart >= this.delay)) {
         return true;
+      } else {
+        this.delayCounterStart = System.currentTimeMillis();
       }
+    } else if (gamePieceType == PieceType.CONE) {
+      return true;
     }
     return false;
   }

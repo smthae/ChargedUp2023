@@ -3,6 +3,8 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
@@ -13,7 +15,7 @@ public class ArmManualControl extends CommandBase {
   private Wrist wrist;
   private DoubleSupplier armYSupplier;
   private DoubleSupplier wristYSupplier;
-  private double maximumDisplacement = 20; // 20 degrees, might need to increase this if it's too slow
+  private double maximumDisplacement = 40; // 40 degrees, might need to increase this if it's too slow
 
   public ArmManualControl(Arm arm, Wrist wrist, DoubleSupplier armYSupplier, DoubleSupplier wristYSupplier) {
     this.arm = arm;
@@ -28,14 +30,15 @@ public class ArmManualControl extends CommandBase {
   public void execute() {
     // Arm
     double armY = MathUtil.applyDeadband(this.armYSupplier.getAsDouble(), Constants.Swerve.stickDeadband);
-    double armChange = (armY  * maximumDisplacement) / 50;
-
-    this.arm.setArmSetpoint(this.arm.getArmSetpoint() + armChange);
+    SmartDashboard.putNumber("the value", armY);
+    double armChange = (armY * maximumDisplacement) / 50;
+    if (armY != 0) this.arm.setArmSetpoint(Units.radiansToDegrees(this.arm.getArmSetpoint()) + armChange);
 
     // Wrist
     double wristY = MathUtil.applyDeadband(this.wristYSupplier.getAsDouble(), Constants.Swerve.stickDeadband);
     double wristChange = (wristY * maximumDisplacement) / 50;
 
-    this.wrist.setWristSetpoint(this.wrist.getWristSetpoint() + wristChange);
+    this.wrist.wristRelativeToGround += Units.degreesToRadians(wristChange);
+    this.wrist.setWristSetpoint(Math.PI - (this.arm.getEncoderPositionWithOffset() - Units.degreesToRadians(this.wrist.wristRelativeToGround)));
   }
 }

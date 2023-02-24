@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.Hashtable;
 
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.photonvision.PhotonCamera;
@@ -56,19 +57,19 @@ public class RobotContainer {
   public RobotContainer() {
     s_Swerve.setName("Drive");
     s_Swerve.setDefaultCommand(new TeleopSwerve(
-        s_Swerve,
-        () -> -driver.getLeftY(),
-        () -> -driver.getLeftX(),
-        () -> -driver.getRightX(),
-        () -> driver.leftBumper().getAsBoolean(),
-        () -> driver.rightBumper().getAsBoolean(),
-        () -> driver.y().getAsBoolean(),
-        () -> driver.b().getAsBoolean(),
-        () -> driver.a().getAsBoolean(),
-        () -> driver.x().getAsBoolean()));
+            s_Swerve,
+            () -> -driver.getLeftY(),
+            () -> -driver.getLeftX(),
+            () -> -driver.getRightX(),
+            () -> driver.leftBumper().getAsBoolean(),
+            () -> driver.rightBumper().getAsBoolean(),
+            () -> driver.y().getAsBoolean(),
+            () -> driver.b().getAsBoolean(),
+            () -> driver.a().getAsBoolean(),
+            () -> driver.x().getAsBoolean()));
 
     arm.setDefaultCommand(
-        new ArmManualControl(arm, wrist, operator::getLeftY, operator::getRightY));
+            new ArmManualControl(arm, wrist, operator::getLeftY, operator::getRightY));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -77,7 +78,9 @@ public class RobotContainer {
     sendAutoCommands();
   }
 
-  /** Actions that we want to do when the robot is disabled. */
+  /**
+   * Actions that we want to do when the robot is disabled.
+   */
   public void disabledActions() {
   }
 
@@ -93,19 +96,10 @@ public class RobotContainer {
     /* Driver Buttons */
     driver.back().onTrue(new InstantCommand(s_Swerve::zeroGyro));
     driver.start().whileTrue(new Balance(s_Swerve));
-    driver.leftTrigger().and(() -> driver.rightTrigger().getAsBoolean()).whileTrue(new IntakeIn(wrist, this.s_Swerve));
-    driver.leftTrigger().whileTrue(new IntakeIn(wrist, this.s_Swerve));
-    driver.rightTrigger().whileTrue(new IntakeOut(wrist));
+//    driver.leftTrigger().and(() -> driver.rightTrigger().getAsBoolean()).whileTrue(new IntakeIn(wrist, this.s_Swerve));
+    driver.leftTrigger().whileTrue(new SequentialCommandGroup(new InstantCommand(() -> this.wrist.currentPiece = PieceType.CONE), new IntakeIn(wrist, this.s_Swerve)));
+    driver.rightTrigger().whileTrue(new SequentialCommandGroup(new InstantCommand(() -> this.wrist.currentPiece = PieceType.CUBE), new IntakeIn(wrist, this.s_Swerve)));
 
-    operator.y().onTrue(new InstantCommand(() -> {
-      wrist.setWristSetpoint(180);
-      wrist.currentPiece = PieceType.CUBE;
-    }));
-    operator.a().onTrue(new InstantCommand(() -> {
-      wrist.setWristSetpoint(15);
-      wrist.currentPiece = PieceType.CONE;
-    }));
-    operator.back().onTrue(new InstantCommand(wrist::resetWristEncoder));
     // operator.start().onTrue(new InstantCommand(arm::resetArmEncoder));
 
   }
@@ -119,13 +113,17 @@ public class RobotContainer {
   public void configureTestCommands() {
     SmartDashboard.putData("Reset Pose Estimator", new InstantCommand(this.poseEstimator::resetFieldPosition));
     SmartDashboard.putData("Go to Position", new GoToPosition(s_Swerve, poseEstimator,
-        new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
-            FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));
-    operator.y()
-        .whileTrue(
-            new GoToPosition(s_Swerve, poseEstimator,
-                new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
+            new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
                     FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));
+    operator.y().onTrue(new InstantCommand(() ->
+            this.arm.setArmSetpoint(70)
+    ));
+    operator.b().onTrue(new InstantCommand(() ->
+            this.arm.setArmSetpoint(100)
+    ));
+    operator.a().onTrue(new InstantCommand(() ->
+            this.arm.setArmSetpoint(120)
+    ));
   }
 
   public void sendAutoCommands() {

@@ -8,6 +8,7 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -18,7 +19,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.lib.math.ArmKinematics;
 import frc.lib.util.SVAConstants;
 import frc.lib.util.SwerveModuleConstants;
 import frc.lib.util.PIDConstants;
@@ -41,8 +41,8 @@ public final class Constants {
   public static final class Vision {
     public static final String cameraName = "OV5647";
     public static final Transform3d cameraToRobot = new Transform3d(
-        new Translation3d(0, -0.15, Units.inchesToMeters(19)),
-        new Rotation3d(0, Units.degreesToRadians(90), 0));
+            new Translation3d(0, -0.15, Units.inchesToMeters(19)),
+            new Rotation3d(0, Units.degreesToRadians(90), 0));
     public static final Transform3d robotToCamera = cameraToRobot.inverse();
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
@@ -51,9 +51,9 @@ public final class Constants {
 
     /* Custom PID Controllers for Vision */
     public static final ProfiledPIDController translationController = new ProfiledPIDController(3, 0, 0.2,
-        TRANSLATION_CONSTRAINTS);
+            TRANSLATION_CONSTRAINTS);
     public static final ProfiledPIDController rotationController = new ProfiledPIDController(3, 0, 0.2,
-        ROTATION_CONSTRAINTS);
+            ROTATION_CONSTRAINTS);
   }
 
   public static final class Operators {
@@ -64,24 +64,23 @@ public final class Constants {
     public static final int leaderMotorID = 31;
     public static final int followerMotorID = 32;
     public static final int encoderDIOPort = 0;
-    public static final double encoderOffset = Units.degreesToRadians(300); // Encoder reading when the arm is parallel to the ground.
+    public static final double encoderOffset = Units.degreesToRadians(75); // Encoder reading when the arm is parallel to the ground.
     public static final ArmFeedforward armFF = new ArmFeedforward(0, 0.92, 1.09, 0.04); // until we have some empirical
-                                                                                        // measurement, kS will be added
-    public static final PIDConstants armPID = new PIDConstants(0.1, 0, 0.05, 2);
+    // measurement, kS will be added
+    public static final PIDConstants armPID = new PIDConstants(1, 0, 0.1, 2);
     public static final double armMaxOutput = 0.3;
     public static final double kMaxVelocityRadPerSecond = 0.3;
     public static final double kMaxAccelerationRadPerSecSquared = 0.1;
 
     public static final int currentLimit = 40;
     public static final double gearRatio = 56; // 56:1
-    public static final ArmKinematics kinematics = new ArmKinematics(3, 0.5);
   }
 
   public static final class Wrist {
     public static final int intakeMotorID = 9;
     public static final int wristMotorID = 33;
 
-    public static final ProfiledPIDConstants wristRotationPID = new ProfiledPIDConstants(0.005, 0, 0.05, 0.1, 0.3);
+    public static final PIDConstants wristRotationPID = new PIDConstants(0.05, 0, 0.05);
     public static final double wristGearRatio = 40;
     public static final double encoderOffset = 0; // TBD
     public static final int encoderDIOPort = 1;
@@ -105,7 +104,7 @@ public final class Constants {
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
     public static final Matrix<N3, N1> stateStdDevs = new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.05, 0.05,
-        Units.degreesToRadians(2));
+            Units.degreesToRadians(2));
 
     public static final double driveGearRatio = (6.75 / 1.0); // 6.75:1
     public static final double angleGearRatio = 150.0 / 7.0; // 150/7:1
@@ -120,10 +119,10 @@ public final class Constants {
 
     /* Kinematics */
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
-        new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
-        new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
-        new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-        new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
+            new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
+            new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
+            new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
+            new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
 
     /* Swerve Compensation */
     public static final double voltageComp = 12.0;
@@ -153,8 +152,8 @@ public final class Constants {
     public static final boolean canCoderInvert = false;
 
     /* Module Specific Constants */
-    public static final String[] moduleNames = { "Front Left", "Front Right", "Back Left", "Back Right" }; // module #0,
-                                                                                                           // #1, #2, #3
+    public static final String[] moduleNames = {"Front Left", "Front Right", "Back Left", "Back Right"}; // module #0,
+    // #1, #2, #3
 
     /* Front Left Module - Module 0 */
     public static final class Mod0 {
@@ -167,7 +166,7 @@ public final class Constants {
       public static final PIDConstants drivePID = new PIDConstants(0.1, 0.0, 0.000);
       public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.6797, 0.17176);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
-          canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
+              canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
     }
 
     /* Front Right Module - Module 1 */
@@ -181,7 +180,7 @@ public final class Constants {
       public static final PIDConstants drivePID = new PIDConstants(0.1, 0.0, 0.000);
       public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.6797, 0.17176);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
-          canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
+              canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
     }
 
     /* Back Left Module - Module 2 */
@@ -195,7 +194,7 @@ public final class Constants {
       public static final PIDConstants drivePID = new PIDConstants(0.1, 0.0, 0.000);
       public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.6797, 0.17176);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
-          canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
+              canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
     }
 
     /* Back Right Module - Module 3 */
@@ -209,7 +208,7 @@ public final class Constants {
       public static final PIDConstants drivePID = new PIDConstants(0.1, 0.0, 0.000);
       public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.6797, 0.17176);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
-          canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
+              canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
     }
   }
 
@@ -224,6 +223,6 @@ public final class Constants {
 
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+            kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 }
