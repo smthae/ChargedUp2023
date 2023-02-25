@@ -104,26 +104,26 @@ public class RobotContainer {
 
     driver.leftTrigger().whileTrue(new ParallelCommandGroup(
         leds.solidYellow(),
-        new MoveArm(this.arm, 41),
+        new MoveArm(this.arm, -49),
         new MoveWrist(this.wrist, 1.129295),
         new IntakeIn(this.wrist, PieceType.CONE)));
 
     driver.rightTrigger().whileTrue(new ParallelCommandGroup(
         leds.solidViolet(),
-        new MoveArm(this.arm, 33.714775),
+        new MoveArm(this.arm, -56.3),
         new MoveWrist(this.wrist, 1.81986),
         new IntakeIn(this.wrist, PieceType.CUBE)));
 
     operator.rightTrigger().whileTrue(new IntakeOut(wrist));
     operator.y().onTrue(new SequentialCommandGroup(
-        new MoveArm(this.arm, 122),
+        new MoveArm(this.arm, 32),
         new MoveWrist(this.wrist, 0.149669)));
     operator.b().onTrue(new SequentialCommandGroup(
-        new MoveArm(this.arm, 121),
+        new MoveArm(this.arm, 31),
         new MoveWrist(this.wrist, -0.649656)));
 
     operator.x().onTrue(new SequentialCommandGroup(
-        new MoveArm(this.arm, 80.645746),
+        new MoveArm(this.arm, -9.355),
         new MoveWrist(this.wrist, 1.819860)));
 
     operator.start().onTrue(leds.solidYellow());

@@ -159,10 +159,10 @@ public class Wrist extends SubsystemBase {
     this.wristRotationPidConstants.retrieveDashboard(this.wristRotationPID);
 
     if (this.getAbsoluteEncoder() > Constants.Wrist.maxAngle) {
-      this.setWristSetpoint(Constants.Wrist.maxAngle);
+      this.wristSetPoint = Constants.Wrist.maxAngle;
       SmartDashboard.putString("wrist limit", "MAX EXCEEDED");
     } else if (this.getAbsoluteEncoder() < Constants.Wrist.minAngle) {
-      this.setWristSetpoint(Constants.Wrist.minAngle);
+      this.wristSetPoint = Constants.Wrist.minAngle;
       SmartDashboard.putString("wrist limit", "MIN EXCEEDED");
     } else {
       SmartDashboard.putString("wrist limit", "none");
