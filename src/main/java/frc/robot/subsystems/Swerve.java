@@ -19,7 +19,6 @@ import frc.lib.util.CustomThreads;
 import frc.lib.util.SwerveModule;
 import frc.robot.Constants;
 
-
 public class Swerve extends SubsystemBase {
   public SwerveModule[] mSwerveMods;
   public Pigeon2 gyro;
@@ -31,7 +30,6 @@ public class Swerve extends SubsystemBase {
   private long defenseDelayStart;
   private final PhotonCamera camera;
   private Translation2d centerOfRotation = new Translation2d();
-
 
   public Swerve(PhotonCamera camera) {
     /* Vision */
@@ -64,10 +62,7 @@ public class Swerve extends SubsystemBase {
    */
   public void rotationUpdate(double rotation) {
     if (this.rotationControllerSpeed != 0.0 && rotation == 0) {
-
-      CustomThreads.setTimeout(() -> {
-        this.orientationWhenReleased = getYaw();
-      }, 90);
+      this.orientationWhenReleased = getYaw();
     }
     this.rotationControllerSpeed = rotation;
   }

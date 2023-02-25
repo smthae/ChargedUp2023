@@ -32,10 +32,11 @@ public class Wrist extends SubsystemBase {
 
   // Encoder
   private final RelativeEncoder wristEncoder;
+  private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(Constants.Wrist.absoluteEncoderPort);
 
   // PID
+  private final PIDConstants wristRotationPidConstants = Constants.Wrist.wristRotationPID;
   private final PIDController wristRotationPID = Constants.Wrist.wristRotationPID.getController();
-  public double wristRelativeToGround = -90;
   private double wristSetPoint = 0;
 
   // Color sensor
@@ -55,12 +56,17 @@ public class Wrist extends SubsystemBase {
     // Encoder
     this.wristEncoder = this.wristMotor.getEncoder();
     this.wristEncoder.setPositionConversionFactor(360 / Constants.Wrist.wristGearRatio);
-    this.wristEncoder.setPosition(180 + 30);
+    this.wristEncoder.setPosition(0);
+
+    this.wristSetPoint = this.getAbsoluteEncoder();
 
     SmartDashboard.putNumber("Wrist rotation setpoint", 0);
-    SmartDashboard.putNumber("Wrist rotation encoder", 0);
+    SmartDashboard.putNumber("Wrist relative encoder", 0);
+    SmartDashboard.putNumber("Wrist absolute encoder", 0);
+    SmartDashboard.putNumber("intake power", this.intakePower);
 
     TalonFXConfiguration intakeMotorConfiguration = new TalonFXConfiguration();
+    this.wristRotationPidConstants.sendDashboard("Wrist Rotation");
     // intakeMotorConfiguration.supplyCurrLimit = new
     // SupplyCurrentLimitConfiguration(
     // true,
@@ -108,11 +114,11 @@ public class Wrist extends SubsystemBase {
         SmartDashboard.putNumber("Blue", detectedColor.blue);
         SmartDashboard.putNumber("Proximity", proximity);
         if (detectedColor.red > 0.17 && detectedColor.red < 0.33 && detectedColor.green > 0.27
-                && detectedColor.green < 0.48
-                && detectedColor.blue < 0.49 && detectedColor.blue > 0.27) {
+            && detectedColor.green < 0.48
+            && detectedColor.blue < 0.49 && detectedColor.blue > 0.27) {
           output = PieceType.CUBE;
         } else if (detectedColor.red > 0.31 && detectedColor.red < 0.40 && detectedColor.green > 0.45
-                && detectedColor.green < 0.55 && detectedColor.blue > 0 && detectedColor.blue < 0.23) {
+            && detectedColor.green < 0.55 && detectedColor.blue > 0 && detectedColor.blue < 0.23) {
           output = PieceType.CONE;
         } else {
           output = PieceType.AIR;
@@ -120,17 +126,25 @@ public class Wrist extends SubsystemBase {
       }
       return output;
     } else {
-      return this.currentPiece;
+      return PieceType.AIR;
     }
 
   }
 
-  public void setWristSetpoint(double value) {
-    this.wristSetPoint = value;
+  /**
+   * 
+   * @param angle pls in radians
+   */
+  public void setWristSetpoint(double angle) {
+    this.wristSetPoint = angle;
   }
 
   public double getWristSetpoint() {
     return this.wristSetPoint;
+  }
+
+  public double getAbsoluteEncoder() {
+    return Units.degreesToRadians(this.absoluteEncoder.getDistance() * 360) - Constants.Wrist.positionOffset;
   }
 
   public void resetWristEncoder() {
@@ -144,13 +158,19 @@ public class Wrist extends SubsystemBase {
 
   @Override
   public void periodic() {
+    this.wristRotationPidConstants.retrieveDashboard(this.wristRotationPID);
+    this.intakePower = SmartDashboard.getNumber("intake power", this.intakePower);
 
     SmartDashboard.putNumber("Wrist relative encoder", this.wristEncoder.getPosition());
+    SmartDashboard.putNumber("Wrist absolute encoder", this.absoluteEncoder.getDistance() * 360);
+
     SmartDashboard.putNumber("Wrist setpoint", this.wristSetPoint);
 
     double power = 0;
-    power = this.wristRotationPID.calculate(Units.degreesToRadians(this.wristEncoder.getPosition()), this.wristSetPoint);
+    power = this.wristRotationPID.calculate(this.getAbsoluteEncoder(),
+        this.wristSetPoint);
     SmartDashboard.putNumber("wrist pid output", power);
+    this.wristMotor.set(power);
 
     PieceType gamePieceType = this.getGamePieceType();
 

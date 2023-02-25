@@ -20,8 +20,8 @@ public class IntakeOut extends CommandBase {
 
   @Override
   public void initialize() {
-    this.pieceType = this.wrist.getGamePieceType();
-    this.wrist.intakeOut(this.pieceType);
+    // this.pieceType = this.wrist.getGamePieceType();
+    this.wrist.intakeOut(this.wrist.currentPiece);
   }
 
   @Override
@@ -31,10 +31,11 @@ public class IntakeOut extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    PieceType gamePieceType = this.wrist.getGamePieceType();
-    if (gamePieceType == PieceType.AIR) {
-      return true;
-    }
     return false;
+    // PieceType gamePieceType = this.wrist.getGamePieceType();
+    // if (gamePieceType == PieceType.AIR) {
+    // return true;
+    // }
+    // return false;
   }
 }

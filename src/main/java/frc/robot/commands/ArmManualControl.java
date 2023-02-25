@@ -29,16 +29,16 @@ public class ArmManualControl extends CommandBase {
   @Override
   public void execute() {
     // Arm
-    double armY = MathUtil.applyDeadband(this.armYSupplier.getAsDouble(), Constants.Swerve.stickDeadband);
+    double armY = -MathUtil.applyDeadband(this.armYSupplier.getAsDouble(), Constants.Swerve.stickDeadband);
     SmartDashboard.putNumber("the value", armY);
     double armChange = (armY * maximumDisplacement) / 50;
-    if (armY != 0) this.arm.setArmSetpoint(Units.radiansToDegrees(this.arm.getArmSetpoint()) + armChange);
+    if (armY != 0)
+      this.arm.setArmSetpoint(Units.radiansToDegrees(this.arm.getArmSetpoint()) + armChange);
 
     // Wrist
-    double wristY = MathUtil.applyDeadband(this.wristYSupplier.getAsDouble(), Constants.Swerve.stickDeadband);
-    double wristChange = (wristY * maximumDisplacement) / 50;
+    double wristY = -MathUtil.applyDeadband(this.wristYSupplier.getAsDouble(), Constants.Swerve.stickDeadband);
+    double wristChange = (wristY * 80) / 50;
 
-    this.wrist.wristRelativeToGround += Units.degreesToRadians(wristChange);
-    this.wrist.setWristSetpoint(Math.PI - (this.arm.getEncoderPositionWithOffset() - Units.degreesToRadians(this.wrist.wristRelativeToGround)));
+    this.wrist.setWristSetpoint(this.wrist.getWristSetpoint() + Units.degreesToRadians(wristChange));
   }
 }
