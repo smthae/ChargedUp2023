@@ -82,24 +82,27 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double pidOutput, feedforward;
+    double pidOutput;
     this.armPidConstants.retrieveDashboard(this.armRotationPID);
 
+    if (this.getArmSetpoint() > Constants.Arm.armMaxAngle) {
+      this.setArmSetpoint(Constants.Arm.armMaxAngle);
+      SmartDashboard.putString("arm limit", "MAX EXCEEDED");
+    }
+    if (this.getArmSetpoint() < Constants.Arm.armMinAngle) {
+      this.setArmSetpoint(Constants.Arm.armMinAngle);
+      SmartDashboard.putString("arm limit", "MIN EXCEEDED");
+    }
     pidOutput = MathUtil.clamp(this.armRotationPID
         .calculate(this.getEncoderPosition(), this.armSetpoint), -0.05,
         Constants.Arm.armMaxOutput);
-
-    feedforward = Constants.Arm.armFF.calculate(
-        this.getEncoderPosition() - Constants.Arm.encoderOffset, 0);
 
     SmartDashboard.putNumber("Arm absolute encoder", Units.radiansToDegrees(this.getEncoderPosition()));
     SmartDashboard.putNumber("Arm absolute encoder with offset",
         Units.radiansToDegrees(this.getEncoderPosition()) - Units.radiansToDegrees(Constants.Arm.encoderOffset));
     SmartDashboard.putNumber("Arm pid output", pidOutput);
-    SmartDashboard.putNumber("Arm pid + ff", pidOutput + feedforward);
     SmartDashboard.putNumber("Arm rotation setpoint", Units.radiansToDegrees(this.getArmSetpoint()));
     SmartDashboard.putNumber("error", this.getEncoderPosition() - this.armSetpoint);
-    // this.armLeader.set(MathUtil.clamp(pidOutput, -0.3, 0.3));
     this.armLeader.set(pidOutput);
   }
 }

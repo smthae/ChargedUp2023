@@ -60,11 +60,6 @@ public class Wrist extends SubsystemBase {
 
     this.wristSetPoint = this.getAbsoluteEncoder();
 
-    SmartDashboard.putNumber("Wrist rotation setpoint", 0);
-    SmartDashboard.putNumber("Wrist relative encoder", 0);
-    SmartDashboard.putNumber("Wrist absolute encoder", 0);
-    SmartDashboard.putNumber("intake power", this.intakePower);
-
     TalonFXConfiguration intakeMotorConfiguration = new TalonFXConfiguration();
     this.wristRotationPidConstants.sendDashboard("Wrist Rotation");
     // intakeMotorConfiguration.supplyCurrLimit = new
@@ -80,10 +75,8 @@ public class Wrist extends SubsystemBase {
 
   public void intakeIn(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
-      SmartDashboard.putNumber("Fuc", -this.intakePower);
       this.intakeMotor.set(ControlMode.PercentOutput, -this.intakePower);
     } else if (gamePiece == PieceType.CUBE) {
-      SmartDashboard.putNumber("Fuc", this.intakePower);
       this.intakeMotor.set(ControlMode.PercentOutput, this.intakePower);
     }
   }
@@ -159,17 +152,15 @@ public class Wrist extends SubsystemBase {
   @Override
   public void periodic() {
     this.wristRotationPidConstants.retrieveDashboard(this.wristRotationPID);
-    this.intakePower = SmartDashboard.getNumber("intake power", this.intakePower);
 
     SmartDashboard.putNumber("Wrist relative encoder", this.wristEncoder.getPosition());
     SmartDashboard.putNumber("Wrist absolute encoder", this.absoluteEncoder.getDistance() * 360);
-
     SmartDashboard.putNumber("Wrist setpoint", this.wristSetPoint);
 
     double power = 0;
     power = this.wristRotationPID.calculate(this.getAbsoluteEncoder(),
         this.wristSetPoint);
-    SmartDashboard.putNumber("wrist pid output", power);
+    SmartDashboard.putNumber("Wrist pid output", power);
     this.wristMotor.set(power);
 
     PieceType gamePieceType = this.getGamePieceType();

@@ -62,8 +62,9 @@ public class Swerve extends SubsystemBase {
    */
   public void rotationUpdate(double rotation) {
     if (this.rotationControllerSpeed != 0.0 && rotation == 0) {
-      this.orientationWhenReleased = getYaw();
+      this.resetHold();
     }
+
     this.rotationControllerSpeed = rotation;
   }
 
@@ -299,9 +300,5 @@ public class Swerve extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("yaw", getYaw().getDegrees());
     SmartDashboard.putNumber("orientationHold", this.orientationWhenReleased.getDegrees());
-
-    for (SwerveModule mod : mSwerveMods) {
-      mod.updateDashboardValues();
-    }
   }
 }

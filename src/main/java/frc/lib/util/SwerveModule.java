@@ -67,13 +67,16 @@ public class SwerveModule {
     lastAngle = getState().angle.getDegrees();
 
     // ANGLE PID DASHBOARD
-    this.anglePID.sendDashboard(Constants.Swerve.moduleNames[this.moduleNumber] + "Angle");
+    // this.anglePID.sendDashboard(Constants.Swerve.moduleNames[this.moduleNumber] +
+    // "Angle");
     // DRIVE PID DASHBOARD
-    this.drivePID.sendDashboard(Constants.Swerve.moduleNames[this.moduleNumber] + "Drive");
+    // this.drivePID.sendDashboard(Constants.Swerve.moduleNames[this.moduleNumber] +
+    // "Drive");
     // DRIVE SVA DASHBOARD
-    this.driveSVA.sendDashboard(Constants.Swerve.moduleNames[this.moduleNumber] + "Drive");
+    // this.driveSVA.sendDashboard(Constants.Swerve.moduleNames[this.moduleNumber] +
+    // "Drive");
 
-    this.updateDashboardValues();
+    // this.updateDashboardValues();
   }
 
   public void updateDashboardValues() {
@@ -93,7 +96,7 @@ public class SwerveModule {
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-    this.updateControllerValues();
+    // this.updateControllerValues();
     desiredState = OnboardModuleState.optimize(
         desiredState,
         getState().angle); // Custom optimize command, since default WPILib optimize assumes
@@ -154,8 +157,9 @@ public class SwerveModule {
           ControlType.kVelocity,
           0,
           feedforward.calculate(desiredState.speedMetersPerSecond));
-      SmartDashboard.putNumber(Constants.Swerve.moduleNames[this.moduleNumber] + " Drive Set Velocity",
-          desiredState.speedMetersPerSecond);
+      // SmartDashboard.putNumber(Constants.Swerve.moduleNames[this.moduleNumber] + "
+      // Drive Set Velocity",
+      // desiredState.speedMetersPerSecond);
     }
   }
 

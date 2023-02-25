@@ -75,6 +75,9 @@ public final class Constants {
 
     public static final int currentLimit = 40;
     public static final double gearRatio = 56; // 56:1
+
+    public static final double armMaxAngle = Units.degreesToRadians(150);
+    public static final double armMinAngle = Units.degreesToRadians(10);
   }
 
   public static final class Wrist {
