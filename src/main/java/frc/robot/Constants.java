@@ -93,7 +93,7 @@ public final class Constants {
     public static final double positionOffset = Units.degreesToRadians(160);
 
     public static final double maxAngle = Units.degreesToRadians(150);
-    public static final double minAngle = Units.degreesToRadians(-150);
+    public static final double minAngle = Units.degreesToRadians(-90);
   }
 
   public static final class Swerve {
