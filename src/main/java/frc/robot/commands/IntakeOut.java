@@ -6,16 +6,9 @@ import frc.robot.subsystems.Wrist;
 
 public class IntakeOut extends CommandBase {
   private final Wrist wrist;
-  private boolean auto = false;
-  private PieceType pieceType = PieceType.AIR;
 
   public IntakeOut(Wrist wrist) {
     this.wrist = wrist;
-  }
-
-  public IntakeOut(Wrist wrist, boolean auto) {
-    this.wrist = wrist;
-    this.auto = auto;
   }
 
   @Override
@@ -31,11 +24,9 @@ public class IntakeOut extends CommandBase {
 
   @Override
   public boolean isFinished() {
+    if (this.wrist.colorSensor.isConnected() && this.wrist.getGamePieceType() == PieceType.AIR) {
+      return true;
+    }
     return false;
-    // PieceType gamePieceType = this.wrist.getGamePieceType();
-    // if (gamePieceType == PieceType.AIR) {
-    // return true;
-    // }
-    // return false;
   }
 }

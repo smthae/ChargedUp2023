@@ -24,7 +24,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
 
 public class Wrist extends SubsystemBase {
-  private double intakePower = Constants.Wrist.intakePower;
 
   // Motors
   private final CANSparkMax wristMotor = new CANSparkMax(Constants.Wrist.wristMotorID, MotorType.kBrushless);
@@ -71,21 +70,23 @@ public class Wrist extends SubsystemBase {
 
     intakeMotor.configFactoryDefault();
     intakeMotor.configAllSettings(intakeMotorConfiguration);
+
+    SmartDashboard.putString("wrist limit", "none");
   }
 
   public void intakeIn(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -this.intakePower);
+      this.intakeMotor.set(ControlMode.PercentOutput, -1);
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, this.intakePower);
+      this.intakeMotor.set(ControlMode.PercentOutput, 1);
     }
   }
 
   public void intakeOut(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, this.intakePower);
+      this.intakeMotor.set(ControlMode.PercentOutput, 0.5);
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -this.intakePower);
+      this.intakeMotor.set(ControlMode.PercentOutput, -1);
     }
   }
 
@@ -119,7 +120,7 @@ public class Wrist extends SubsystemBase {
       }
       return output;
     } else {
-      return PieceType.AIR;
+      return this.currentPiece;
     }
 
   }
@@ -130,6 +131,11 @@ public class Wrist extends SubsystemBase {
    */
   public void setWristSetpoint(double angle) {
     this.wristSetPoint = angle;
+    this.handleMovement();
+  }
+
+  public boolean atSetpoint() {
+    return this.wristRotationPID.atSetpoint();
   }
 
   public double getWristSetpoint() {
@@ -149,20 +155,35 @@ public class Wrist extends SubsystemBase {
     // }, 20);
   }
 
-  @Override
-  public void periodic() {
+  public double handleMovement() {
     this.wristRotationPidConstants.retrieveDashboard(this.wristRotationPID);
 
-    SmartDashboard.putNumber("Wrist relative encoder", this.wristEncoder.getPosition());
-    SmartDashboard.putNumber("Wrist absolute encoder", this.absoluteEncoder.getDistance() * 360);
-    SmartDashboard.putNumber("Wrist setpoint", this.wristSetPoint);
+    if (this.getAbsoluteEncoder() > Constants.Wrist.maxAngle) {
+      this.setWristSetpoint(Constants.Wrist.maxAngle);
+      SmartDashboard.putString("wrist limit", "MAX EXCEEDED");
+    } else if (this.getAbsoluteEncoder() < Constants.Wrist.minAngle) {
+      this.setWristSetpoint(Constants.Wrist.minAngle);
+      SmartDashboard.putString("wrist limit", "MIN EXCEEDED");
+    } else {
+      SmartDashboard.putString("wrist limit", "none");
+    }
 
     double power = 0;
     power = this.wristRotationPID.calculate(this.getAbsoluteEncoder(),
         this.wristSetPoint);
-    SmartDashboard.putNumber("Wrist pid output", power);
-    this.wristMotor.set(power);
 
+    return power;
+  }
+
+  @Override
+  public void periodic() {
+    double power = this.handleMovement();
+
+    this.wristMotor.set(power);
+    SmartDashboard.putNumber("Wrist relative encoder", this.wristEncoder.getPosition());
+    SmartDashboard.putNumber("Wrist pid output", power);
+    SmartDashboard.putNumber("Wrist absolute encoder", this.getAbsoluteEncoder());
+    SmartDashboard.putNumber("Wrist setpoint", this.wristSetPoint);
     PieceType gamePieceType = this.getGamePieceType();
 
     switch (gamePieceType) {

@@ -37,6 +37,7 @@ public final class Constants {
   }
 
   public static final RobotModes robotMode = RobotModes.Debug;
+  public static final int blinkinPort = 0;
 
   public static final class Vision {
     public static final String cameraName = "OV5647";
@@ -90,6 +91,9 @@ public final class Constants {
     public static final double intakePower = 0.5;
     public static final int absoluteEncoderPort = 1;
     public static final double positionOffset = Units.degreesToRadians(160);
+
+    public static final double maxAngle = Units.degreesToRadians(-150);
+    public static final double minAngle = Units.degreesToRadians(150);
   }
 
   public static final class Swerve {

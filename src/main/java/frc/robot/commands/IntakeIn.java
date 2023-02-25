@@ -8,55 +8,45 @@ import frc.robot.subsystems.Wrist;
 
 public class IntakeIn extends CommandBase {
   private final Wrist wrist;
-  private Swerve swerve;
-  private boolean auto = false;
-  private int delay = 200;
-  private long delayCounterStart = 0;
+  private PieceType gamePieceType;
+  // private int delay = 200;
+  // private long delayCounterStart = 0;
 
-  public IntakeIn(Wrist wrist, Swerve swerve) {
+  public IntakeIn(Wrist wrist, PieceType gamePiece) {
     this.wrist = wrist;
-    this.swerve = swerve;
-  }
+    this.gamePieceType = gamePiece;
 
-  public IntakeIn(Wrist wrist, boolean auto) {
-    this.wrist = wrist;
-    this.auto = auto;
   }
 
   @Override
   public void initialize() {
-    this.wrist.intakeIn(this.wrist.currentPiece);
-    if (!this.auto) {
-      this.swerve.setCoR(new Translation2d(1, 0));
-    }
+    this.wrist.currentPiece = this.gamePieceType;
+    this.wrist.intakeIn(this.gamePieceType);
   }
 
   @Override
   public void end(boolean interrupted) {
     this.wrist.intakeStop();
-    if (!this.auto) {
-      this.swerve.resetCoR();
-    }
   }
 
   @Override
   public boolean isFinished() {
+    if (!this.wrist.colorSensor.isConnected()) {
+      return false;
+    }
+    PieceType gamePieceType = this.wrist.getGamePieceType();
+    if (gamePieceType == PieceType.CUBE) {
+      // if (this.delayCounterStart != 0 && (System.currentTimeMillis() -
+      // this.delayCounterStart >= this.delay)) {
+      // return true;
+      // } else {
+      // this.delayCounterStart = System.currentTimeMillis();
+      // }
+      return true;
+    } else if (gamePieceType == PieceType.CONE) {
+      return true;
+    }
     return false;
-    // if (this.wrist.colorSensor.getProximity() > 60) {
-    // return true;
-    // }
-    // PieceType gamePieceType = this.wrist.getGamePieceType();
-    // if (gamePieceType == PieceType.CUBE) {
-    // if (this.delayCounterStart != 0 && (System.currentTimeMillis() -
-    // this.delayCounterStart >= this.delay)) {
-    // return true;
-    // } else {
-    // this.delayCounterStart = System.currentTimeMillis();
-    // }
-    // } else if (gamePieceType == PieceType.CONE) {
-    // return true;
-    // }
-    // return false;
   }
 
 }

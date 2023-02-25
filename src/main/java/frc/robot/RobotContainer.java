@@ -20,7 +20,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.PieceType;
 import frc.robot.autos.*;
@@ -47,6 +49,7 @@ public class RobotContainer {
   final Swerve s_Swerve = new Swerve(camera);
   final Wrist wrist = new Wrist();
   final Arm arm = new Arm();
+  final LEDs leds = new LEDs();
   public final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve, camera);
 
   /* Auto */
@@ -97,26 +100,34 @@ public class RobotContainer {
     /* Driver Buttons */
     driver.back().onTrue(new InstantCommand(s_Swerve::zeroGyro));
     driver.start().whileTrue(new Balance(s_Swerve));
-    // driver.leftTrigger().and(() ->
-    // driver.rightTrigger().getAsBoolean()).whileTrue(new IntakeIn(wrist,
-    // this.s_Swerve));
-    driver.leftTrigger().whileTrue(new SequentialCommandGroup(
-        new InstantCommand(() -> {
-          this.arm.setArmSetpoint(41);
-          this.wrist.setWristSetpoint(1.129295);
-          this.wrist.currentPiece = PieceType.CONE;
-        }), new IntakeIn(wrist, this.s_Swerve)));
-    driver.rightTrigger().whileTrue(new SequentialCommandGroup(
-        new InstantCommand(() -> {
-          this.arm.setArmSetpoint(33.714775);
-          this.wrist.setWristSetpoint(1.81986);
-          this.wrist.currentPiece = PieceType.CUBE;
-        }), new IntakeIn(wrist, this.s_Swerve)));
+    driver.leftStick().whileTrue(new FancyRotation(s_Swerve));
+
+    driver.leftTrigger().whileTrue(new ParallelCommandGroup(
+        leds.solidYellow(),
+        new MoveArm(this.arm, 41),
+        new MoveWrist(this.wrist, 1.129295),
+        new IntakeIn(this.wrist, PieceType.CONE)));
+
+    driver.rightTrigger().whileTrue(new ParallelCommandGroup(
+        leds.solidViolet(),
+        new MoveArm(this.arm, 33.714775),
+        new MoveWrist(this.wrist, 1.81986),
+        new IntakeIn(this.wrist, PieceType.CUBE)));
 
     operator.rightTrigger().whileTrue(new IntakeOut(wrist));
+    operator.y().onTrue(new SequentialCommandGroup(
+        new MoveArm(this.arm, 122),
+        new MoveWrist(this.wrist, 0.149669)));
+    operator.b().onTrue(new SequentialCommandGroup(
+        new MoveArm(this.arm, 121),
+        new MoveWrist(this.wrist, -0.649656)));
 
-    // operator.start().onTrue(new InstantCommand(arm::resetArmEncoder));
+    operator.x().onTrue(new SequentialCommandGroup(
+        new MoveArm(this.arm, 80.645746),
+        new MoveWrist(this.wrist, 1.819860)));
 
+    operator.start().onTrue(leds.solidYellow());
+    operator.back().onTrue(leds.solidViolet());
   }
 
   public void configureAutoCommands() {
@@ -130,25 +141,6 @@ public class RobotContainer {
     SmartDashboard.putData("Go to Position", new GoToPosition(s_Swerve, poseEstimator,
         new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
             FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));
-    operator.y().onTrue(new InstantCommand(() -> {
-      this.arm.setArmSetpoint(122);
-      this.wrist.setWristSetpoint(0.149669);
-      this.wrist.currentPiece = PieceType.CONE;
-
-    }));
-    operator.b().onTrue(new InstantCommand(() -> {
-      this.arm.setArmSetpoint(121);
-      this.wrist.setWristSetpoint(-0.649656);
-      this.wrist.currentPiece = PieceType.CONE;
-
-    }));
-    operator.x().onTrue(new InstantCommand(() -> {
-      this.arm.setArmSetpoint(80.645746);
-      this.wrist.setWristSetpoint(1.819860);
-      this.wrist.currentPiece = PieceType.CUBE;
-
-    }));
-    operator.a().onTrue(new InstantCommand(() -> this.arm.setArmSetpoint(70)));
 
   }
 

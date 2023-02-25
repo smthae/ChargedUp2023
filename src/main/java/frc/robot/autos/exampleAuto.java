@@ -45,7 +45,8 @@ public class exampleAuto implements AutoImpl {
 
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("intakein",
-        new SequentialCommandGroup(new IntakeIn(wrist, true), new InstantCommand(() -> wrist.setWristSetpoint(300))));
+        new SequentialCommandGroup(new IntakeIn(wrist, PieceType.CONE),
+            new InstantCommand(() -> wrist.setWristSetpoint(300))));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
         poseEstimator::setCurrentPose,
@@ -68,6 +69,6 @@ public class exampleAuto implements AutoImpl {
 
   public Command getCommand() {
     return new SequentialCommandGroup(
-        autoBuilder.fullAuto(pathGroup), new IntakeOut(wrist, true));
+        autoBuilder.fullAuto(pathGroup), new IntakeOut(wrist));
   }
 }
