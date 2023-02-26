@@ -1,0 +1,109 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 1.8549646229107004,
+        "y": 4.8715050925108985
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.541092100729137,
+        "y": 4.585618643419883
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.084878925820619,
+        "y": 4.688537765092648
+      },
+      "prevControl": {
+        "x": 3.225162574330569,
+        "y": 4.590842725150597
+      },
+      "nextControl": {
+        "x": 5.091199226620992,
+        "y": 4.802892344729054
+      },
+      "holonomicAngle": 1.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [
+          "conepickupstand"
+        ],
+        "executionBehavior": "parallelDeadline",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 6.108954985385006,
+        "y": 4.3797804000743525
+      },
+      "prevControl": {
+        "x": 6.028906779639522,
+        "y": 4.368344942110711
+      },
+      "nextControl": {
+        "x": 6.189003191130491,
+        "y": 4.391215858037994
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 7.827050077177079,
+        "y": 4.432064633360036
+      },
+      "prevControl": {
+        "x": 7.518732537465076,
+        "y": 4.364620171548037
+      },
+      "nextControl": null,
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    }
+  ],
+  "markers": [
+    {
+      "position": 1.592727272727287,
+      "names": [
+        "event",
+        "conepickupstand"
+      ]
+    }
+  ]
+}

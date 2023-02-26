@@ -114,26 +114,73 @@ public class RobotContainer {
         new MoveWrist(this.wrist, 1.81986),
         new IntakeIn(this.wrist, PieceType.CUBE)));
 
+    // Shoot
     operator.rightTrigger().whileTrue(new IntakeOut(wrist));
-    operator.y().onTrue(new SequentialCommandGroup(
-        new MoveArm(this.arm, 32),
-        new MoveWrist(this.wrist, 0.149669)));
-    operator.b().onTrue(new SequentialCommandGroup(
+
+    /* CONE */
+
+    // Cone standing
+    operator.rightBumper().whileTrue(new ParallelCommandGroup(
+        new MoveArm(this.arm, -10.372419),
+        new MoveWrist(this.wrist, -0.221668),
+        new IntakeIn(this.wrist, PieceType.CONE)));
+
+    // Cone Human Player against ramp
+    operator.leftBumper().whileTrue(new ParallelCommandGroup(
+        new MoveArm(this.arm, -50.945790),
+        new MoveWrist(this.wrist, 2.443461),
+        new IntakeIn(this.wrist, PieceType.CONE)));
+
+    // Cone L1
+    operator.a().and(operator.povLeft()).whileTrue(new ParallelCommandGroup(
+        new MoveArm(this.arm, -10.372419),
+        new MoveWrist(this.wrist, -0.221668)));
+
+    // Cone L2
+    operator.b().and(operator.povLeft()).whileTrue(new ParallelCommandGroup(
         new MoveArm(this.arm, 31),
         new MoveWrist(this.wrist, -0.649656)));
 
-    operator.x().onTrue(new SequentialCommandGroup(
+    // Cone L3
+    operator.y().and(operator.povLeft()).whileTrue(new ParallelCommandGroup(
+        new MoveArm(this.arm, 32),
+        new MoveWrist(this.wrist, 0.149669)));
+
+    // Cone Shelf Standing up
+    operator.x().and(operator.povLeft()).whileTrue(new ParallelCommandGroup(
+        new MoveArm(this.arm, 56.41),
+        new MoveWrist(this.wrist, -1.25),
+        new IntakeIn(this.wrist, PieceType.CONE)));
+
+    /* CUBE */
+    // Cube Human Player against ramp - TBD
+
+    // Cube L1 - TBD
+    operator.a().and(operator.povRight()).whileTrue(new ParallelCommandGroup(
+        leds.solidViolet(),
+        new MoveArm(this.arm, -56.3),
+        new MoveWrist(this.wrist, 1.81986)));
+
+    // Cube L2
+    operator.b().and(operator.povRight()).whileTrue(new ParallelCommandGroup(
         new MoveArm(this.arm, -9.355),
         new MoveWrist(this.wrist, 1.819860)));
 
-    operator.start().onTrue(leds.solidYellow());
-    operator.back().onTrue(leds.solidViolet());
+    // Cube L3 - TBD
+    operator.y().and(operator.povRight().whileTrue(Commands.none()));
+
+    // Cube Shelf - TBD
+    operator.x().and(operator.povRight()).whileTrue(Commands.none());
+
+    operator.start().whileTrue(leds.solidYellow());
+    operator.back().whileTrue(leds.solidViolet());
   }
 
   public void configureAutoCommands() {
     this.autoCommands.put("1 cone sus", new exampleAuto(s_Swerve, camera, poseEstimator, wrist));
     this.autoCommands.put("Example auto 2", new exampleAuto2(s_Swerve, camera, poseEstimator));
     this.autoCommands.put("Example auto 3", new exampleAuto3(s_Swerve, camera, poseEstimator));
+    this.autoCommands.put("2 cone auto", new TwoConeAuto(s_Swerve, camera, poseEstimator, wrist, arm));
   }
 
   public void configureTestCommands() {
@@ -169,7 +216,7 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     String selectedAuto = SmartDashboard.getString("selectedAuto", "default");
     if (selectedAuto.equals("default") || !this.autoCommands.containsKey(selectedAuto)) {
-      return new DefaultAuto(this.wrist);
+      return new DefaultAuto(this.wrist, this.arm).getCommand();
     }
 
     return this.autoCommands.get(selectedAuto).getCommand();

@@ -6,6 +6,7 @@ import frc.robot.subsystems.Wrist;
 
 public class IntakeOut extends CommandBase {
   private final Wrist wrist;
+  private int counter = 0;
 
   public IntakeOut(Wrist wrist) {
     this.wrist = wrist;
@@ -15,6 +16,7 @@ public class IntakeOut extends CommandBase {
   public void initialize() {
     // this.pieceType = this.wrist.getGamePieceType();
     this.wrist.intakeOut(this.wrist.currentPiece);
+    this.counter = 0;
   }
 
   @Override
@@ -23,10 +25,15 @@ public class IntakeOut extends CommandBase {
   }
 
   @Override
+  public void execute() {
+    this.counter++;
+  }
+
+  @Override
   public boolean isFinished() {
     if (this.wrist.colorSensor.isConnected() && this.wrist.getGamePieceType() == PieceType.AIR) {
       return true;
     }
-    return false;
+    return counter > 20;
   }
 }

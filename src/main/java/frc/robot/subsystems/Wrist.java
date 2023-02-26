@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import javax.swing.plaf.synth.ColorType;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -9,6 +11,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ColorSensorV3.RawColor;
 import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -42,6 +45,7 @@ public class Wrist extends SubsystemBase {
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   public PieceType currentPiece = PieceType.AIR;
+  public int colorCounter = 0;
 
   public Wrist() {
     this.intakeMotor.configVoltageCompSaturation(Constants.Swerve.voltageComp);
@@ -76,9 +80,9 @@ public class Wrist extends SubsystemBase {
 
   public void intakeIn(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -1);
+      this.intakeMotor.set(ControlMode.PercentOutput, -0.6);
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, 1);
+      this.intakeMotor.set(ControlMode.PercentOutput, 0.5);
     }
   }
 
@@ -86,7 +90,7 @@ public class Wrist extends SubsystemBase {
     if (gamePiece == PieceType.CONE) {
       this.intakeMotor.set(ControlMode.PercentOutput, 0.5);
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -1);
+      this.intakeMotor.set(ControlMode.PercentOutput, -0.5);
     }
   }
 
@@ -131,11 +135,21 @@ public class Wrist extends SubsystemBase {
    */
   public void setWristSetpoint(double angle) {
     this.wristSetPoint = angle;
+    if (this.wristSetPoint > Constants.Wrist.maxAngle) {
+      this.wristSetPoint = Constants.Wrist.maxAngle;
+      SmartDashboard.putString("wrist limit", "MAX EXCEEDED");
+    } else if (wristSetPoint < Constants.Wrist.minAngle) {
+      this.wristSetPoint = Constants.Wrist.minAngle;
+      SmartDashboard.putString("wrist limit", "MIN EXCEEDED");
+    } else {
+      SmartDashboard.putString("wrist limit", "none");
+    }
     this.handleMovement();
   }
 
   public boolean atSetpoint() {
-    return this.wristRotationPID.atSetpoint();
+    return this.getAbsoluteEncoder() > this.wristSetPoint + Units.degreesToRadians(-5)
+        && this.getAbsoluteEncoder() < this.wristSetPoint + Units.degreesToRadians(5);
   }
 
   public double getWristSetpoint() {
@@ -157,17 +171,15 @@ public class Wrist extends SubsystemBase {
 
   public double handleMovement() {
     this.wristRotationPidConstants.retrieveDashboard(this.wristRotationPID);
-
-    if (this.getAbsoluteEncoder() > Constants.Wrist.maxAngle) {
+    if (this.wristSetPoint > Constants.Wrist.maxAngle) {
       this.wristSetPoint = Constants.Wrist.maxAngle;
       SmartDashboard.putString("wrist limit", "MAX EXCEEDED");
-    } else if (this.getAbsoluteEncoder() < Constants.Wrist.minAngle) {
+    } else if (wristSetPoint < Constants.Wrist.minAngle) {
       this.wristSetPoint = Constants.Wrist.minAngle;
       SmartDashboard.putString("wrist limit", "MIN EXCEEDED");
     } else {
       SmartDashboard.putString("wrist limit", "none");
     }
-
     double power = 0;
     power = this.wristRotationPID.calculate(this.getAbsoluteEncoder(),
         this.wristSetPoint);
@@ -184,20 +196,30 @@ public class Wrist extends SubsystemBase {
     SmartDashboard.putNumber("Wrist pid output", power);
     SmartDashboard.putNumber("Wrist absolute encoder", this.getAbsoluteEncoder());
     SmartDashboard.putNumber("Wrist setpoint", this.wristSetPoint);
-    PieceType gamePieceType = this.getGamePieceType();
+    SmartDashboard.putBoolean("wrist end", this.atSetpoint());
 
-    switch (gamePieceType) {
-      case AIR:
-        SmartDashboard.putString("color sensor", "Nothing - AIR");
-        break;
-      case CONE:
-        SmartDashboard.putString("color sensor", "CONE");
-        break;
-      case CUBE:
-        SmartDashboard.putString("color sensor", "CUBE");
-        break;
-      default:
-        break;
-    }
+    // Color detectedColor = colorSensor.getColor();
+
+    // int proximity = colorSensor.getProximity();
+    // SmartDashboard.putNumber("Red", detectedColor.red);
+    // SmartDashboard.putNumber("Green", detectedColor.green);
+    // SmartDashboard.putNumber("Blue", detectedColor.blue);
+
+    // SmartDashboard.putNumber("Proximity", proximity);
+    // PieceType gamePieceType = this.getGamePieceType();
+
+    // switch (gamePieceType) {
+    // case AIR:
+    // SmartDashboard.putString("color sensor", "Nothing - AIR");
+    // break;
+    // case CONE:
+    // SmartDashboard.putString("color sensor", "CONE");
+    // break;
+    // case CUBE:
+    // SmartDashboard.putString("color sensor", "CUBE");
+    // break;
+    // default:
+    // break;
+    // }
   }
 }

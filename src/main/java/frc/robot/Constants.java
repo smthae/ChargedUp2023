@@ -69,7 +69,7 @@ public final class Constants {
                                                                            // to the ground.
     public static final ArmFeedforward armFF = new ArmFeedforward(0, 0.92, 1.09, 0.04); // until we have some empirical
     // measurement, kS will be added
-    public static final PIDConstants armPID = new PIDConstants(1, 0, 0.05, 2);
+    public static final PIDConstants armPID = new PIDConstants(1, 0, 0.05, 5);
     public static final double armMaxOutput = 1;
     public static final double kMaxVelocityRadPerSecond = 0.3;
     public static final double kMaxAccelerationRadPerSecSquared = 0.1;
@@ -77,23 +77,23 @@ public final class Constants {
     public static final int currentLimit = 40;
     public static final double gearRatio = 56; // 56:1
 
-    public static final double maxAngle = Units.degreesToRadians(80);
-    public static final double minAngle = Units.degreesToRadians(-60);
+    public static final double maxAngle = Units.degreesToRadians(60);
+    public static final double minAngle = Units.degreesToRadians(-63);
   }
 
   public static final class Wrist {
     public static final int intakeMotorID = 9;
     public static final int wristMotorID = 33;
 
-    public static final PIDConstants wristRotationPID = new PIDConstants(0.7, 0, 0.0005);
+    public static final PIDConstants wristRotationPID = new PIDConstants(0.7, 0, 0.0005, Units.degreesToRadians(10));
     public static final double wristGearRatio = 40;
 
     public static final double intakePower = 0.5;
     public static final int absoluteEncoderPort = 1;
     public static final double positionOffset = Units.degreesToRadians(160);
 
-    public static final double maxAngle = Units.degreesToRadians(150);
-    public static final double minAngle = Units.degreesToRadians(-90);
+    public static final double maxAngle = Units.degreesToRadians(140);
+    public static final double minAngle = -1.18;
   }
 
   public static final class Swerve {
@@ -221,8 +221,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 0.5;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
+    public static final double kMaxSpeedMetersPerSecond = 2;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 2;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 

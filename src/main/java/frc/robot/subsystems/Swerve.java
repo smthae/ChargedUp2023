@@ -61,7 +61,7 @@ public class Swerve extends SubsystemBase {
    * @param rotation the value of the rotation axis
    */
   public void rotationUpdate(double rotation) {
-    if (this.rotationControllerSpeed != 0.0 && rotation == 0) {
+    if (this.rotationControllerSpeed != 0.0) {
       this.resetHold();
     }
 

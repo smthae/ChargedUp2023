@@ -10,6 +10,7 @@ public class MoveArm extends CommandBase {
     public MoveArm(Arm arm, double angle) {
         this.arm = arm;
         this.angle = angle;
+        addRequirements(arm);
     }
 
     @Override

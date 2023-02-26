@@ -1,6 +1,12 @@
 {
   "NetworkTables": {
     "transitory": {
+      "CameraPublisher": {
+        "USB Camera 0": {
+          "open": true
+        },
+        "open": true
+      },
       "SmartDashboard": {
         "open": true
       }
@@ -14,7 +20,7 @@
   },
   "NetworkTables Settings": {
     "mode": "Client (NT3)",
-    "serverTeam": "localhost"
+    "serverTeam": "3161"
   },
   "Plots": {
     "Plot <0>": {
