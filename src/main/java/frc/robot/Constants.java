@@ -149,7 +149,7 @@ public final class Constants {
 
     /* Neutral Modes */
     public static final IdleMode angleNeutralMode = IdleMode.kBrake;
-    public static final IdleMode driveNeutralMode = IdleMode.kBrake;
+    public static final IdleMode driveNeutralMode = IdleMode.kCoast;
 
     /* Motor Inverts */
     public static final boolean driveInvert = true;

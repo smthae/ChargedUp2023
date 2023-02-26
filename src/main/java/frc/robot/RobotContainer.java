@@ -38,6 +38,7 @@ import frc.robot.commands.presets.ConeTipped;
 import frc.robot.commands.presets.CubeIntake;
 import frc.robot.commands.presets.CubeL1;
 import frc.robot.commands.presets.CubeL2;
+import frc.robot.commands.presets.Rest;
 import frc.robot.subsystems.*;
 
 /**
@@ -66,10 +67,13 @@ public class RobotContainer {
   /* Auto */
   Hashtable<String, AutoImpl> autoCommands = new Hashtable<String, AutoImpl>();
 
+  final Score score;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    this.score = new Score(arm, wrist);
     s_Swerve.setName("Drive");
     s_Swerve.setDefaultCommand(new TeleopSwerve(
         s_Swerve,
@@ -108,6 +112,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
     /* Driver Buttons */
     driver.back().onTrue(new InstantCommand(s_Swerve::zeroGyro));
     driver.start().whileTrue(new Balance(s_Swerve));
@@ -121,8 +126,22 @@ public class RobotContainer {
         new CubeIntake(arm, wrist),
         new IntakeIn(this.wrist, PieceType.CUBE)));
 
+    // rest
+    operator.povDown().onTrue(new Rest(arm, wrist));
+
     // Shoot
     operator.rightTrigger().whileTrue(new IntakeOut(wrist));
+
+    /* Score */
+
+    // L1
+    operator.a().onTrue(Commands.runOnce(score::L1));
+
+    // L2
+    operator.b().onTrue(Commands.runOnce(score::L2));
+
+    // L3
+    operator.y().onTrue(Commands.runOnce(score::L3));
 
     /* CONE */
 
@@ -136,34 +155,16 @@ public class RobotContainer {
         new ConeHP(arm, wrist),
         new IntakeIn(this.wrist, PieceType.CONE)));
 
-    // Cone L1
-    operator.a().and(operator.povLeft()).whileTrue(new ConeL1(arm, wrist));
-
-    // Cone L2
-    operator.b().and(operator.povLeft()).whileTrue(new ConeL2(arm, wrist));
-
-    // Cone L3
-    operator.y().and(operator.povLeft()).whileTrue(new ConeL3(arm, wrist));
-
     // Cone Shelf Standing up
-    operator.x().and(operator.povLeft()).whileTrue(new ParallelCommandGroup(
+    operator.povLeft().whileTrue(new ParallelCommandGroup(
         new ConeShelf(arm, wrist),
         new IntakeIn(this.wrist, PieceType.CONE)));
 
     /* CUBE */
     // Cube Human Player against ramp - TBD
 
-    // Cube L1
-    operator.a().and(operator.povRight()).whileTrue(new CubeL1(arm, wrist));
-
-    // Cube L2
-    operator.b().and(operator.povRight()).whileTrue(new CubeL2(arm, wrist));
-
-    // Cube L3 - TBD
-    operator.y().and(operator.povRight().whileTrue(Commands.none()));
-
     // Cube Shelf - TBD
-    operator.x().and(operator.povRight()).whileTrue(Commands.none());
+    operator.povRight().whileTrue(Commands.none());
 
     operator.start().whileTrue(new Blink(leds, Constants.LEDConstants.solidYellow));
     operator.back().whileTrue(new Blink(leds, Constants.LEDConstants.solidViolet));
