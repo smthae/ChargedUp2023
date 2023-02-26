@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -135,13 +136,22 @@ public class RobotContainer {
     /* Score */
 
     // L1
-    operator.a().onTrue(Commands.runOnce(score::L1));
+    operator.a().onTrue(new ConditionalCommand(
+        new ConeL1(arm, wrist),
+        new CubeL1(arm, wrist),
+        () -> wrist.currentPiece == PieceType.CONE));
 
     // L2
-    operator.b().onTrue(Commands.runOnce(score::L2));
+    operator.b().onTrue(new ConditionalCommand(
+        new ConeL2(arm, wrist),
+        new CubeL2(arm, wrist),
+        () -> wrist.currentPiece == PieceType.CONE));
 
     // L3
-    operator.y().onTrue(Commands.runOnce(score::L3));
+    operator.y().onTrue(new ConditionalCommand(
+        new ConeL3(arm, wrist),
+        Commands.none(),
+        () -> wrist.currentPiece == PieceType.CONE));
 
     /* CONE */
 
