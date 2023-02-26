@@ -157,7 +157,11 @@ public class Wrist extends SubsystemBase {
   }
 
   public double getAbsoluteEncoder() {
-    return Units.degreesToRadians(this.absoluteEncoder.getDistance() * 360) - Constants.Wrist.positionOffset;
+    double encoderValue = Units.degreesToRadians(this.absoluteEncoder.getDistance() * 360)
+        - Constants.Wrist.positionOffset;
+
+    // hopefully fixes rollover issue
+    return ((encoderValue + Math.PI) % (2 * Math.PI)) - Math.PI;
   }
 
   public void resetWristEncoder() {

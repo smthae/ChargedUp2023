@@ -66,7 +66,10 @@ public class Arm extends SubsystemBase {
   }
 
   public double getEncoderPositionWithOffset() {
-    return this.getEncoderPosition() - Constants.Arm.encoderOffset;
+    double encoderValue = this.getEncoderPosition() - Constants.Arm.encoderOffset;
+
+    // hopefully fixes rollover issue
+    return ((encoderValue + Math.PI) % (2 * Math.PI)) - Math.PI;
   }
 
   /**
