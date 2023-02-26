@@ -37,7 +37,6 @@ public final class Constants {
   }
 
   public static final RobotModes robotMode = RobotModes.Debug;
-  public static final int blinkinPort = 0;
 
   public static final class Vision {
     public static final String cameraName = "OV5647";
@@ -232,5 +231,16 @@ public final class Constants {
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+  }
+
+  public static final class LEDConstants {
+    public static final int blinkinPort = 0;
+    public static final int blinkPerSecond = 50 / 25; // 25 times per second
+    public static final double forestPattern = -0.37;
+    public static final double solidYellow = 0.69;
+    public static final double solidViolet = 0.91;
+    public static final double solidGreen = 0.77;
+    public static final double solidRed = 0.61;
+    public static final double off = 0.99;
   }
 }

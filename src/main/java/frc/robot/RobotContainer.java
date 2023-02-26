@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.PieceType;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
+import frc.robot.commands.leds.Blink;
 import frc.robot.commands.presets.ConeHP;
 import frc.robot.commands.presets.ConeL1;
 import frc.robot.commands.presets.ConeL2;
@@ -164,8 +165,8 @@ public class RobotContainer {
     // Cube Shelf - TBD
     operator.x().and(operator.povRight()).whileTrue(Commands.none());
 
-    operator.start().whileTrue(leds.solidYellow());
-    operator.back().whileTrue(leds.solidViolet());
+    operator.start().whileTrue(new Blink(leds, Constants.LEDConstants.solidYellow));
+    operator.back().whileTrue(new Blink(leds, Constants.LEDConstants.solidViolet));
   }
 
   public void configureAutoCommands() {
