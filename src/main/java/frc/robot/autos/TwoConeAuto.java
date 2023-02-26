@@ -11,6 +11,8 @@ import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.MoveArm;
 import frc.robot.commands.MoveWrist;
+import frc.robot.commands.presets.ConeL2Score;
+import frc.robot.commands.presets.ConeStanding;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
@@ -51,8 +53,7 @@ public class TwoConeAuto implements AutoImpl {
 
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("conepickupstand", new ParallelCommandGroup(
-        new MoveArm(this.arm, -10.372419),
-        new MoveWrist(this.wrist, -0.221668),
+        new ConeStanding(arm, wrist),
         new IntakeIn(this.wrist, PieceType.CONE, true)));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
@@ -76,7 +77,7 @@ public class TwoConeAuto implements AutoImpl {
 
   public Command getCommand() {
     return new SequentialCommandGroup(
-        new DefaultAuto(this.wrist, this.arm).getCommand(),
+        new ConeL2Score(arm, wrist),
         autoBuilder.fullAuto(pathGroup));
   }
 }

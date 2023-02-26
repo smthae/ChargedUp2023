@@ -27,6 +27,16 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.PieceType;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
+import frc.robot.commands.presets.ConeHP;
+import frc.robot.commands.presets.ConeL1;
+import frc.robot.commands.presets.ConeL2;
+import frc.robot.commands.presets.ConeL3;
+import frc.robot.commands.presets.ConeShelf;
+import frc.robot.commands.presets.ConeStanding;
+import frc.robot.commands.presets.ConeTipped;
+import frc.robot.commands.presets.CubeIntake;
+import frc.robot.commands.presets.CubeL1;
+import frc.robot.commands.presets.CubeL2;
 import frc.robot.subsystems.*;
 
 /**
@@ -103,15 +113,11 @@ public class RobotContainer {
     driver.leftStick().whileTrue(new FancyRotation(s_Swerve));
 
     driver.leftTrigger().whileTrue(new ParallelCommandGroup(
-        leds.solidYellow(),
-        new MoveArm(this.arm, -49),
-        new MoveWrist(this.wrist, 1.129295),
+        new ConeTipped(arm, wrist),
         new IntakeIn(this.wrist, PieceType.CONE)));
 
     driver.rightTrigger().whileTrue(new ParallelCommandGroup(
-        leds.solidViolet(),
-        new MoveArm(this.arm, -56.3),
-        new MoveWrist(this.wrist, 1.81986),
+        new CubeIntake(arm, wrist),
         new IntakeIn(this.wrist, PieceType.CUBE)));
 
     // Shoot
@@ -121,50 +127,36 @@ public class RobotContainer {
 
     // Cone standing
     operator.rightBumper().whileTrue(new ParallelCommandGroup(
-        new MoveArm(this.arm, -10.372419),
-        new MoveWrist(this.wrist, -0.221668),
+        new ConeStanding(arm, wrist),
         new IntakeIn(this.wrist, PieceType.CONE)));
 
     // Cone Human Player against ramp
     operator.leftBumper().whileTrue(new ParallelCommandGroup(
-        new MoveArm(this.arm, -50.945790),
-        new MoveWrist(this.wrist, 2.443461),
+        new ConeHP(arm, wrist),
         new IntakeIn(this.wrist, PieceType.CONE)));
 
     // Cone L1
-    operator.a().and(operator.povLeft()).whileTrue(new ParallelCommandGroup(
-        new MoveArm(this.arm, -10.372419),
-        new MoveWrist(this.wrist, -0.221668)));
+    operator.a().and(operator.povLeft()).whileTrue(new ConeL1(arm, wrist));
 
     // Cone L2
-    operator.b().and(operator.povLeft()).whileTrue(new ParallelCommandGroup(
-        new MoveArm(this.arm, 31),
-        new MoveWrist(this.wrist, -0.649656)));
+    operator.b().and(operator.povLeft()).whileTrue(new ConeL2(arm, wrist));
 
     // Cone L3
-    operator.y().and(operator.povLeft()).whileTrue(new ParallelCommandGroup(
-        new MoveArm(this.arm, 32),
-        new MoveWrist(this.wrist, 0.149669)));
+    operator.y().and(operator.povLeft()).whileTrue(new ConeL3(arm, wrist));
 
     // Cone Shelf Standing up
     operator.x().and(operator.povLeft()).whileTrue(new ParallelCommandGroup(
-        new MoveArm(this.arm, 56.41),
-        new MoveWrist(this.wrist, -1.25),
+        new ConeShelf(arm, wrist),
         new IntakeIn(this.wrist, PieceType.CONE)));
 
     /* CUBE */
     // Cube Human Player against ramp - TBD
 
-    // Cube L1 - TBD
-    operator.a().and(operator.povRight()).whileTrue(new ParallelCommandGroup(
-        leds.solidViolet(),
-        new MoveArm(this.arm, -56.3),
-        new MoveWrist(this.wrist, 1.81986)));
+    // Cube L1
+    operator.a().and(operator.povRight()).whileTrue(new CubeL1(arm, wrist));
 
     // Cube L2
-    operator.b().and(operator.povRight()).whileTrue(new ParallelCommandGroup(
-        new MoveArm(this.arm, -9.355),
-        new MoveWrist(this.wrist, 1.819860)));
+    operator.b().and(operator.povRight()).whileTrue(new CubeL2(arm, wrist));
 
     // Cube L3 - TBD
     operator.y().and(operator.povRight().whileTrue(Commands.none()));
@@ -216,7 +208,7 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     String selectedAuto = SmartDashboard.getString("selectedAuto", "default");
     if (selectedAuto.equals("default") || !this.autoCommands.containsKey(selectedAuto)) {
-      return new DefaultAuto(this.wrist, this.arm).getCommand();
+      return new DefaultAuto().getCommand();
     }
 
     return this.autoCommands.get(selectedAuto).getCommand();
