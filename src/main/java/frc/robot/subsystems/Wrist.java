@@ -59,7 +59,7 @@ public class Wrist extends SubsystemBase {
     // Encoder
     this.wristEncoder = this.wristMotor.getEncoder();
     this.wristEncoder.setPositionConversionFactor(360 / Constants.Wrist.wristGearRatio);
-    this.wristEncoder.setPosition(0);
+    this.wristEncoder.setPosition(Units.radiansToDegrees(this.getAbsoluteEncoder()));
 
     this.wristSetPoint = this.getAbsoluteEncoder();
 
@@ -148,12 +148,16 @@ public class Wrist extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return this.getAbsoluteEncoder() > this.wristSetPoint + Units.degreesToRadians(-5)
-        && this.getAbsoluteEncoder() < this.wristSetPoint + Units.degreesToRadians(5);
+    return this.getEncoderPosition() > this.wristSetPoint + Units.degreesToRadians(-5)
+        && this.getEncoderPosition() < this.wristSetPoint + Units.degreesToRadians(5);
   }
 
   public double getWristSetpoint() {
     return this.wristSetPoint;
+  }
+
+  public double getEncoderPosition() {
+    return Units.degreesToRadians(this.wristEncoder.getPosition());
   }
 
   public double getAbsoluteEncoder() {
@@ -185,7 +189,7 @@ public class Wrist extends SubsystemBase {
       SmartDashboard.putString("wrist limit", "none");
     }
     double power = 0;
-    power = this.wristRotationPID.calculate(this.getAbsoluteEncoder(),
+    power = this.wristRotationPID.calculate(this.getEncoderPosition(),
         this.wristSetPoint);
 
     return power;
@@ -196,7 +200,7 @@ public class Wrist extends SubsystemBase {
     double power = this.handleMovement();
 
     this.wristMotor.set(power);
-    SmartDashboard.putNumber("Wrist relative encoder", this.wristEncoder.getPosition());
+    SmartDashboard.putNumber("Wrist relative encoder", this.getEncoderPosition());
     SmartDashboard.putNumber("Wrist pid output", power);
     SmartDashboard.putNumber("Wrist absolute encoder", this.getAbsoluteEncoder());
     SmartDashboard.putNumber("Wrist setpoint", this.wristSetPoint);

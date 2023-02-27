@@ -85,7 +85,7 @@ public final class Constants {
     public static final int wristMotorID = 33;
 
     public static final PIDConstants wristRotationPID = new PIDConstants(0.7, 0, 0.0005, Units.degreesToRadians(10));
-    public static final double wristGearRatio = 40;
+    public static final double wristGearRatio = 67.2;
 
     public static final double intakePower = 0.5;
     public static final int absoluteEncoderPort = 1;
@@ -149,7 +149,7 @@ public final class Constants {
 
     /* Neutral Modes */
     public static final IdleMode angleNeutralMode = IdleMode.kBrake;
-    public static final IdleMode driveNeutralMode = IdleMode.kCoast;
+    public static final IdleMode driveNeutralMode = IdleMode.kBrake;
 
     /* Motor Inverts */
     public static final boolean driveInvert = true;
@@ -220,13 +220,15 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 2;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+    public static final double kMaxSpeedMetersPerSecond = 16;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 3.5;
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI * 4;
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI * 3;
 
-    public static final PIDConstants translationPID = new PIDConstants(0.2, 0, 0.05);
-    public static final PIDConstants rotationPID = new PIDConstants(0.1, 0, 0.05);
+    // public static final PIDConstants translationPID = new PIDConstants(0.8, 0.2,
+    // 0.05);
+    public static final PIDConstants translationPID = new PIDConstants(3, 0.05, 0);
+    public static final PIDConstants rotationPID = new PIDConstants(1, 0, 0.05);
 
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

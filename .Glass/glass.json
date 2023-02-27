@@ -15,7 +15,8 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Go to Position": "Command",
-      "/SmartDashboard/Reset Pose Estimator": "Command"
+      "/SmartDashboard/Reset Pose Estimator": "Command",
+      "/SmartDashboard/l3 cone": "Command"
     }
   },
   "NetworkTables Settings": {

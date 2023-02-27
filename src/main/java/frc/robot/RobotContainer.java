@@ -33,6 +33,7 @@ import frc.robot.commands.presets.ConeHP;
 import frc.robot.commands.presets.ConeL1;
 import frc.robot.commands.presets.ConeL2;
 import frc.robot.commands.presets.ConeL3;
+import frc.robot.commands.presets.ConeL3Score;
 import frc.robot.commands.presets.ConeShelf;
 import frc.robot.commands.presets.ConeStanding;
 import frc.robot.commands.presets.ConeTipped;
@@ -185,10 +186,12 @@ public class RobotContainer {
     this.autoCommands.put("Example auto 2", new exampleAuto2(s_Swerve, camera, poseEstimator));
     this.autoCommands.put("Example auto 3", new exampleAuto3(s_Swerve, camera, poseEstimator));
     this.autoCommands.put("2 cone auto", new TwoConeAuto(s_Swerve, camera, poseEstimator, wrist, arm));
+    this.autoCommands.put("tuning", new Tuning(s_Swerve, poseEstimator, wrist, arm));
   }
 
   public void configureTestCommands() {
     SmartDashboard.putData("Reset Pose Estimator", new InstantCommand(this.poseEstimator::resetFieldPosition));
+    SmartDashboard.putData("l3 cone", new ConeL3Score(arm, wrist));
     SmartDashboard.putData("Go to Position", new GoToPosition(s_Swerve, poseEstimator,
         new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
             FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));

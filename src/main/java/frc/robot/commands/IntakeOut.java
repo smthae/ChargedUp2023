@@ -34,6 +34,6 @@ public class IntakeOut extends CommandBase {
     if (this.wrist.colorSensor.isConnected() && this.wrist.getGamePieceType() == PieceType.AIR) {
       return true;
     }
-    return counter > 20;
+    return counter > 15;
   }
 }

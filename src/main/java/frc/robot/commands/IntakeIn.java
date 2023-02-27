@@ -45,7 +45,7 @@ public class IntakeIn extends CommandBase {
   @Override
   public boolean isFinished() {
     if (this.auto) {
-      return this.counter > 100;
+      return this.counter > 80;
     }
 
     return false;

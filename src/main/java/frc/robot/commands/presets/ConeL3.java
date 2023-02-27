@@ -9,7 +9,7 @@ import frc.robot.subsystems.Wrist;
 public class ConeL3 extends ParallelCommandGroup {
     public ConeL3(Arm arm, Wrist wrist) {
         addCommands(
-                new MoveArm(arm, 32),
+                new MoveArm(arm, 37),
                 new MoveWrist(wrist, 0.149669));
     }
 }
