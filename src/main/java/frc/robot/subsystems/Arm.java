@@ -25,6 +25,7 @@ public class Arm extends SubsystemBase {
 
   // Encoders
   private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(Constants.Arm.encoderDIOPort);
+  private final RelativeEncoder relativeEncoder;
 
   // Motion Control
   private final PIDConstants armPidConstants = Constants.Arm.armPID;
@@ -52,10 +53,11 @@ public class Arm extends SubsystemBase {
 
     // Encoder
     this.armSetpoint = this.getEncoderPositionWithOffset();
+    this.relativeEncoder = this.armLeader.getEncoder();
+    this.relativeEncoder.setPositionConversionFactor(Math.PI / Constants.Arm.gearRatio);
+    this.relativeEncoder.setPosition(this.getEncoderPositionWithOffset());
 
     // PID
-    SmartDashboard.putNumber("Arm rotation setpoint", 0);
-    SmartDashboard.putNumber("Arm rotation encoder", 0);
     SmartDashboard.putString("arm limit", "none");
 
     this.armPidConstants.sendDashboard("arm pid");
@@ -91,15 +93,15 @@ public class Arm extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return this.getEncoderPositionWithOffset() > this.armSetpoint + Units.degreesToRadians(-5)
-        && this.getEncoderPositionWithOffset() < this.armSetpoint + Units.degreesToRadians(5);
+    return this.relativeEncoder.getPosition() > this.armSetpoint + Units.degreesToRadians(-5)
+        && this.relativeEncoder.getPosition() < this.armSetpoint + Units.degreesToRadians(5);
   }
 
   public double handleMovement() {
     double pidOutput;
     this.armPidConstants.retrieveDashboard(this.armRotationPID);
     pidOutput = MathUtil.clamp(this.armRotationPID
-        .calculate(this.getEncoderPositionWithOffset(), this.armSetpoint), -0.1,
+        .calculate(this.relativeEncoder.getPosition(), this.armSetpoint), -0.1,
         Constants.Arm.armMaxOutput);
 
     return pidOutput;
@@ -113,6 +115,7 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm absolute encoder", this.getEncoderPosition());
     SmartDashboard.putNumber("Arm absolute encoder with offset",
         Units.radiansToDegrees(this.getEncoderPositionWithOffset()));
+    SmartDashboard.putNumber("Arm relative encoder", this.relativeEncoder.getPosition());
     SmartDashboard.putNumber("Arm rotation setpoint", Units.radiansToDegrees(this.armSetpoint));
     SmartDashboard.putNumber("error", Units.radiansToDegrees(this.getEncoderPositionWithOffset() - this.armSetpoint));
     SmartDashboard.putBoolean("arm end", this.atSetpoint());
