@@ -74,6 +74,7 @@ public final class Constants {
     public static final double kMaxAccelerationRadPerSecSquared = 0.1;
 
     public static final int currentLimit = 40;
+    public static final int stallLimit = 80;
     public static final double gearRatio = 56; // 56:1
 
     public static final double maxAngle = Units.degreesToRadians(60);

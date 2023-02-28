@@ -78,6 +78,15 @@ public class Robot extends TimedRobot {
     }
   }
 
+  @Override
+  public void autonomousExit() {
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
+
+    m_robotContainer.s_Swerve.gyro.setYaw(180);
+  }
+
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {

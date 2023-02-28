@@ -38,13 +38,13 @@ public class Arm extends SubsystemBase {
     // Arm leader
     this.armLeader.restoreFactoryDefaults();
     this.armLeader.enableVoltageCompensation(Constants.Swerve.voltageComp);
-    this.armLeader.setSmartCurrentLimit(Constants.Arm.currentLimit);
+    this.armLeader.setSmartCurrentLimit(Constants.Arm.stallLimit, Constants.Arm.currentLimit);
     this.armLeader.setIdleMode(IdleMode.kBrake);
 
     // Arm follower
     this.armFollower.restoreFactoryDefaults();
     this.armFollower.enableVoltageCompensation(Constants.Swerve.voltageComp);
-    this.armFollower.setSmartCurrentLimit(Constants.Arm.currentLimit);
+    this.armFollower.setSmartCurrentLimit(Constants.Arm.stallLimit, Constants.Arm.currentLimit);
     this.armFollower.follow(this.armLeader, true);
     this.armFollower.setIdleMode(IdleMode.kBrake);
 
