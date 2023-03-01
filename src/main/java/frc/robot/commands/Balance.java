@@ -5,14 +5,17 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Swerve;
 
 public class Balance extends CommandBase {
   private final Swerve swerve;
   private final PIDController balanceController = Constants.Swerve.balancePID.getController();
+  private final LEDs leds;
 
-  public Balance(Swerve swerve) {
+  public Balance(Swerve swerve, LEDs leds) {
     this.swerve = swerve;
+    this.leds = leds;
 
     this.addRequirements(swerve);
   }
@@ -50,11 +53,13 @@ public class Balance extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
+    this.leds.set(Constants.LEDConstants.colorGradient);
     this.swerve.brake();
   }
 
   @Override
   public boolean isFinished() {
+    this.leds.set(Constants.LEDConstants.off);
     return this.balanceController.atSetpoint();
   }
 }

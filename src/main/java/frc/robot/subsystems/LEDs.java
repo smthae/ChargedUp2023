@@ -16,5 +16,4 @@ public class LEDs extends SubsystemBase {
       this.blinkin.set(value);
     }
   }
-
 }

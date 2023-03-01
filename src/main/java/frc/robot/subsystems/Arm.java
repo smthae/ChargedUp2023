@@ -99,7 +99,7 @@ public class Arm extends SubsystemBase {
     double pidOutput;
     this.armPidConstants.retrieveDashboard(this.armRotationPID);
     pidOutput = MathUtil.clamp(this.armRotationPID
-        .calculate(this.getEncoderPositionWithOffset(), this.armSetpoint), -0.1,
+        .calculate(this.getEncoderPositionWithOffset(), this.armSetpoint), -0.05,
         Constants.Arm.armMaxOutput);
 
     return pidOutput;

@@ -31,7 +31,7 @@ public class exampleAuto3 implements AutoImpl {
     this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
-    pathGroup = PathPlanner.loadPathGroup("test3",
+    pathGroup = PathPlanner.loadPathGroup("apriltagtest",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 

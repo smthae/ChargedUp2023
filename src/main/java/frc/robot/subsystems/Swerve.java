@@ -29,6 +29,9 @@ public class Swerve extends SubsystemBase {
   private final PhotonCamera camera;
   private Translation2d centerOfRotation = new Translation2d();
 
+  private double pitchOffset = 0;
+  private double rollOffset = 0;
+
   public Swerve(PhotonCamera camera) {
     /* Vision */
     this.camera = camera;
@@ -36,6 +39,8 @@ public class Swerve extends SubsystemBase {
     /* Gyro setup */
     gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.Swerve.pigeonCanBUS);
     gyro.configFactoryDefault();
+    this.pitchOffset = -gyro.getPitch();
+    this.rollOffset = -gyro.getRoll();
     zeroGyro();
 
     /* Custom PID controllers setup */
@@ -279,11 +284,11 @@ public class Swerve extends SubsystemBase {
    * @return the pitch of the robot
    */
   public Rotation2d getPitch() {
-    return Rotation2d.fromDegrees(gyro.getPitch());
+    return Rotation2d.fromDegrees(gyro.getPitch() - this.pitchOffset);
   }
 
   public Rotation2d getRoll() {
-    return Rotation2d.fromDegrees(gyro.getRoll());
+    return Rotation2d.fromDegrees(gyro.getRoll() - this.rollOffset);
   }
 
   public void resetCoR() {

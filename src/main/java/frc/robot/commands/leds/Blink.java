@@ -34,6 +34,7 @@ public class Blink extends CommandBase {
         if (counter >= Constants.LEDConstants.blinkPerSecond) {
             this.counter = 0;
             this.leds.set(this.on ? Constants.LEDConstants.off : color);
+            this.on = !this.on;
         }
         counter++;
     }

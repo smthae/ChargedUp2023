@@ -12,6 +12,7 @@ import frc.robot.commands.presets.ConeL3Score;
 import frc.robot.commands.presets.ConeStanding;
 import frc.robot.commands.presets.Rest;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Wrist;
@@ -35,15 +36,17 @@ public class TwoConeAuto implements AutoImpl {
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
   private final Wrist wrist;
+  private final LEDs leds;
   private final Arm arm;
 
-  public TwoConeAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Wrist wrist, Arm arm) {
+  public TwoConeAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Wrist wrist, Arm arm, LEDs leds) {
     this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
     this.wrist = wrist;
     this.arm = arm;
     this.wrist.currentPiece = PieceType.CONE;
+    this.leds = leds;
 
     pathGroup = PathPlanner.loadPathGroup("2 piece cone",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
@@ -51,10 +54,10 @@ public class TwoConeAuto implements AutoImpl {
 
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("conepickupstand", new ParallelCommandGroup(
-        new ConeStanding(arm, wrist),
+        new ConeStanding(arm, wrist, leds),
         new IntakeIn(this.wrist, PieceType.CONE, true)));
-    eventMap.put("rest", new Rest(arm, wrist));
-    eventMap.put("conel2", new ConeL2Score(arm, wrist));
+    eventMap.put("rest", new Rest(arm, wrist, leds));
+    eventMap.put("conel2", new ConeL2Score(arm, wrist, leds));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
         poseEstimator::setCurrentPose,
@@ -77,8 +80,8 @@ public class TwoConeAuto implements AutoImpl {
 
   public Command getCommand() {
     return new SequentialCommandGroup(
-        new ConeL3Score(arm, wrist),
+        new ConeL3Score(arm, wrist, leds),
         autoBuilder.fullAuto(pathGroup),
-        new ConeL2Score(arm, wrist));
+        new ConeL2Score(arm, wrist, leds));
   }
 }

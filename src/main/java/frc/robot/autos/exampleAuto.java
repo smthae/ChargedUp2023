@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
 import frc.robot.commands.IntakeIn;
 import frc.robot.commands.IntakeOut;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Wrist;
@@ -31,13 +32,15 @@ public class exampleAuto implements AutoImpl {
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
   private final Wrist wrist;
+  private final LEDs leds;
 
-  public exampleAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Wrist wrist) {
+  public exampleAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Wrist wrist, LEDs leds) {
     this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
     this.wrist = wrist;
     this.wrist.currentPiece = PieceType.CONE;
+    this.leds = leds;
 
     pathGroup = PathPlanner.loadPathGroup("test4",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
@@ -45,7 +48,7 @@ public class exampleAuto implements AutoImpl {
 
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("intakein",
-        new SequentialCommandGroup(new IntakeIn(wrist, PieceType.CONE),
+        new SequentialCommandGroup(new IntakeIn(wrist, PieceType.CONE, leds),
             new InstantCommand(() -> wrist.setWristSetpoint(300))));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
@@ -69,6 +72,6 @@ public class exampleAuto implements AutoImpl {
 
   public Command getCommand() {
     return new SequentialCommandGroup(
-        autoBuilder.fullAuto(pathGroup), new IntakeOut(wrist));
+        autoBuilder.fullAuto(pathGroup), new IntakeOut(wrist, leds));
   }
 }

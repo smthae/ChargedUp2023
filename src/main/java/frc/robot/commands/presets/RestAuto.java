@@ -7,8 +7,9 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Wrist;
 
-public class ConeShelf extends ParallelCommandGroup {
-    public ConeShelf(Arm arm, Wrist wrist, LEDs leds) {
-        addCommands(new MoveArm(arm, 56.41, leds), new MoveWrist(wrist, -1.25, leds));
+public class RestAuto extends ParallelCommandGroup {
+    public RestAuto(Arm arm, Wrist wrist, LEDs leds) {
+        addCommands(
+                new MoveArm(arm, -54, leds), new MoveWrist(wrist, 2.91, leds));
     }
 }

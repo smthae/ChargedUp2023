@@ -1,22 +1,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.PieceType;
+import frc.robot.Constants;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Wrist;
 
 public class IntakeOut extends CommandBase {
   private final Wrist wrist;
-  private int counter = 0;
+  private final LEDs leds;
 
-  public IntakeOut(Wrist wrist) {
+  public IntakeOut(Wrist wrist, LEDs leds) {
     this.wrist = wrist;
+    this.leds = leds;
   }
 
   @Override
   public void initialize() {
-    // this.pieceType = this.wrist.getGamePieceType();
     this.wrist.intakeOut(this.wrist.currentPiece);
-    this.counter = 0;
   }
 
   @Override
@@ -25,15 +25,11 @@ public class IntakeOut extends CommandBase {
   }
 
   @Override
-  public void execute() {
-    this.counter++;
-  }
-
-  @Override
   public boolean isFinished() {
-    if (this.wrist.colorSensor.isConnected() && this.wrist.getGamePieceType() == PieceType.AIR) {
+    if (!this.wrist.getBeambreak()) {
+      this.leds.set(Constants.LEDConstants.solidBlue);
       return true;
     }
-    return counter > 15;
+    return false;
   }
 }

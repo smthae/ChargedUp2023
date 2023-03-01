@@ -17,6 +17,7 @@ import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,6 +47,9 @@ public class Wrist extends SubsystemBase {
   public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   public PieceType currentPiece = PieceType.AIR;
   public int colorCounter = 0;
+
+  // Beam break
+  private DigitalInput breambreak = new DigitalInput(Constants.Wrist.beambreakDIO);
 
   public Wrist() {
     this.intakeMotor.configVoltageCompSaturation(Constants.Swerve.voltageComp);
@@ -88,14 +92,18 @@ public class Wrist extends SubsystemBase {
 
   public void intakeOut(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, 0.5);
+      this.intakeMotor.set(ControlMode.PercentOutput, 7);
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -0.5);
+      this.intakeMotor.set(ControlMode.PercentOutput, -1);
     }
   }
 
   public void intakeStop() {
     this.intakeMotor.set(ControlMode.PercentOutput, 0);
+  }
+
+  public boolean getBeambreak() {
+    return !this.breambreak.get();
   }
 
   public PieceType getGamePieceType() {
@@ -205,6 +213,7 @@ public class Wrist extends SubsystemBase {
     SmartDashboard.putNumber("Wrist absolute encoder", this.getAbsoluteEncoder());
     SmartDashboard.putNumber("Wrist setpoint", this.wristSetPoint);
     SmartDashboard.putBoolean("wrist end", this.atSetpoint());
+    SmartDashboard.putBoolean("beambreak", this.breambreak.get());
 
     // Color detectedColor = colorSensor.getColor();
 

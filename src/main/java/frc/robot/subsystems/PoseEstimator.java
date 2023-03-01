@@ -11,6 +11,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -68,8 +69,9 @@ public class PoseEstimator extends SubsystemBase {
         Pose3d camPose = targetPos.transformBy(camToTarget.inverse());
 
         var visionMeasurement = camPose.transformBy(Constants.Vision.cameraToRobot);
-
-        this.swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(),
+        this.swerveDrivePoseEstimator.addVisionMeasurement(
+            new Pose2d(visionMeasurement.getX(), Units.feetToMeters(26) - visionMeasurement.getY(),
+                visionMeasurement.getRotation().toRotation2d()),
             resultTimestamp);
       }
     }

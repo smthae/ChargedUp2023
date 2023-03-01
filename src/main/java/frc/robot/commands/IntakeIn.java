@@ -1,9 +1,9 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Wrist;
 
 public class IntakeIn extends CommandBase {
@@ -11,12 +11,13 @@ public class IntakeIn extends CommandBase {
   private PieceType gamePieceType;
   private boolean auto = false;
   private int counter = 0;
-  // private int delay = 200;
-  // private long delayCounterStart = 0;
+  private LEDs leds;
+  private boolean hasSeen = false;
 
-  public IntakeIn(Wrist wrist, PieceType gamePiece) {
+  public IntakeIn(Wrist wrist, PieceType gamePiece, LEDs leds) {
     this.wrist = wrist;
     this.gamePieceType = gamePiece;
+    this.leds = leds;
   }
 
   public IntakeIn(Wrist wrist, PieceType gamePiece, boolean auto) {
@@ -27,27 +28,41 @@ public class IntakeIn extends CommandBase {
 
   @Override
   public void initialize() {
-    this.wrist.currentPiece = this.gamePieceType;
-    this.wrist.intakeIn(this.gamePieceType);
-    this.counter = 0;
+    if (this.wrist.getBeambreak()) {
+      this.end(auto);
+    } else {
+      this.wrist.currentPiece = this.gamePieceType;
+      this.wrist.intakeIn(this.gamePieceType);
+      this.hasSeen = false;
+      this.counter = 0;
+    }
   }
 
   @Override
   public void end(boolean interrupted) {
+    if (!this.wrist.getBeambreak()) {
+      this.leds.set(Constants.LEDConstants.off);
+    }
+
     this.wrist.intakeStop();
   }
 
   @Override
-  public void execute() {
-    counter++;
-  }
-
-  @Override
   public boolean isFinished() {
-    if (this.auto) {
-      return this.counter > 80;
+    this.leds.set(Constants.LEDConstants.solidRed);
+    if (this.hasSeen) {
+      counter++;
+      if (counter > 10) {
+        this.leds.set(Constants.LEDConstants.solidGreen);
+        return true;
+      }
+      return false;
     }
 
+    if (this.wrist.getBeambreak()) {
+      this.hasSeen = true;
+      return false;
+    }
     return false;
   }
 

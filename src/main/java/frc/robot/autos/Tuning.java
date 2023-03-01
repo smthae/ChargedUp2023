@@ -3,6 +3,8 @@ package frc.robot.autos;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.print.attribute.standard.PrinterIsAcceptingJobs;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -15,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.commands.presets.Rest;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Wrist;
@@ -26,12 +29,14 @@ public class Tuning implements AutoImpl {
   private final Swerve swerve;
   private final Wrist wrist;
   private final Arm arm;
+  private final LEDs leds;
 
-  public Tuning(Swerve swerve, PoseEstimator poseEstimator, Wrist wrist, Arm arm) {
+  public Tuning(Swerve swerve, PoseEstimator poseEstimator, Wrist wrist, Arm arm, LEDs leds) {
     this.swerve = swerve;
     this.poseEstimator = poseEstimator;
     this.wrist = wrist;
     this.arm = arm;
+    this.leds = leds;
 
     pathGroup = PathPlanner.loadPathGroup("tuning",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
@@ -58,7 +63,7 @@ public class Tuning implements AutoImpl {
 
   public Command getCommand() {
     return new SequentialCommandGroup(
-        new Rest(arm, wrist),
+        new Rest(arm, wrist, leds),
         autoBuilder.fullAuto(pathGroup));
   }
 }

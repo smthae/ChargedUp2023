@@ -40,6 +40,7 @@ import frc.robot.commands.presets.ConeTipped;
 import frc.robot.commands.presets.CubeIntake;
 import frc.robot.commands.presets.CubeL1;
 import frc.robot.commands.presets.CubeL2;
+import frc.robot.commands.presets.CubeL3;
 import frc.robot.commands.presets.Rest;
 import frc.robot.subsystems.*;
 
@@ -75,7 +76,7 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    this.score = new Score(arm, wrist);
+    this.score = new Score(arm, wrist, leds);
     s_Swerve.setName("Drive");
     s_Swerve.setDefaultCommand(new TeleopSwerve(
         s_Swerve,
@@ -103,6 +104,7 @@ public class RobotContainer {
    * Actions that we want to do when the robot is disabled.
    */
   public void disabledActions() {
+    this.leds.set(Constants.LEDConstants.forestPattern);
   }
 
   /**
@@ -117,59 +119,59 @@ public class RobotContainer {
 
     /* Driver Buttons */
     driver.back().onTrue(new InstantCommand(s_Swerve::zeroGyro));
-    driver.start().whileTrue(new Balance(s_Swerve));
+    driver.start().whileTrue(new Balance(s_Swerve, leds));
     driver.leftStick().whileTrue(new FancyRotation(s_Swerve));
 
     driver.leftTrigger().whileTrue(new ParallelCommandGroup(
-        new ConeTipped(arm, wrist),
-        new IntakeIn(this.wrist, PieceType.CONE)));
+        new ConeTipped(arm, wrist, leds),
+        new IntakeIn(this.wrist, PieceType.CONE, leds)));
 
     driver.rightTrigger().whileTrue(new ParallelCommandGroup(
-        new CubeIntake(arm, wrist),
-        new IntakeIn(this.wrist, PieceType.CUBE)));
+        new CubeIntake(arm, wrist, leds),
+        new IntakeIn(this.wrist, PieceType.CUBE, leds)));
 
     // rest
-    operator.povDown().onTrue(new Rest(arm, wrist));
+    operator.povDown().onTrue(new Rest(arm, wrist, leds));
 
     // Shoot
-    operator.rightTrigger().whileTrue(new IntakeOut(wrist));
+    operator.rightTrigger().whileTrue(new IntakeOut(wrist, leds));
 
     /* Score */
 
     // L1
     operator.a().onTrue(new ConditionalCommand(
-        new ConeL1(arm, wrist),
-        new CubeL1(arm, wrist),
+        new ConeL1(arm, wrist, leds),
+        new CubeL1(arm, wrist, leds),
         () -> wrist.currentPiece == PieceType.CONE));
 
     // L2
     operator.b().onTrue(new ConditionalCommand(
-        new ConeL2(arm, wrist),
-        new CubeL2(arm, wrist),
+        new ConeL2(arm, wrist, leds),
+        new CubeL2(arm, wrist, leds),
         () -> wrist.currentPiece == PieceType.CONE));
 
     // L3
     operator.y().onTrue(new ConditionalCommand(
-        new ConeL3(arm, wrist),
-        Commands.none(),
+        new ConeL3(arm, wrist, leds),
+        new CubeL3(arm, wrist, leds),
         () -> wrist.currentPiece == PieceType.CONE));
 
     /* CONE */
 
     // Cone standing
     operator.rightBumper().whileTrue(new ParallelCommandGroup(
-        new ConeStanding(arm, wrist),
-        new IntakeIn(this.wrist, PieceType.CONE)));
+        new ConeStanding(arm, wrist, leds),
+        new IntakeIn(this.wrist, PieceType.CONE, leds)));
 
     // Cone Human Player against ramp
     operator.leftBumper().whileTrue(new ParallelCommandGroup(
-        new ConeHP(arm, wrist),
-        new IntakeIn(this.wrist, PieceType.CONE)));
+        new ConeHP(arm, wrist, leds),
+        new IntakeIn(this.wrist, PieceType.CONE, leds)));
 
     // Cone Shelf Standing up
     operator.povLeft().whileTrue(new ParallelCommandGroup(
-        new ConeShelf(arm, wrist),
-        new IntakeIn(this.wrist, PieceType.CONE)));
+        new ConeShelf(arm, wrist, leds),
+        new IntakeIn(this.wrist, PieceType.CONE, leds)));
 
     /* CUBE */
     // Cube Human Player against ramp - TBD
@@ -182,16 +184,16 @@ public class RobotContainer {
   }
 
   public void configureAutoCommands() {
-    this.autoCommands.put("1 cone sus", new exampleAuto(s_Swerve, camera, poseEstimator, wrist));
+    this.autoCommands.put("1 cone sus", new exampleAuto(s_Swerve, camera, poseEstimator, wrist, leds));
     this.autoCommands.put("Example auto 2", new exampleAuto2(s_Swerve, camera, poseEstimator));
-    this.autoCommands.put("Example auto 3", new exampleAuto3(s_Swerve, camera, poseEstimator));
-    this.autoCommands.put("2 cone auto", new TwoConeAuto(s_Swerve, camera, poseEstimator, wrist, arm));
-    this.autoCommands.put("tuning", new Tuning(s_Swerve, poseEstimator, wrist, arm));
+    this.autoCommands.put("auto3", new exampleAuto3(s_Swerve, camera, poseEstimator));
+    this.autoCommands.put("2 cone auto", new TwoConeAuto(s_Swerve, camera, poseEstimator, wrist, arm, leds));
+    this.autoCommands.put("tuning", new Tuning(s_Swerve, poseEstimator, wrist, arm, leds));
   }
 
   public void configureTestCommands() {
     SmartDashboard.putData("Reset Pose Estimator", new InstantCommand(this.poseEstimator::resetFieldPosition));
-    SmartDashboard.putData("l3 cone", new ConeL3Score(arm, wrist));
+    SmartDashboard.putData("l3 cone", new ConeL3Score(arm, wrist, leds));
     SmartDashboard.putData("Go to Position", new GoToPosition(s_Swerve, poseEstimator,
         new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
             FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));

@@ -42,7 +42,7 @@ public final class Constants {
     public static final String cameraName = "OV5647";
     public static final Transform3d cameraToRobot = new Transform3d(
         new Translation3d(0, -0.15, Units.inchesToMeters(19)),
-        new Rotation3d(0, Units.degreesToRadians(90), 0));
+        new Rotation3d(0, Units.degreesToRadians(0), 0));
     public static final Transform3d robotToCamera = cameraToRobot.inverse();
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
 
@@ -69,7 +69,7 @@ public final class Constants {
     public static final ArmFeedforward armFF = new ArmFeedforward(0, 0.92, 1.09, 0.04); // until we have some empirical
     // measurement, kS will be added
     public static final PIDConstants armPID = new PIDConstants(1, 0, 0.05, 5);
-    public static final double armMaxOutput = 1;
+    public static final double armMaxOutput = 0.8;
     public static final double kMaxVelocityRadPerSecond = 0.3;
     public static final double kMaxAccelerationRadPerSecSquared = 0.1;
 
@@ -78,7 +78,7 @@ public final class Constants {
     public static final double gearRatio = 56; // 56:1
 
     public static final double maxAngle = Units.degreesToRadians(60);
-    public static final double minAngle = Units.degreesToRadians(-63);
+    public static final double minAngle = Units.degreesToRadians(-54.3);
   }
 
   public static final class Wrist {
@@ -90,10 +90,12 @@ public final class Constants {
 
     public static final double intakePower = 0.5;
     public static final int absoluteEncoderPort = 1;
-    public static final double positionOffset = Units.degreesToRadians(160);
+    public static final double positionOffset = 3.89;
 
-    public static final double maxAngle = Units.degreesToRadians(140);
-    public static final double minAngle = -1.18;
+    public static final double maxAngle = 3.083457;
+    public static final double minAngle = -1.664522;
+
+    public static final int beambreakDIO = 2;
   }
 
   public static final class Swerve {
@@ -238,12 +240,15 @@ public final class Constants {
 
   public static final class LEDConstants {
     public static final int blinkinPort = 0;
-    public static final int blinkPerSecond = 50 / 25; // 25 times per second
+    public static final int blinkPerSecond = 50 / 5;
     public static final double forestPattern = -0.37;
+    public static final double colorGradient = 0.41;
     public static final double solidYellow = 0.69;
     public static final double solidViolet = 0.91;
     public static final double solidGreen = 0.77;
     public static final double solidRed = 0.61;
+    public static final double solidBlue = 0.87;
+    public static final double solidOrange = 0.65;
     public static final double off = 0.99;
   }
 }
