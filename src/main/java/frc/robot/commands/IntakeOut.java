@@ -8,6 +8,7 @@ import frc.robot.subsystems.Wrist;
 public class IntakeOut extends CommandBase {
   private final Wrist wrist;
   private final LEDs leds;
+  private int counter = 0;
 
   public IntakeOut(Wrist wrist, LEDs leds) {
     this.wrist = wrist;
@@ -17,6 +18,7 @@ public class IntakeOut extends CommandBase {
   @Override
   public void initialize() {
     this.wrist.intakeOut(this.wrist.currentPiece);
+    counter = 0;
   }
 
   @Override
@@ -27,8 +29,12 @@ public class IntakeOut extends CommandBase {
   @Override
   public boolean isFinished() {
     if (!this.wrist.getBeambreak()) {
+      if (counter > 10) {
+        return true;
+      }
+      counter++;
       this.leds.set(Constants.LEDConstants.solidBlue);
-      return true;
+      return false;
     }
     return false;
   }

@@ -13,6 +13,7 @@ public class ConeL3Score extends SequentialCommandGroup {
         wrist.currentPiece = PieceType.CONE;
         addCommands(
                 new Rest(arm, wrist, leds),
+                new ConeL2(arm, wrist, leds),
                 new ConeL3(arm, wrist, leds),
                 Commands.waitSeconds(0.5),
                 new IntakeOut(wrist, leds), new Rest(arm, wrist, leds));

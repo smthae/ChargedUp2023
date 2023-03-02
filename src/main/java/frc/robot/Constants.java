@@ -41,7 +41,7 @@ public final class Constants {
   public static final class Vision {
     public static final String cameraName = "OV5647";
     public static final Transform3d cameraToRobot = new Transform3d(
-        new Translation3d(0, -0.15, Units.inchesToMeters(19)),
+        new Translation3d(0, 0.15, Units.inchesToMeters(19)),
         new Rotation3d(0, Units.degreesToRadians(0), 0));
     public static final Transform3d robotToCamera = cameraToRobot.inverse();
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
@@ -90,7 +90,7 @@ public final class Constants {
 
     public static final double intakePower = 0.5;
     public static final int absoluteEncoderPort = 1;
-    public static final double positionOffset = 3.89;
+    public static final double positionOffset = 4.96;
 
     public static final double maxAngle = 3.083457;
     public static final double minAngle = -1.664522;
@@ -223,8 +223,8 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 16;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3.5;
+    public static final double kMaxSpeedMetersPerSecond = 8;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 2;
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI * 4;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI * 3;
 

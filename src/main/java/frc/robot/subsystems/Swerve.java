@@ -301,6 +301,8 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("roll", getRoll().getDegrees());
+    SmartDashboard.putNumber("pitch", getPitch().getDegrees());
     SmartDashboard.putNumber("yaw", getYaw().getDegrees());
     SmartDashboard.putNumber("orientationHold", this.orientationWhenReleased.getDegrees());
   }

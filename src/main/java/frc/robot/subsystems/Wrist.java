@@ -1,25 +1,19 @@
 package frc.robot.subsystems;
 
-import javax.swing.plaf.synth.ColorType;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.ColorSensorV3.RawColor;
-import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -63,9 +57,7 @@ public class Wrist extends SubsystemBase {
     // Encoder
     this.wristEncoder = this.wristMotor.getEncoder();
     this.wristEncoder.setPositionConversionFactor(360 / Constants.Wrist.wristGearRatio);
-    this.wristEncoder.setPosition(Units.radiansToDegrees(this.getAbsoluteEncoder()));
-
-    this.wristSetPoint = this.getAbsoluteEncoder();
+    this.syncEncoders();
 
     TalonFXConfiguration intakeMotorConfiguration = new TalonFXConfiguration();
     this.wristRotationPidConstants.sendDashboard("Wrist Rotation");
@@ -92,7 +84,7 @@ public class Wrist extends SubsystemBase {
 
   public void intakeOut(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, 7);
+      this.intakeMotor.set(ControlMode.PercentOutput, 0.51735);
     } else if (gamePiece == PieceType.CUBE) {
       this.intakeMotor.set(ControlMode.PercentOutput, -1);
     }
@@ -169,20 +161,11 @@ public class Wrist extends SubsystemBase {
   }
 
   public double getAbsoluteEncoder() {
-    double encoderValue = Units.degreesToRadians(this.absoluteEncoder.getDistance() * 360)
+    double encoderValue = Units.degreesToRadians(this.absoluteEncoder.get() * 360)
         - Constants.Wrist.positionOffset;
-
+    return encoderValue;
     // hopefully fixes rollover issue
-    return ((encoderValue + Math.PI) % (2 * Math.PI)) - Math.PI;
-  }
-
-  public void resetWristEncoder() {
-    this.wristEncoder.setPosition(0);
-    this.wristSetPoint = 0;
-
-    // CustomThreads.setTimeout(() -> {
-    // this.wristSetPoint = 0;
-    // }, 20);
+    // return ((encoderValue + Math.PI) % (2 * Math.PI)) - Math.PI;
   }
 
   public double handleMovement() {
@@ -203,6 +186,17 @@ public class Wrist extends SubsystemBase {
     return power;
   }
 
+  public void syncEncoders() {
+    double absoluteEncoder = this.getAbsoluteEncoder();
+    if (absoluteEncoder < 0) {
+      this.wristEncoder.setPosition(Units.radiansToDegrees(3.114573));
+      this.wristSetPoint = 3.114573;
+    } else {
+      this.wristEncoder.setPosition(Units.radiansToDegrees(this.getAbsoluteEncoder()));
+      this.wristSetPoint = this.getAbsoluteEncoder();
+    }
+  }
+
   @Override
   public void periodic() {
     double power = this.handleMovement();
@@ -214,29 +208,7 @@ public class Wrist extends SubsystemBase {
     SmartDashboard.putNumber("Wrist setpoint", this.wristSetPoint);
     SmartDashboard.putBoolean("wrist end", this.atSetpoint());
     SmartDashboard.putBoolean("beambreak", this.breambreak.get());
+    SmartDashboard.putNumber("raw value absolute", this.absoluteEncoder.get());
 
-    // Color detectedColor = colorSensor.getColor();
-
-    // int proximity = colorSensor.getProximity();
-    // SmartDashboard.putNumber("Red", detectedColor.red);
-    // SmartDashboard.putNumber("Green", detectedColor.green);
-    // SmartDashboard.putNumber("Blue", detectedColor.blue);
-
-    // SmartDashboard.putNumber("Proximity", proximity);
-    // PieceType gamePieceType = this.getGamePieceType();
-
-    // switch (gamePieceType) {
-    // case AIR:
-    // SmartDashboard.putString("color sensor", "Nothing - AIR");
-    // break;
-    // case CONE:
-    // SmartDashboard.putString("color sensor", "CONE");
-    // break;
-    // case CUBE:
-    // SmartDashboard.putString("color sensor", "CUBE");
-    // break;
-    // default:
-    // break;
-    // }
   }
 }

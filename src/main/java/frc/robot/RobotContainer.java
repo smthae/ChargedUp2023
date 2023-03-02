@@ -104,7 +104,7 @@ public class RobotContainer {
    * Actions that we want to do when the robot is disabled.
    */
   public void disabledActions() {
-    this.leds.set(Constants.LEDConstants.forestPattern);
+    this.leds.set(-0.99);
   }
 
   /**
@@ -186,7 +186,7 @@ public class RobotContainer {
   public void configureAutoCommands() {
     this.autoCommands.put("1 cone sus", new exampleAuto(s_Swerve, camera, poseEstimator, wrist, leds));
     this.autoCommands.put("Example auto 2", new exampleAuto2(s_Swerve, camera, poseEstimator));
-    this.autoCommands.put("auto3", new exampleAuto3(s_Swerve, camera, poseEstimator));
+    this.autoCommands.put("auto3", new exampleAuto3(s_Swerve, camera, poseEstimator, arm, wrist, leds));
     this.autoCommands.put("2 cone auto", new TwoConeAuto(s_Swerve, camera, poseEstimator, wrist, arm, leds));
     this.autoCommands.put("tuning", new Tuning(s_Swerve, poseEstimator, wrist, arm, leds));
   }

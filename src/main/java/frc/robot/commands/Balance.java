@@ -25,7 +25,7 @@ public class Balance extends CommandBase {
     double yaw = this.swerve.getYaw().getDegrees();
     double power = 0;
 
-    power = -MathUtil.clamp(this.balanceController.calculate(this.swerve.getPitch().getDegrees(), 0), -0.2, 0.2);
+    power = -MathUtil.clamp(this.balanceController.calculate(this.swerve.getRoll().getDegrees(), 0), -0.2, 0.2);
     // if (yaw <= 45 && 360 - yaw >= 315) {
     // this.swerve.setHold(0);
     // power =

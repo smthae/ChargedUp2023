@@ -10,6 +10,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -71,7 +72,7 @@ public class PoseEstimator extends SubsystemBase {
         var visionMeasurement = camPose.transformBy(Constants.Vision.cameraToRobot);
         this.swerveDrivePoseEstimator.addVisionMeasurement(
             new Pose2d(visionMeasurement.getX(), Units.feetToMeters(26) - visionMeasurement.getY(),
-                visionMeasurement.getRotation().toRotation2d()),
+                Rotation2d.fromDegrees(this.swerve.getYaw().getDegrees() - 180)),
             resultTimestamp);
       }
     }

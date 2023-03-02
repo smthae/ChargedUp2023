@@ -9,8 +9,10 @@ import frc.robot.subsystems.Wrist;
 
 public class CubeL3 extends ParallelCommandGroup {
     public CubeL3(Arm arm, Wrist wrist, LEDs leds) {
+        // 39.44
+        // 1.509
         addCommands(
-                new MoveArm(arm, 39.444, leds),
-                new MoveWrist(wrist, 1.509, leds));
+                new MoveArm(arm, 17.462, leds),
+                new MoveWrist(wrist, 1.584508, leds));
     }
 }

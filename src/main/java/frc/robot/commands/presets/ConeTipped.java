@@ -9,7 +9,7 @@ import frc.robot.subsystems.Wrist;
 
 public class ConeTipped extends ParallelCommandGroup {
     public ConeTipped(Arm arm, Wrist wrist, LEDs leds) {
-        addCommands(new MoveArm(arm, -49, leds),
+        addCommands(new MoveArm(arm, -47.5, leds),
                 new MoveWrist(wrist, 1.129295, leds));
     }
 }
