@@ -8,8 +8,15 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Wrist;
 
 public class Rest extends ParallelCommandGroup {
+    private static double armSetpoint = -54;
+    private static double wristSetpoint = 2.91;
     public Rest(Arm arm, Wrist wrist, LEDs leds) {
         addCommands(
-                new MoveArm(arm, -54, leds), new MoveWrist(wrist, 2.91, leds));
+                new MoveArm(arm, armSetpoint, leds), new MoveWrist(wrist, wristSetpoint, leds));
+    }
+
+    public static void forceSet(Arm arm, Wrist wrist) {
+        arm.setArmSetpoint(armSetpoint);
+        wrist.setWristSetpoint(wristSetpoint);
     }
 }

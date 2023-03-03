@@ -2,13 +2,16 @@ package frc.robot.autos;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
 import frc.robot.commands.IntakeIn;
+import frc.robot.commands.IntakeOut;
+import frc.robot.commands.presets.ConeL2;
 import frc.robot.commands.presets.ConeL2Score;
+import frc.robot.commands.presets.ConeL3;
 import frc.robot.commands.presets.ConeL3Score;
 import frc.robot.commands.presets.ConeStanding;
 import frc.robot.commands.presets.Rest;
@@ -28,37 +31,37 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.common.hardware.VisionLEDMode;
 
 public class TwoConeAuto implements AutoImpl {
-
   private final SwerveAutoBuilder autoBuilder;
   private final List<PathPlannerTrajectory> pathGroup;
   private final PhotonCamera camera;
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
+  private final Arm arm;
   private final Wrist wrist;
   private final LEDs leds;
-  private final Arm arm;
 
-  public TwoConeAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Wrist wrist, Arm arm, LEDs leds) {
+  public TwoConeAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
+      LEDs leds) {
     this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
-    this.wrist = wrist;
     this.arm = arm;
-    this.wrist.currentPiece = PieceType.CONE;
+    this.wrist = wrist;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("2 piece cone",
+    pathGroup = PathPlanner.loadPathGroup("standingcone",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
     HashMap<String, Command> eventMap = new HashMap<>();
-    eventMap.put("conepickupstand", new ParallelCommandGroup(
-        new ConeStanding(arm, wrist, leds),
-        new IntakeIn(this.wrist, PieceType.CONE, true)));
+    eventMap.put("standingcone", new ConeStanding(arm, wrist, leds));
+    eventMap.put("intakein", new IntakeIn(arm, wrist, PieceType.CONE, leds));
     eventMap.put("rest", new Rest(arm, wrist, leds));
-    eventMap.put("conel2", new ConeL2Score(arm, wrist, leds));
+    eventMap.put("conel2", new ConeL2(arm, wrist, leds));
+    eventMap.put("outake", new IntakeOut(arm, wrist, leds));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
         poseEstimator::setCurrentPose,
@@ -81,8 +84,9 @@ public class TwoConeAuto implements AutoImpl {
 
   public Command getCommand() {
     return new SequentialCommandGroup(
+        new Rest(arm, wrist, leds),
         new ConeL3Score(arm, wrist, leds),
         autoBuilder.fullAuto(pathGroup),
-        new ConeL2Score(arm, wrist, leds));
+        new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
   }
 }

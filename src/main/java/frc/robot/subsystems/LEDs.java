@@ -8,10 +8,6 @@ public class LEDs extends SubsystemBase {
   private final Spark blinkin = new Spark(Constants.LEDConstants.blinkinPort);
   private double currentColor = 0;
 
-  public LEDs() {
-    this.set(Constants.LEDConstants.forestPattern);
-  }
-
   public void set(double value) {
     if (currentColor == value)
       return;

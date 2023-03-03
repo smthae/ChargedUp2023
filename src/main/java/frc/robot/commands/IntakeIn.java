@@ -3,24 +3,29 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
+import frc.robot.commands.presets.Rest;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Wrist;
 
 public class IntakeIn extends CommandBase {
   private final Wrist wrist;
+  private final Arm arm;
   private PieceType gamePieceType;
   private boolean auto = false;
   private int counter = 0;
   private LEDs leds;
   private boolean hasSeen = false;
 
-  public IntakeIn(Wrist wrist, PieceType gamePiece, LEDs leds) {
+  public IntakeIn(Arm arm, Wrist wrist, PieceType gamePiece, LEDs leds) {
+    this.arm = arm;
     this.wrist = wrist;
     this.gamePieceType = gamePiece;
     this.leds = leds;
   }
 
-  public IntakeIn(Wrist wrist, PieceType gamePiece, boolean auto) {
+  public IntakeIn(Arm arm, Wrist wrist, PieceType gamePiece, boolean auto) {
+    this.arm = arm;
     this.wrist = wrist;
     this.gamePieceType = gamePiece;
     this.auto = auto;
@@ -44,6 +49,7 @@ public class IntakeIn extends CommandBase {
       this.leds.set(Constants.LEDConstants.off);
     }
 
+    Rest.forceSet(arm, wrist);
     this.wrist.intakeStop();
   }
 
@@ -54,6 +60,7 @@ public class IntakeIn extends CommandBase {
       counter++;
       if (counter > 10) {
         this.leds.set(Constants.LEDConstants.solidGreen);
+        Rest.forceSet(arm, wrist);
         return true;
       }
       return false;

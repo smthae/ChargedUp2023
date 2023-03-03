@@ -122,7 +122,7 @@ public final class Constants {
     /* Custom PID Controllers */
     public static final PIDConstants robotRotationPID = new PIDConstants(0.1, 0, 0.00005);
     public static final PIDConstants translationPID = new PIDConstants(4, 0, 0.005);
-    public static final PIDConstants balancePID = new PIDConstants(0.05, 0, 0.02, 2);
+    public static final PIDConstants balancePID = new PIDConstants(0.5, 0.0, 0.1, 4);
 
     /* Delays (milliseconds) */
     public static final long defenseDelay = 500;
@@ -147,7 +147,7 @@ public final class Constants {
     public static final double angleConversionFactor = 360.0 / angleGearRatio;
 
     /* Swerve Profiling Values */
-    public static final double maxSpeed = 4.5; // meters per second
+    public static final double maxSpeed = 6; // meters per second
     public static final double maxAngularVelocity = 11.5;
 
     /* Neutral Modes */
@@ -250,5 +250,6 @@ public final class Constants {
     public static final double solidBlue = 0.87;
     public static final double solidOrange = 0.65;
     public static final double off = 0.99;
+    public static final double raindbow = -0.99;
   }
 }

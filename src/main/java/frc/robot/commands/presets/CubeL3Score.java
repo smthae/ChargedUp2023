@@ -8,10 +8,10 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Wrist;
 
-public class ConeL2Score extends SequentialCommandGroup {
-    public ConeL2Score(Arm arm, Wrist wrist, LEDs leds) {
+public class CubeL3Score extends SequentialCommandGroup {
+    public CubeL3Score(Arm arm, Wrist wrist, LEDs leds) {
         addCommands(
-                new ConeL2(arm, wrist, leds),
+                new CubeL3(arm, wrist, leds),
                 Commands.waitSeconds(1),
                 new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
     }

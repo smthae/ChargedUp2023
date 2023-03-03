@@ -10,7 +10,7 @@ import frc.robot.subsystems.Wrist;
 public class ConeStanding extends ParallelCommandGroup {
     public ConeStanding(Arm arm, Wrist wrist, LEDs leds) {
         addCommands(
-                new MoveArm(arm, -10.372419, leds),
+                new MoveArm(arm, -9.372419, leds),
                 new MoveWrist(wrist, -0.221668, leds));
     }
 }

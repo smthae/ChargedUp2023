@@ -104,7 +104,6 @@ public class RobotContainer {
    * Actions that we want to do when the robot is disabled.
    */
   public void disabledActions() {
-    this.leds.set(-0.99);
   }
 
   /**
@@ -124,17 +123,17 @@ public class RobotContainer {
 
     driver.leftTrigger().whileTrue(new ParallelCommandGroup(
         new ConeTipped(arm, wrist, leds),
-        new IntakeIn(this.wrist, PieceType.CONE, leds)));
+        new IntakeIn(arm, this.wrist, PieceType.CONE, leds)));
 
     driver.rightTrigger().whileTrue(new ParallelCommandGroup(
         new CubeIntake(arm, wrist, leds),
-        new IntakeIn(this.wrist, PieceType.CUBE, leds)));
+        new IntakeIn(arm, this.wrist, PieceType.CUBE, leds)));
 
     // rest
     operator.povDown().onTrue(new Rest(arm, wrist, leds));
 
     // Shoot
-    operator.rightTrigger().whileTrue(new IntakeOut(wrist, leds));
+    operator.rightTrigger().whileTrue(new IntakeOut(arm, wrist, leds));
 
     /* Score */
 
@@ -161,17 +160,17 @@ public class RobotContainer {
     // Cone standing
     operator.rightBumper().whileTrue(new ParallelCommandGroup(
         new ConeStanding(arm, wrist, leds),
-        new IntakeIn(this.wrist, PieceType.CONE, leds)));
+        new IntakeIn(arm, this.wrist, PieceType.CONE, leds)));
 
     // Cone Human Player against ramp
     operator.leftBumper().whileTrue(new ParallelCommandGroup(
         new ConeHP(arm, wrist, leds),
-        new IntakeIn(this.wrist, PieceType.CONE, leds)));
+        new IntakeIn(arm, this.wrist, PieceType.CONE, leds)));
 
     // Cone Shelf Standing up
     operator.povLeft().whileTrue(new ParallelCommandGroup(
         new ConeShelf(arm, wrist, leds),
-        new IntakeIn(this.wrist, PieceType.CONE, leds)));
+        new IntakeIn(arm, this.wrist, PieceType.CONE, leds)));
 
     /* CUBE */
     // Cube Human Player against ramp - TBD
@@ -184,11 +183,13 @@ public class RobotContainer {
   }
 
   public void configureAutoCommands() {
-    this.autoCommands.put("1 cone sus", new exampleAuto(s_Swerve, camera, poseEstimator, wrist, leds));
-    this.autoCommands.put("Example auto 2", new exampleAuto2(s_Swerve, camera, poseEstimator));
-    this.autoCommands.put("auto3", new exampleAuto3(s_Swerve, camera, poseEstimator, arm, wrist, leds));
-    this.autoCommands.put("2 cone auto", new TwoConeAuto(s_Swerve, camera, poseEstimator, wrist, arm, leds));
-    this.autoCommands.put("tuning", new Tuning(s_Swerve, poseEstimator, wrist, arm, leds));
+    this.autoCommands.put("Two cone auto", new TwoConeAuto(s_Swerve, camera, poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("Cone and Cube L2", new ConeAndCube(s_Swerve, camera, poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("Cone and Cube L3", new ConeAndCubeL3(s_Swerve, camera, poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("Cone L2 Stationary", new StationaryConeL2(arm, wrist, leds));
+    this.autoCommands.put("Cone L3 Stationary", new StationaryConeL3(arm, wrist, leds));
+    this.autoCommands.put("Cube L2 Stationary", new StationaryCubeL2(arm, wrist, leds));
+    this.autoCommands.put("Cube L3 Stationary", new StationaryCubeL3(arm, wrist, leds));
   }
 
   public void configureTestCommands() {

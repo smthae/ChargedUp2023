@@ -8,10 +8,15 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
 import frc.robot.commands.IntakeIn;
+import frc.robot.commands.IntakeOut;
+import frc.robot.commands.presets.ConeL2;
 import frc.robot.commands.presets.ConeL2Score;
 import frc.robot.commands.presets.ConeL3;
 import frc.robot.commands.presets.ConeL3Score;
 import frc.robot.commands.presets.ConeStanding;
+import frc.robot.commands.presets.CubeIntake;
+import frc.robot.commands.presets.CubeL2;
+import frc.robot.commands.presets.CubeL3;
 import frc.robot.commands.presets.Rest;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.LEDs;
@@ -31,7 +36,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import org.photonvision.PhotonCamera;
 import org.photonvision.common.hardware.VisionLEDMode;
 
-public class exampleAuto3 implements AutoImpl {
+public class ConeAndCubeL3 implements AutoImpl {
   private final SwerveAutoBuilder autoBuilder;
   private final List<PathPlannerTrajectory> pathGroup;
   private final PhotonCamera camera;
@@ -41,7 +46,7 @@ public class exampleAuto3 implements AutoImpl {
   private final Wrist wrist;
   private final LEDs leds;
 
-  public exampleAuto3(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
+  public ConeAndCubeL3(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
       LEDs leds) {
     this.camera = camera;
     this.poseEstimator = poseEstimator;
@@ -50,15 +55,16 @@ public class exampleAuto3 implements AutoImpl {
     this.wrist = wrist;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("standingcone",
+    pathGroup = PathPlanner.loadPathGroup("cone & cube",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
     HashMap<String, Command> eventMap = new HashMap<>();
-    eventMap.put("standingcone", new ConeStanding(arm, wrist, leds));
-    eventMap.put("intakein",
-        new ParallelCommandGroup(new ConeStanding(arm, wrist, leds), new IntakeIn(wrist, PieceType.CONE, leds)));
+    eventMap.put("cubepickup", new CubeIntake(arm, wrist, leds));
+    eventMap.put("intakein", new IntakeIn(arm, wrist, PieceType.CUBE, leds));
     eventMap.put("rest", new Rest(arm, wrist, leds));
+    eventMap.put("cubel2", new CubeL3(arm, wrist, leds));
+    eventMap.put("outake", new IntakeOut(arm, wrist, leds));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
         poseEstimator::setCurrentPose,
@@ -84,6 +90,6 @@ public class exampleAuto3 implements AutoImpl {
         new Rest(arm, wrist, leds),
         new ConeL3Score(arm, wrist, leds),
         autoBuilder.fullAuto(pathGroup),
-        new ConeL2Score(arm, wrist, leds));
+        new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
   }
 }

@@ -15,7 +15,7 @@ public class ConeL3Score extends SequentialCommandGroup {
                 new Rest(arm, wrist, leds),
                 new ConeL2(arm, wrist, leds),
                 new ConeL3(arm, wrist, leds),
-                Commands.waitSeconds(0.5),
-                new IntakeOut(wrist, leds), new Rest(arm, wrist, leds));
+                Commands.waitSeconds(0.8),
+                new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
     }
 }
