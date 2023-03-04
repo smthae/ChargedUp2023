@@ -1,21 +1,9 @@
 package frc.robot.autos;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
-import frc.robot.Constants.PieceType;
-import frc.robot.commands.IntakeIn;
-import frc.robot.commands.IntakeOut;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.LEDs;
-import frc.robot.subsystems.PoseEstimator;
-import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.Wrist;
-
 import java.util.HashMap;
 import java.util.List;
+
+import org.photonvision.PhotonCamera;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -23,36 +11,44 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
-import org.photonvision.PhotonCamera;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
+import frc.robot.commands.presets.ConeL2Score;
+import frc.robot.commands.presets.ConeTipped;
+import frc.robot.commands.presets.Rest;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.PoseEstimator;
+import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.Wrist;
 
-public class exampleAuto implements AutoImpl {
-
-  private final SwerveAutoBuilder autoBuilder;
-  private final List<PathPlannerTrajectory> pathGroup;
+public class L2ChargeStationCone implements AutoImpl {
   private final PhotonCamera camera;
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
-  private final Wrist wrist;
   private final Arm arm;
+  private final Wrist wrist;
   private final LEDs leds;
+  private final SwerveAutoBuilder autoBuilder;
+  private final List<PathPlannerTrajectory> pathGroup;
 
-  public exampleAuto(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist, LEDs leds) {
+  public L2ChargeStationCone(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
+      LEDs leds) {
     this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
-    this.wrist = wrist;
     this.arm = arm;
-    this.wrist.currentPiece = PieceType.CONE;
+    this.wrist = wrist;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("test4",
+    pathGroup = PathPlanner.loadPathGroup("l2chargestation",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
     HashMap<String, Command> eventMap = new HashMap<>();
-    eventMap.put("intakein",
-        new SequentialCommandGroup(new IntakeIn(arm, wrist, PieceType.CONE, leds),
-            new InstantCommand(() -> wrist.setWristSetpoint(300))));
+    eventMap.put("coneintake", new ConeTipped(arm, wrist, leds));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
         poseEstimator::setCurrentPose,
@@ -75,6 +71,8 @@ public class exampleAuto implements AutoImpl {
 
   public Command getCommand() {
     return new SequentialCommandGroup(
-        autoBuilder.fullAuto(pathGroup), new IntakeOut(arm, wrist, leds));
+        new Rest(arm, wrist, leds),
+        new ConeL2Score(arm, wrist, leds),
+        autoBuilder.fullAuto(pathGroup));
   }
 }

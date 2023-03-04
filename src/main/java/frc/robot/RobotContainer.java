@@ -190,6 +190,8 @@ public class RobotContainer {
     this.autoCommands.put("Cone L3 Stationary", new StationaryConeL3(arm, wrist, leds));
     this.autoCommands.put("Cube L2 Stationary", new StationaryCubeL2(arm, wrist, leds));
     this.autoCommands.put("Cube L3 Stationary", new StationaryCubeL3(arm, wrist, leds));
+    this.autoCommands.put("L2 Cone Charge Station",
+        new L2ChargeStationCone(s_Swerve, camera, poseEstimator, arm, wrist, leds));
   }
 
   public void configureTestCommands() {
@@ -226,7 +228,7 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     String selectedAuto = SmartDashboard.getString("selectedAuto", "default");
     if (selectedAuto.equals("default") || !this.autoCommands.containsKey(selectedAuto)) {
-      return new DefaultAuto().getCommand();
+      return new DefaultAuto(arm, wrist, leds).getCommand();
     }
 
     return this.autoCommands.get(selectedAuto).getCommand();
