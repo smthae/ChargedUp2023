@@ -192,6 +192,8 @@ public class RobotContainer {
     this.autoCommands.put("Cube L3 Stationary", new StationaryCubeL3(arm, wrist, leds));
     this.autoCommands.put("L2 Cone Charge Station",
         new L2ChargeStationCone(s_Swerve, camera, poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("L3 Cone Farside",
+        new FarsideConeL3(s_Swerve, camera, poseEstimator, arm, wrist, leds));
   }
 
   public void configureTestCommands() {
