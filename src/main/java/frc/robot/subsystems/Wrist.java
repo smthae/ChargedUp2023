@@ -86,7 +86,7 @@ public class Wrist extends SubsystemBase {
     if (gamePiece == PieceType.CONE) {
       this.intakeMotor.set(ControlMode.PercentOutput, 0.51735);
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -1);
+      this.intakeMotor.set(ControlMode.PercentOutput, -0.5);
     }
   }
 

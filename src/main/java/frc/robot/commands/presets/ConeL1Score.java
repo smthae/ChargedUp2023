@@ -2,6 +2,7 @@ package frc.robot.commands.presets;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 import frc.robot.commands.IntakeOut;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.LEDs;
@@ -12,6 +13,7 @@ public class ConeL1Score extends SequentialCommandGroup {
         addCommands(
                 new ConeL1(arm, wrist, leds),
                 Commands.waitSeconds(1),
-                new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
+                new IntakeOut(arm, wrist, leds),
+                new Rest(arm, wrist, leds));
     }
 }

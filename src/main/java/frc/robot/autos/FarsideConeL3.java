@@ -48,8 +48,8 @@ public class FarsideConeL3 implements AutoImpl {
     this.leds = leds;
 
     pathGroup = PathPlanner.loadPathGroup("l2chargestation",
-        new PathConstraints(3,
-            1),
+        new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared),
         new PathConstraints(0.5, 0.5));
 
     HashMap<String, Command> eventMap = new HashMap<>();

@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.commands.Balance;
 import frc.robot.commands.presets.ConeL2Score;
 import frc.robot.commands.presets.ConeTipped;
 import frc.robot.commands.presets.Rest;
@@ -45,7 +46,8 @@ public class L2ChargeStationCone implements AutoImpl {
 
     pathGroup = PathPlanner.loadPathGroup("l2chargestation",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared),
+        new PathConstraints(5, 5));
 
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("coneintake", new ConeTipped(arm, wrist, leds));
@@ -73,6 +75,6 @@ public class L2ChargeStationCone implements AutoImpl {
     return new SequentialCommandGroup(
         new Rest(arm, wrist, leds),
         new ConeL2Score(arm, wrist, leds),
-        autoBuilder.fullAuto(pathGroup));
+        autoBuilder.fullAuto(pathGroup), new Balance(swerve, leds));
   }
 }

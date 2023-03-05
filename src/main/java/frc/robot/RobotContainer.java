@@ -32,6 +32,7 @@ import frc.robot.commands.leds.Blink;
 import frc.robot.commands.presets.ConeHP;
 import frc.robot.commands.presets.ConeL1;
 import frc.robot.commands.presets.ConeL2;
+import frc.robot.commands.presets.ConeL2Score;
 import frc.robot.commands.presets.ConeL3;
 import frc.robot.commands.presets.ConeL3Score;
 import frc.robot.commands.presets.ConeShelf;
@@ -199,6 +200,7 @@ public class RobotContainer {
   public void configureTestCommands() {
     SmartDashboard.putData("Reset Pose Estimator", new InstantCommand(this.poseEstimator::resetFieldPosition));
     SmartDashboard.putData("l3 cone", new ConeL3Score(arm, wrist, leds));
+    SmartDashboard.putData("l2 cone", new ConeL2Score(arm, wrist, leds));
     SmartDashboard.putData("Go to Position", new GoToPosition(s_Swerve, poseEstimator,
         new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
             FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));

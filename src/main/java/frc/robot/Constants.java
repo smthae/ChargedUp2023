@@ -79,6 +79,8 @@ public final class Constants {
 
     public static final double maxAngle = Units.degreesToRadians(60);
     public static final double minAngle = Units.degreesToRadians(-54.3);
+
+    public static final double commandTimeout = 1.5;
   }
 
   public static final class Wrist {
@@ -90,12 +92,14 @@ public final class Constants {
 
     public static final double intakePower = 0.5;
     public static final int absoluteEncoderPort = 1;
-    public static final double positionOffset = 4.96;
+    public static final double positionOffset = 4.96 + 0.035;
 
     public static final double maxAngle = 3.083457;
     public static final double minAngle = -1.664522;
 
     public static final int beambreakDIO = 2;
+
+    public static final double commandTimeout = 1.5;
   }
 
   public static final class Swerve {
@@ -122,7 +126,7 @@ public final class Constants {
     /* Custom PID Controllers */
     public static final PIDConstants robotRotationPID = new PIDConstants(0.1, 0, 0.00005);
     public static final PIDConstants translationPID = new PIDConstants(4, 0, 0.005);
-    public static final PIDConstants balancePID = new PIDConstants(0.5, 0.0, 0.1, 4);
+    public static final PIDConstants balancePID = new PIDConstants(0.045, 0.0, 0, 2);
 
     /* Delays (milliseconds) */
     public static final long defenseDelay = 500;
@@ -249,6 +253,7 @@ public final class Constants {
     public static final double solidRed = 0.61;
     public static final double solidBlue = 0.87;
     public static final double solidOrange = 0.65;
+    public static final double skyblue = 0.83;
     public static final double off = 0.99;
     public static final double raindbow = -0.99;
   }
