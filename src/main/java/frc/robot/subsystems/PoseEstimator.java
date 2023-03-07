@@ -34,6 +34,7 @@ public class PoseEstimator extends SubsystemBase {
 
     try {
       aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+      aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
     } catch (Exception e) {
       DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());
       aprilTagFieldLayout = null;
@@ -44,13 +45,6 @@ public class PoseEstimator extends SubsystemBase {
         Constants.Vision.visionMeasurementStdDevs);
 
     SmartDashboard.putData("Field", field2d);
-  }
-
-  public void updateOrigin() {
-    var alliance = DriverStation.getAlliance();
-    SmartDashboard.putString("alliance", alliance == Alliance.Blue ? "blue" : "red");
-    aprilTagFieldLayout.setOrigin(alliance == Alliance.Blue ? OriginPosition.kBlueAllianceWallRightSide
-        : OriginPosition.kRedAllianceWallRightSide);
   }
 
   @Override
@@ -70,9 +64,7 @@ public class PoseEstimator extends SubsystemBase {
         Pose3d camPose = targetPos.transformBy(camToTarget.inverse());
 
         var visionMeasurement = camPose.transformBy(Constants.Vision.cameraToRobot);
-        this.swerveDrivePoseEstimator.addVisionMeasurement(
-            new Pose2d(visionMeasurement.getX(), Units.feetToMeters(26) - visionMeasurement.getY(),
-                Rotation2d.fromDegrees(this.swerve.getYaw().getDegrees() - 180)),
+        this.swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(),
             resultTimestamp);
       }
     }
