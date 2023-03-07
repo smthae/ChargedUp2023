@@ -26,7 +26,7 @@ import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Wrist;
 
-public class L2ChargeStationCone implements AutoImpl {
+public class CenterChargeStation implements AutoImpl {
   private final PhotonCamera camera;
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
@@ -36,7 +36,7 @@ public class L2ChargeStationCone implements AutoImpl {
   private final SwerveAutoBuilder autoBuilder;
   private final List<PathPlannerTrajectory> pathGroup;
 
-  public L2ChargeStationCone(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
+  public CenterChargeStation(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
       LEDs leds) {
     this.camera = camera;
     this.poseEstimator = poseEstimator;
@@ -45,12 +45,9 @@ public class L2ChargeStationCone implements AutoImpl {
     this.wrist = wrist;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("l2chargestation",
+    pathGroup = PathPlanner.loadPathGroup("centerbalance",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared),
-        new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared),
-        new PathConstraints(5, 5));
+            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("conel2score", new ConeL2Score(arm, wrist, leds));

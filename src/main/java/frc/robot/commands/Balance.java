@@ -21,7 +21,7 @@ public class Balance extends CommandBase {
   @Override
   public void execute() {
     double power = 0;
-    power = this.balanceController.calculate(this.swerve.getPitch().getDegrees(), -1.2);
+    power = this.balanceController.calculate(this.swerve.getPitch().getDegrees(), -3);
 
     this.swerve.drive(new Translation2d(power, 0), 0, true, true, true, true);
 
@@ -34,7 +34,7 @@ public class Balance extends CommandBase {
 
   public boolean isBalanced() {
     double value = this.swerve.getPitch().getDegrees();
-    return value <= Constants.Swerve.balancePID.tolerance && value >= -Constants.Swerve.balancePID.tolerance;
+    return value - 3 <= Constants.Swerve.balancePID.tolerance && value + 3 >= -Constants.Swerve.balancePID.tolerance;
   }
 
   @Override

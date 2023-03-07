@@ -126,7 +126,7 @@ public final class Constants {
     /* Custom PID Controllers */
     public static final PIDConstants robotRotationPID = new PIDConstants(0.1, 0, 0.00005);
     public static final PIDConstants translationPID = new PIDConstants(4, 0, 0.005);
-    public static final PIDConstants balancePID = new PIDConstants(0.045, 0.0, 0, 2);
+    public static final PIDConstants balancePID = new PIDConstants(0.043, 0.0, 0, 2);
 
     /* Delays (milliseconds) */
     public static final long defenseDelay = 500;

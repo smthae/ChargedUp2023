@@ -195,6 +195,8 @@ public class RobotContainer {
         new L2ChargeStationCone(s_Swerve, camera, poseEstimator, arm, wrist, leds));
     this.autoCommands.put("L3 Cone Farside",
         new FarsideConeL3(s_Swerve, camera, poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("L2 Cone Center Balance",
+        new CenterChargeStation(s_Swerve, camera, poseEstimator, arm, wrist, leds));
   }
 
   public void configureTestCommands() {

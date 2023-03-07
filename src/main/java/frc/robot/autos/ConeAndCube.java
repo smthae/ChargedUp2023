@@ -64,6 +64,7 @@ public class ConeAndCube implements AutoImpl {
     eventMap.put("rest", new Rest(arm, wrist, leds));
     eventMap.put("cubel2", new CubeL2(arm, wrist, leds));
     eventMap.put("outake", new IntakeOut(arm, wrist, leds));
+    eventMap.put("conel2score", new ConeL2Score(arm, wrist, leds));
 
     autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
         poseEstimator::setCurrentPose,
@@ -87,7 +88,7 @@ public class ConeAndCube implements AutoImpl {
   public Command getCommand() {
     return new SequentialCommandGroup(
         new Rest(arm, wrist, leds),
-        new ConeL2Score(arm, wrist, leds),
+        new ConeL2(arm, wrist, leds),
         autoBuilder.fullAuto(pathGroup),
         new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
   }
