@@ -25,7 +25,7 @@ public class Wrist extends SubsystemBase {
 
   // Motors
   private final CANSparkMax wristMotor = new CANSparkMax(Constants.Wrist.wristMotorID, MotorType.kBrushless);
-  private final TalonFX intakeMotor = new TalonFX(Constants.Wrist.intakeMotorID);
+  public final TalonFX intakeMotor = new TalonFX(Constants.Wrist.intakeMotorID);
 
   // Encoder
   private final RelativeEncoder wristEncoder;

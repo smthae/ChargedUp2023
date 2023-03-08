@@ -173,6 +173,8 @@ public class RobotContainer {
         new ConeShelf(arm, wrist, leds),
         new IntakeIn(arm, this.wrist, PieceType.CONE, leds)));
 
+    operator.povUp().whileTrue(new testOutake(arm, wrist, leds));
+
     /* CUBE */
     // Cube Human Player against ramp - TBD
 
