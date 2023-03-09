@@ -1,10 +1,14 @@
 package frc.robot.autos;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.trajectory.TrajectoryUtil.TrajectorySerializationException;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.lib.util.Flipper;
 import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
 import frc.robot.commands.IntakeIn;
@@ -24,7 +28,9 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Wrist;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
@@ -77,8 +83,19 @@ public class ConeAndCube implements AutoImpl {
             Constants.AutoConstants.rotationPID.d),
         swerve::setModuleStates,
         eventMap,
-        true,
+        false,
         swerve);
+  }
+
+  public CommandBase getFullAuto(List<PathPlannerTrajectory> trajectories) {
+    boolean shouldFlip = Flipper.shouldFlip();
+    if (shouldFlip) {
+      for (ListIterator<PathPlannerTrajectory> iter = trajectories.listIterator(); iter.hasNext();) {
+        iter.set(Flipper.allianceFlip(iter.next()));
+      }
+    }
+
+    return autoBuilder.fullAuto(trajectories);
   }
 
   public Pose2d getInitialHolonomicPose() {
@@ -89,7 +106,7 @@ public class ConeAndCube implements AutoImpl {
     return new SequentialCommandGroup(
         new Rest(arm, wrist, leds),
         new ConeL2(arm, wrist, leds),
-        autoBuilder.fullAuto(pathGroup),
+        getFullAuto(pathGroup),
         new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
   }
 }

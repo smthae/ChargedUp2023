@@ -34,7 +34,6 @@ public class PoseEstimator extends SubsystemBase {
 
     try {
       aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-      aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
     } catch (Exception e) {
       DriverStation.reportError("Failed to load AprilTagFieldLayout", e.getStackTrace());
       aprilTagFieldLayout = null;
@@ -49,27 +48,22 @@ public class PoseEstimator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    var pipelineResult = this.camera.getLatestResult();
-    var resultTimestamp = pipelineResult.getTimestampSeconds();
-    if (resultTimestamp != previousPipelineTimestamp && pipelineResult.hasTargets()) {
-      previousPipelineTimestamp = resultTimestamp;
-      var target = pipelineResult.getBestTarget();
-      var fiduciaryId = target.getFiducialId();
-      Optional<Pose3d> tagPose = aprilTagFieldLayout == null ? Optional.empty()
-          : aprilTagFieldLayout.getTagPose(fiduciaryId);
-      if (target.getPoseAmbiguity() <= 0.2 && fiduciaryId >= 0 && tagPose.isPresent()) {
-        var targetPos = tagPose.get();
-        Transform3d camToTarget = target.getBestCameraToTarget();
-        SmartDashboard.putNumber("tag to camera", camToTarget.getY() + Constants.Vision.cameraToRobot.getY());
-        Pose3d camPose = targetPos.transformBy(camToTarget.inverse());
+    var result = this.camera.getLatestResult();
+    if (!result.hasTargets())
+      return;
 
-        var visionMeasurement = camPose.transformBy(Constants.Vision.cameraToRobot);
-        this.swerveDrivePoseEstimator.addVisionMeasurement(visionMeasurement.toPose2d(),
-            resultTimestamp);
-      }
-    }
+    var id = result.getBestTarget().getFiducialId();
+    if (id == -1)
+      return;
+
+    var tag = aprilTagFieldLayout.getTagPose(id);
+    if (tag.isEmpty())
+      return;
 
     this.swerveDrivePoseEstimator.update(this.swerve.getYaw(), this.swerve.getPositions());
+    this.swerveDrivePoseEstimator.addVisionMeasurement(
+        tag.get().plus(result.getBestTarget().getBestCameraToTarget()).toPose2d(), result.getTimestampSeconds());
+
     SmartDashboard.putString("Estimated Pose", this.getFormattedPose());
     field2d.setRobotPose(getCurrentPose());
   }
