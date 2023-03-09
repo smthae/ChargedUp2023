@@ -91,7 +91,8 @@ public class ConeAndCube implements AutoImpl {
     boolean shouldFlip = Flipper.shouldFlip();
     if (shouldFlip) {
       for (ListIterator<PathPlannerTrajectory> iter = trajectories.listIterator(); iter.hasNext();) {
-        iter.set(Flipper.allianceFlip(iter.next()));
+        PathPlannerTrajectory trajectory = Flipper.allianceFlip(iter.next());
+        iter.set(trajectory);
       }
     }
 
