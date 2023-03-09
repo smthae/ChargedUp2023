@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.PIDConstants;
 import frc.robot.Constants;
+import frc.robot.Constants.GamePieceLevel;
 import frc.robot.Constants.PieceType;
 
 public class Wrist extends SubsystemBase {
@@ -40,6 +41,7 @@ public class Wrist extends SubsystemBase {
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   public final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   public PieceType currentPiece = PieceType.AIR;
+  public GamePieceLevel gamePieceLevel = GamePieceLevel.L1;
   public int colorCounter = 0;
 
   // Beam break
@@ -76,17 +78,44 @@ public class Wrist extends SubsystemBase {
 
   public void intakeIn(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -0.6);
+      this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.intakeInCone);
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, 0.5);
+      this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.intakeInCube);
     }
   }
 
   public void intakeOut(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
       this.intakeMotor.set(ControlMode.PercentOutput, 0.51735);
+      switch (this.gamePieceLevel) {
+        case L1:
+          this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.outakeConeL2);
+          break;
+        case L2:
+          this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.outakeConeL2);
+          break;
+        case L3:
+          this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.outakeConeL3);
+          break;
+
+        default:
+          break;
+      }
     } else if (gamePiece == PieceType.CUBE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, -0.5);
+      switch (this.gamePieceLevel) {
+        case L1:
+          this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.outakeCubeL2);
+          break;
+        case L2:
+          this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.outakeCubeL2);
+          break;
+        case L3:
+          this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.outakeCubeL3);
+          break;
+
+        default:
+          break;
+      }
     }
   }
 

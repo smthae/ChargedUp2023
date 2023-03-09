@@ -31,6 +31,12 @@ public final class Constants {
     AIR
   }
 
+  public static enum GamePieceLevel {
+    L1,
+    L2,
+    L3,
+  }
+
   public static enum RobotModes {
     Competition,
     Debug
@@ -91,6 +97,16 @@ public final class Constants {
     public static final double wristGearRatio = 67.2;
 
     public static final double intakePower = 0.5;
+
+    public static final double intakeInCube = 0.5;
+    public static final double intakeInCone = -0.6;
+
+    public static final double outakeConeL2 = 0.51735;
+    public static final double outakeConeL3 = 0.49;
+
+    public static final double outakeCubeL2 = -0.5;
+    public static final double outakeCubeL3 = -0.6;
+
     public static final int absoluteEncoderPort = 1;
     public static final double positionOffset = 4.96 + 0.035;
 
