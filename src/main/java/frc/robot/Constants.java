@@ -116,6 +116,8 @@ public final class Constants {
     public static final int beambreakDIO = 2;
 
     public static final double commandTimeout = 1.5;
+
+    public static final PIDConstants intakePIDConstants = new PIDConstants(0.1, 0, 0);
   }
 
   public static final class Swerve {

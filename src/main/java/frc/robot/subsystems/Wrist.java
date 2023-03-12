@@ -30,12 +30,16 @@ public class Wrist extends SubsystemBase {
 
   // Encoder
   private final RelativeEncoder wristEncoder;
-  private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(Constants.Wrist.absoluteEncoderPort);
+  private final DutyCycleEncoder absoluteEncoder = new DutyCycleEncoder(
+      Constants.Wrist.absoluteEncoderPort);
 
   // PID
   private final PIDConstants wristRotationPidConstants = Constants.Wrist.wristRotationPID;
   private final PIDController wristRotationPID = Constants.Wrist.wristRotationPID.getController();
+  private final PIDConstants intakePIDConstants = Constants.Wrist.intakePIDConstants;
+  private final PIDController intakePIDController = Constants.Wrist.intakePIDConstants.getController();
   private double wristSetPoint = 0;
+  private double intakeSetVelocity = 0;
 
   // Color sensor
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
@@ -63,6 +67,8 @@ public class Wrist extends SubsystemBase {
 
     TalonFXConfiguration intakeMotorConfiguration = new TalonFXConfiguration();
     this.wristRotationPidConstants.sendDashboard("Wrist Rotation");
+    this.intakePIDConstants.sendDashboard("intake pid");
+    SmartDashboard.putNumber("set velocity", intakeSetVelocity);
     // intakeMotorConfiguration.supplyCurrLimit = new
     // SupplyCurrentLimitConfiguration(
     // true,
@@ -228,9 +234,23 @@ public class Wrist extends SubsystemBase {
 
   @Override
   public void periodic() {
+    wristRotationPidConstants.retrieveDashboard(intakePIDController);
+
     double power = this.handleMovement();
 
     this.wristMotor.set(power);
+
+    // intakeSetVelocity = SmartDashboard.getNumber("set velocity",
+    // intakeSetVelocity);
+    // double intakePower =
+    // intakePIDController.calculate(intakeMotor.getSelectedSensorVelocity(),
+    // intakeSetVelocity);
+    // SmartDashboard.putNumber("intake velocity",
+    // intakeMotor.getSelectedSensorVelocity());
+    // SmartDashboard.putNumber("intake power", intakePower);
+
+    // this.intakeMotor.set(ControlMode.PercentOutput, intakePower);
+
     SmartDashboard.putNumber("Wrist relative encoder", this.getEncoderPosition());
     SmartDashboard.putNumber("Wrist pid output", power);
     SmartDashboard.putNumber("Wrist absolute encoder", this.getAbsoluteEncoder());

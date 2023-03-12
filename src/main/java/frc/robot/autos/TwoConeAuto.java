@@ -52,7 +52,7 @@ public class TwoConeAuto implements AutoImpl {
     this.wrist = wrist;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("standingcone",
+    pathGroup = PathPlanner.loadPathGroup("2 cone auto",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
