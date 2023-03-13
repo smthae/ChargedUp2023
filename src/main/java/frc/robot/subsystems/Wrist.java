@@ -8,6 +8,7 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -92,7 +93,6 @@ public class Wrist extends SubsystemBase {
 
   public void intakeOut(PieceType gamePiece) {
     if (gamePiece == PieceType.CONE) {
-      this.intakeMotor.set(ControlMode.PercentOutput, 0.51735);
       switch (this.gamePieceLevel) {
         case L1:
           this.intakeMotor.set(ControlMode.PercentOutput, Constants.Wrist.outakeConeL2);
@@ -236,7 +236,7 @@ public class Wrist extends SubsystemBase {
   public void periodic() {
     wristRotationPidConstants.retrieveDashboard(intakePIDController);
 
-    double power = this.handleMovement();
+    double power = MathUtil.clamp(this.handleMovement(), -0.5, 0.5);
 
     this.wristMotor.set(power);
 

@@ -10,7 +10,7 @@ import frc.robot.subsystems.Wrist;
 
 public class Rest extends ParallelCommandGroup {
     private static double armSetpoint = -54;
-    private static double wristSetpoint = 2.91;
+    private static double wristSetpoint = 2.86;
 
     public Rest(Arm arm, Wrist wrist, LEDs leds) {
         addCommands(
