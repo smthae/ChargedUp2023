@@ -44,25 +44,23 @@ import org.photonvision.common.hardware.VisionLEDMode;
 public class ConeAndCube implements AutoImpl {
   private final SwerveAutoBuilder autoBuilder;
   private final List<PathPlannerTrajectory> pathGroup;
-  private final PhotonCamera camera;
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
   private final Arm arm;
   private final Wrist wrist;
   private final LEDs leds;
 
-  public ConeAndCube(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
+  public ConeAndCube(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
       LEDs leds) {
-    this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
     this.arm = arm;
     this.wrist = wrist;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("cone & cube",
-        new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+    pathGroup = PathPlanner.loadPathGroup("coneandcube",
+        new PathConstraints(0.2,
+            0.2));
 
     HashMap<String, Command> eventMap = new HashMap<>();
     eventMap.put("cubepickup", new CubeIntake(arm, wrist, leds));
@@ -72,7 +70,7 @@ public class ConeAndCube implements AutoImpl {
     eventMap.put("outake", new IntakeOut(arm, wrist, leds));
     eventMap.put("conel2score", new ConeL2Score(arm, wrist, leds));
 
-    autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
+    autoBuilder = new SwerveAutoBuilder(poseEstimator::currentPose,
         poseEstimator::setCurrentPose,
         Constants.Swerve.swerveKinematics,
         new PIDConstants(Constants.AutoConstants.translationPID.p,
@@ -83,20 +81,8 @@ public class ConeAndCube implements AutoImpl {
             Constants.AutoConstants.rotationPID.d),
         swerve::setModuleStates,
         eventMap,
-        false,
+        true,
         swerve);
-  }
-
-  public CommandBase getFullAuto(List<PathPlannerTrajectory> trajectories) {
-    boolean shouldFlip = Flipper.shouldFlip();
-    if (shouldFlip) {
-      for (ListIterator<PathPlannerTrajectory> iter = trajectories.listIterator(); iter.hasNext();) {
-        PathPlannerTrajectory trajectory = Flipper.allianceFlip(iter.next());
-        iter.set(trajectory);
-      }
-    }
-
-    return autoBuilder.fullAuto(trajectories);
   }
 
   public Pose2d getInitialHolonomicPose() {
@@ -107,7 +93,7 @@ public class ConeAndCube implements AutoImpl {
     return new SequentialCommandGroup(
         new Rest(arm, wrist, leds),
         new ConeL2(arm, wrist, leds),
-        getFullAuto(pathGroup),
+        autoBuilder.fullAuto(pathGroup),
         new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
   }
 }

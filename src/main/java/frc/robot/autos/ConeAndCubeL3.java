@@ -39,16 +39,14 @@ import org.photonvision.common.hardware.VisionLEDMode;
 public class ConeAndCubeL3 implements AutoImpl {
   private final SwerveAutoBuilder autoBuilder;
   private final List<PathPlannerTrajectory> pathGroup;
-  private final PhotonCamera camera;
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
   private final Arm arm;
   private final Wrist wrist;
   private final LEDs leds;
 
-  public ConeAndCubeL3(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
+  public ConeAndCubeL3(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
       LEDs leds) {
-    this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
     this.arm = arm;
@@ -66,7 +64,7 @@ public class ConeAndCubeL3 implements AutoImpl {
     eventMap.put("cubel2", new CubeL3(arm, wrist, leds));
     eventMap.put("outake", new IntakeOut(arm, wrist, leds));
 
-    autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
+    autoBuilder = new SwerveAutoBuilder(poseEstimator::currentPose,
         poseEstimator::setCurrentPose,
         Constants.Swerve.swerveKinematics,
         new PIDConstants(Constants.AutoConstants.translationPID.p,

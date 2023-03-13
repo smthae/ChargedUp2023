@@ -42,7 +42,7 @@ public class Tuning implements AutoImpl {
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
     HashMap<String, Command> eventMap = new HashMap<>();
-    autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
+    autoBuilder = new SwerveAutoBuilder(poseEstimator::currentPose,
         poseEstimator::setCurrentPose,
         Constants.Swerve.swerveKinematics,
         new PIDConstants(Constants.AutoConstants.translationPID.p,

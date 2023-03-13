@@ -40,7 +40,7 @@ public class GoToPosition extends CommandBase {
 
   @Override
   public void initialize() {
-    var robotPose = this.poseEstimator.getCurrentPose();
+    var robotPose = this.poseEstimator.currentPose();
     rotationController.reset(robotPose.getRotation().getRadians());
     xController.reset(robotPose.getX());
     yController.reset(robotPose.getY());
@@ -52,7 +52,7 @@ public class GoToPosition extends CommandBase {
 
   @Override
   public void execute() {
-    var robotPose2d = this.poseEstimator.getCurrentPose();
+    var robotPose2d = this.poseEstimator.currentPose();
 
     var xSpeed = xController.calculate(robotPose2d.getX());
     if (xController.atGoal()) {

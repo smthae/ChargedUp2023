@@ -27,16 +27,12 @@ public class Swerve extends SubsystemBase {
   private boolean wasRotationZero = true;
   private boolean wasTranslationZero = true;
   private long defenseDelayStart;
-  private final PhotonCamera camera;
   private Translation2d centerOfRotation = new Translation2d();
 
   private double pitchOffset = 0;
   private double rollOffset = 0;
 
-  public Swerve(PhotonCamera camera) {
-    /* Vision */
-    this.camera = camera;
-
+  public Swerve() {
     /* Gyro setup */
     gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.Swerve.pigeonCanBUS);
     gyro.configFactoryDefault();

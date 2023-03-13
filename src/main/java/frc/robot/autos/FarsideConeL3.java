@@ -29,7 +29,6 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Wrist;
 
 public class FarsideConeL3 implements AutoImpl {
-  private final PhotonCamera camera;
   private final PoseEstimator poseEstimator;
   private final Swerve swerve;
   private final Arm arm;
@@ -38,9 +37,8 @@ public class FarsideConeL3 implements AutoImpl {
   private final SwerveAutoBuilder autoBuilder;
   private final List<PathPlannerTrajectory> pathGroup;
 
-  public FarsideConeL3(Swerve swerve, PhotonCamera camera, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
+  public FarsideConeL3(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
       LEDs leds) {
-    this.camera = camera;
     this.poseEstimator = poseEstimator;
     this.swerve = swerve;
     this.arm = arm;
@@ -56,7 +54,7 @@ public class FarsideConeL3 implements AutoImpl {
     eventMap.put("conestanding", new ConeStanding(arm, wrist, leds));
     eventMap.put("intakea", new IntakeIn(arm, wrist, PieceType.CONE, leds));
 
-    autoBuilder = new SwerveAutoBuilder(poseEstimator::getCurrentPose,
+    autoBuilder = new SwerveAutoBuilder(poseEstimator::currentPose,
         poseEstimator::setCurrentPose,
         Constants.Swerve.swerveKinematics,
         new PIDConstants(Constants.AutoConstants.translationPID.p,
