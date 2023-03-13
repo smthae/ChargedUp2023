@@ -58,7 +58,7 @@ public class ConeAndCube implements AutoImpl {
     this.wrist = wrist;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("coneandcube",
+    pathGroup = PathPlanner.loadPathGroup("cone & cube",
         new PathConstraints(0.2,
             0.2));
 
