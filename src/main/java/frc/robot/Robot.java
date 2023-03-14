@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.server.PathPlannerServer;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
@@ -42,6 +44,8 @@ public class Robot extends TimedRobot {
     UsbCamera camera = CameraServer.startAutomaticCapture();
     camera.setPixelFormat(PixelFormat.kYUYV);
     camera.setResolution(320, 240);
+
+    PathPlannerServer.startServer(5811);
   }
 
   @Override

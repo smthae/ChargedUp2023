@@ -63,9 +63,10 @@ public class RobotContainer {
   /* Subsystems */
   final Swerve s_Swerve = new Swerve();
   final Wrist wrist = new Wrist();
+  final PhotonCamera camera = new PhotonCamera(Constants.Vision.cameraName);
   final Arm arm = new Arm();
   final LEDs leds = new LEDs();
-  public final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve);
+  public final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve, camera);
 
   /* Auto */
   Hashtable<String, AutoImpl> autoCommands = new Hashtable<String, AutoImpl>();
@@ -186,6 +187,8 @@ public class RobotContainer {
     this.autoCommands.put("Two cone auto", new TwoConeAuto(s_Swerve, poseEstimator, arm, wrist, leds));
     this.autoCommands.put("Cone and Cube L2", new ConeAndCube(s_Swerve, poseEstimator, arm, wrist, leds));
     this.autoCommands.put("Cone and Cube L3", new ConeAndCubeL3(s_Swerve, poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("testpath", new TestPath(s_Swerve, poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("coneandcubel3_red", new ConeAndCubeL3Red(s_Swerve, poseEstimator, arm, wrist, leds));
     this.autoCommands.put("Cone L2 Stationary", new StationaryConeL2(arm, wrist, leds));
     this.autoCommands.put("Cone L3 Stationary", new StationaryConeL3(arm, wrist, leds));
     this.autoCommands.put("Cube L2 Stationary", new StationaryCubeL2(arm, wrist, leds));

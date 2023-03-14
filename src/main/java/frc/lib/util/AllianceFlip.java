@@ -42,9 +42,11 @@ public class AllianceFlip {
 
     /** Flips a rotation based on the current alliance color. */
     public static Rotation2d apply(Rotation2d rotation) {
-        if (shouldFlip())
-            return new Rotation2d(-rotation.getCos(), rotation.getSin());
         return rotation;
+
+        // if (shouldFlip())
+        // return new Rotation2d(-rotation.getCos(), rotation.getSin());
+        // return rotation;
     }
 
     /**
