@@ -236,7 +236,8 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     String selectedAuto = SmartDashboard.getString("selectedAuto", "default");
     if (selectedAuto.equals("default") || !this.autoCommands.containsKey(selectedAuto)) {
-      return new DefaultAuto(arm, wrist, leds).getCommand();
+      // return new DefaultAuto(arm, wrist, leds).getCommand();
+      return new RotationTune(s_Swerve, poseEstimator, arm, wrist, leds).getCommand();
     }
 
     return this.autoCommands.get(selectedAuto).getCommand();
