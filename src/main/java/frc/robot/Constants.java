@@ -99,7 +99,7 @@ public final class Constants {
     public static final double intakePower = 0.5;
 
     public static final double intakeInCube = 0.5;
-    public static final double intakeInCone = -0.6;
+    public static final double intakeInCone = -0.5;
 
     public static final double outakeConeL2 = 0.51735;
     public static final double outakeConeL3 = 0.57;

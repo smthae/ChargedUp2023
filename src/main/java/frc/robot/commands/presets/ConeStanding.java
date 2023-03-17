@@ -11,7 +11,7 @@ import frc.robot.subsystems.Wrist;
 public class ConeStanding extends ParallelCommandGroup {
     public ConeStanding(Arm arm, Wrist wrist, LEDs leds) {
         addCommands(
-                new MoveArm(arm, -11, leds).withTimeout(Constants.Arm.commandTimeout),
-                new MoveWrist(wrist, -0.221668, leds).withTimeout(Constants.Wrist.commandTimeout));
+                new MoveArm(arm, -5.2, leds).withTimeout(Constants.Arm.commandTimeout),
+                new MoveWrist(wrist, -0.95, leds).withTimeout(Constants.Wrist.commandTimeout));
     }
 }
