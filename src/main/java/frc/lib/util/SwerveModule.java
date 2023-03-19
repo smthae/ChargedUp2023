@@ -37,7 +37,6 @@ public class SwerveModule {
   public final SparkMaxPIDController driveController;
   public final SparkMaxPIDController angleController;
   public final PIDConstants anglePID;
-  public final PIDConstants drivePID;
   public final SVAConstants driveSVA;
   public SimpleMotorFeedforward feedforward;
 
@@ -46,7 +45,6 @@ public class SwerveModule {
 
     angleOffset = moduleConstants.angleOffset;
     this.anglePID = moduleConstants.anglePID;
-    this.drivePID = moduleConstants.drivePID;
     this.driveSVA = moduleConstants.driveSVA;
 
     /* Angle Encoder Config */
@@ -93,7 +91,6 @@ public class SwerveModule {
   public void updateControllerValues() {
     this.feedforward = this.driveSVA.retrieveDashboard();
     this.anglePID.retrieveDashboard(this.angleController);
-    this.drivePID.retrieveDashboard(this.driveController);
   }
 
   public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
@@ -141,7 +138,7 @@ public class SwerveModule {
     driveMotor.setIdleMode(Constants.Swerve.driveNeutralMode);
     driveEncoder.setVelocityConversionFactor(Constants.Swerve.driveConversionVelocityFactor);
     driveEncoder.setPositionConversionFactor(Constants.Swerve.driveConversionPositionFactor);
-    this.drivePID.applyPID(this.driveController);
+    Constants.Swerve.drivePID.applyPID(this.driveController);
     driveController.setFF(0);
     this.feedforward = driveSVA.getController();
     driveMotor.enableVoltageCompensation(Constants.Swerve.voltageComp);

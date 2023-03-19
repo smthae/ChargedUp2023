@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.Pigeon2;
-import com.pathplanner.lib.auto.PIDConstants;
 
 import org.photonvision.PhotonCamera;
 
@@ -15,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.util.PIDConstants;
 import frc.lib.util.SwerveModule;
 import frc.robot.Constants;
 
@@ -27,6 +27,7 @@ public class Swerve extends SubsystemBase {
   private boolean wasRotationZero = true;
   private boolean wasTranslationZero = true;
   private long defenseDelayStart;
+  private PIDConstants drivePIDConstants = Constants.Swerve.drivePID;
   private Translation2d centerOfRotation = new Translation2d();
 
   private double pitchOffset = 0;
@@ -44,6 +45,8 @@ public class Swerve extends SubsystemBase {
     this.robotRotationPID = Constants.Swerve.robotRotationPID.getController();
     this.robotRotationPID.enableContinuousInput(-180, 180);
     this.robotRotationPID.setTolerance(2);
+
+    drivePIDConstants.sendDashboard("Module Velocity");
 
     /* Swerve modules setup */
     mSwerveMods = new SwerveModule[] {
@@ -299,6 +302,14 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
+    this.drivePIDConstants.retrieveDashboard();
+
+    for (SwerveModule mod : mSwerveMods) {
+      this.drivePIDConstants.applyPID(mod.driveController);
+      SmartDashboard.putNumber(Constants.Swerve.moduleNames[mod.moduleNumber],
+          mod.getSpeed() * Constants.Swerve.wheelDiameter);
+    }
+
     SmartDashboard.putNumber("roll", getRoll().getDegrees());
     SmartDashboard.putNumber("pitch", getPitch().getDegrees());
     SmartDashboard.putNumber("yaw", getYaw().getDegrees());

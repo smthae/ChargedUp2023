@@ -59,6 +59,12 @@ public class PIDConstants {
     SmartDashboard.putNumber(subscript + " D", this.d);
   }
 
+  public void retrieveDashboard() {
+    this.p = SmartDashboard.getNumber(this.subscript + " P", 0.0);
+    this.i = SmartDashboard.getNumber(this.subscript + " I", 0.0);
+    this.d = SmartDashboard.getNumber(this.subscript + " D", 0.0);
+  }
+
   /**
    * Get the values from the dashboard and update the controller pid values in
    * case they have been changed by the user in the dashboard

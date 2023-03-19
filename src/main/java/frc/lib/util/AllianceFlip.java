@@ -36,7 +36,7 @@ public class AllianceFlip {
     public static Translation2d apply(Translation2d translation) {
         if (shouldFlip())
             return new Translation2d(
-                    FieldConstants.fieldLength - translation.getX(), translation.getY());
+                    FieldConstants.fieldLength - translation.getX(), FieldConstants.fieldWidth - translation.getY());
         return translation;
     }
 
