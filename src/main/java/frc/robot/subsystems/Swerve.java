@@ -306,7 +306,7 @@ public class Swerve extends SubsystemBase {
 
     for (SwerveModule mod : mSwerveMods) {
       this.drivePIDConstants.applyPID(mod.driveController);
-      SmartDashboard.putNumber(Constants.Swerve.moduleNames[mod.moduleNumber],
+      SmartDashboard.putNumber(Constants.Swerve.moduleNames[mod.moduleNumber] + " speed",
           mod.getSpeed() * Constants.Swerve.wheelDiameter);
     }
 

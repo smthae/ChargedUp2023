@@ -12,8 +12,10 @@ import org.json.simple.JSONObject;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -209,6 +211,9 @@ public class RobotContainer {
         new Transform3d(new Translation3d(FieldConstants.aprilTags.get(1).getX() - 0.5,
             FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));
 
+    SmartDashboard.putData("Drive at 4m/s", new InstantCommand(() -> {
+      s_Swerve.drive(new Translation2d(4, 0), 0, true, false, false, true);
+    }));
   }
 
   public void sendAutoCommands() {
