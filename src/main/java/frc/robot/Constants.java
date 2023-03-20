@@ -187,7 +187,7 @@ public final class Constants {
     public static final String[] moduleNames = { "Front Left", "Front Right", "Back Left", "Back Right" }; // module #0,
     // #1, #2, #3
 
-    public static final PIDConstants drivePID = new PIDConstants(0.1, 0.0, 0.000);
+    public static final PIDConstants drivePID = new PIDConstants(0.6, 0.003, 0.0005);
 
     /* Front Left Module - Module 0 */
     public static final class Mod0 {
