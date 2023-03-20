@@ -203,6 +203,10 @@ public class SwerveModule {
     return new SwerveModulePosition(this.getDistance(), this.getAngle());
   }
 
+  public SwerveModulePosition getRedPosition() {
+    return new SwerveModulePosition(this.getDistance(), Rotation2d.fromDegrees(-this.getAngle().getDegrees()));
+  }
+
   public CANSparkMax getDriveMotor() {
     return this.driveMotor;
   }

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.util.AllianceFlip;
+import frc.lib.util.Flipper;
 import frc.robot.Constants;
 
 public class PoseEstimator extends SubsystemBase {
@@ -49,7 +50,13 @@ public class PoseEstimator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // if (Flipper.shouldFlip()) {
+    // this.swerveDrivePoseEstimator.update(this.swerve.getYaw(),
+    // this.swerve.getRedPositions());
+    // } else {
+    // }
     this.swerveDrivePoseEstimator.update(this.swerve.getYaw(), this.swerve.getPositions());
+
     SmartDashboard.putString("Estimated Pose", this.getFormattedPose());
     field2d.setRobotPose(currentPose());
     var result = this.camera.getLatestResult();

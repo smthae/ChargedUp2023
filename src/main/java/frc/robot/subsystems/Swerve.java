@@ -235,6 +235,16 @@ public class Swerve extends SubsystemBase {
     return positions;
   }
 
+  public SwerveModulePosition[] getRedPositions() {
+    SwerveModulePosition[] positions = new SwerveModulePosition[4];
+
+    for (SwerveModule mod : mSwerveMods) {
+      positions[mod.moduleNumber] = mod.getRedPosition();
+    }
+
+    return positions;
+  }
+
   /** Reset the gyro and position hold */
   public void zeroGyro() {
     gyro.setYaw(0);

@@ -42,7 +42,7 @@ public class Flipper {
     return new Pose2d(
         new Translation2d(
             FieldConstants.fieldLength - pose.getTranslation().getX(),
-            pose.getTranslation().getY()),
+            FieldConstants.fieldWidth - pose.getTranslation().getY()),
         allianceFlip(pose.getRotation()));
   }
 
