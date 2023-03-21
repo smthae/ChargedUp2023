@@ -81,7 +81,7 @@ public class ConeAndCube implements AutoImpl {
             Constants.AutoConstants.rotationPID.d),
         swerve::setModuleStates,
         eventMap,
-        true,
+        false,
         swerve);
   }
 

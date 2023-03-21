@@ -45,58 +45,58 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.common.hardware.VisionLEDMode;
 
 public class ConeAndCubeL3Red implements AutoImpl {
-  private final SwerveAutoBuilder autoBuilder;
-  private final List<PathPlannerTrajectory> pathGroup;
-  private final PoseEstimator poseEstimator;
-  private final Swerve swerve;
-  private final Arm arm;
-  private final Wrist wrist;
-  private final LEDs leds;
+        private final SwerveAutoBuilder autoBuilder;
+        private final List<PathPlannerTrajectory> pathGroup;
+        private final PoseEstimator poseEstimator;
+        private final Swerve swerve;
+        private final Arm arm;
+        private final Wrist wrist;
+        private final LEDs leds;
 
-  public ConeAndCubeL3Red(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
-      LEDs leds) {
-    this.poseEstimator = poseEstimator;
-    this.swerve = swerve;
-    this.arm = arm;
-    this.wrist = wrist;
-    this.leds = leds;
+        public ConeAndCubeL3Red(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
+                        LEDs leds) {
+                this.poseEstimator = poseEstimator;
+                this.swerve = swerve;
+                this.arm = arm;
+                this.wrist = wrist;
+                this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("coneandcubel3_red",
-        new PathConstraints(4,
-            3),
-        new PathConstraints(0.5,
-            0.5),
-        new PathConstraints(4,
-            3));
+                pathGroup = PathPlanner.loadPathGroup("cone & cube_red",
+                                new PathConstraints(4,
+                                                3),
+                                new PathConstraints(0.5,
+                                                0.5),
+                                new PathConstraints(4,
+                                                3));
 
-    HashMap<String, Command> eventMap = new HashMap<>();
-    eventMap.put("cubeintake", new CubeIntake(arm, wrist, leds));
-    eventMap.put("intake", new IntakeIn(arm, wrist, PieceType.CUBE, leds));
-    eventMap.put("cubel3", new CubeL3(arm, wrist, leds));
+                HashMap<String, Command> eventMap = new HashMap<>();
+                eventMap.put("cubeintake", new CubeIntake(arm, wrist, leds));
+                eventMap.put("intake", new IntakeIn(arm, wrist, PieceType.CUBE, leds));
+                eventMap.put("cubel3", new CubeL3(arm, wrist, leds));
 
-    autoBuilder = new SwerveAutoBuilder(poseEstimator::currentPose,
-        poseEstimator::setCurrentPose,
-        Constants.Swerve.swerveKinematics,
-        new PIDConstants(Constants.AutoConstants.translationPID.p,
-            Constants.AutoConstants.translationPID.i,
-            Constants.AutoConstants.translationPID.d),
-        new PIDConstants(Constants.AutoConstants.rotationPID.p,
-            Constants.AutoConstants.rotationPID.i,
-            Constants.AutoConstants.rotationPID.d),
-        swerve::setModuleStates,
-        eventMap,
-        true,
-        swerve);
-  }
+                autoBuilder = new SwerveAutoBuilder(poseEstimator::currentPose,
+                                poseEstimator::setCurrentPose,
+                                Constants.Swerve.swerveKinematics,
+                                new PIDConstants(Constants.AutoConstants.translationPID.p,
+                                                Constants.AutoConstants.translationPID.i,
+                                                Constants.AutoConstants.translationPID.d),
+                                new PIDConstants(Constants.AutoConstants.rotationPID.p,
+                                                Constants.AutoConstants.rotationPID.i,
+                                                Constants.AutoConstants.rotationPID.d),
+                                swerve::setModuleStates,
+                                eventMap,
+                                false,
+                                swerve);
+        }
 
-  public Pose2d getInitialHolonomicPose() {
-    return pathGroup.get(0).getInitialHolonomicPose();
-  }
+        public Pose2d getInitialHolonomicPose() {
+                return pathGroup.get(0).getInitialHolonomicPose();
+        }
 
-  public Command getCommand() {
-    return new SequentialCommandGroup(
-        new ConeL3Score(arm, wrist, leds),
-        autoBuilder.fullAuto(pathGroup),
-        new CubeL3Score(arm, wrist, leds));
-  }
+        public Command getCommand() {
+                return new SequentialCommandGroup(
+                                new ConeL3Score(arm, wrist, leds),
+                                autoBuilder.fullAuto(pathGroup),
+                                new CubeL3Score(arm, wrist, leds));
+        }
 }

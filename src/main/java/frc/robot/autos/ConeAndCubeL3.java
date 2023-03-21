@@ -53,7 +53,7 @@ public class ConeAndCubeL3 implements AutoImpl {
     this.wrist = wrist;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("cone & cube",
+    pathGroup = PathPlanner.loadPathGroup("cone & cube_red",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
@@ -75,7 +75,7 @@ public class ConeAndCubeL3 implements AutoImpl {
             Constants.AutoConstants.rotationPID.d),
         swerve::setModuleStates,
         eventMap,
-        true,
+        false,
         swerve);
   }
 

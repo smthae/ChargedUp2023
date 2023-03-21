@@ -76,7 +76,7 @@ public class TestPath implements AutoImpl {
             Constants.AutoConstants.rotationPID.d),
         swerve::setModuleStates,
         eventMap,
-        true,
+        false,
         swerve);
   }
 

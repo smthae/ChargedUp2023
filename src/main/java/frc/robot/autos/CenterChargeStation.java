@@ -61,7 +61,7 @@ public class CenterChargeStation implements AutoImpl {
             Constants.AutoConstants.rotationPID.d),
         swerve::setModuleStates,
         eventMap,
-        true,
+        false,
         swerve);
   }
 

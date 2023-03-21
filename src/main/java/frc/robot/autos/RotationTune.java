@@ -45,50 +45,50 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.common.hardware.VisionLEDMode;
 
 public class RotationTune implements AutoImpl {
-    private final SwerveAutoBuilder autoBuilder;
-    private final List<PathPlannerTrajectory> pathGroup;
-    private final PoseEstimator poseEstimator;
-    private final Swerve swerve;
-    private final Arm arm;
-    private final Wrist wrist;
-    private final LEDs leds;
+  private final SwerveAutoBuilder autoBuilder;
+  private final List<PathPlannerTrajectory> pathGroup;
+  private final PoseEstimator poseEstimator;
+  private final Swerve swerve;
+  private final Arm arm;
+  private final Wrist wrist;
+  private final LEDs leds;
 
-    public RotationTune(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
-            LEDs leds) {
-        this.poseEstimator = poseEstimator;
-        this.swerve = swerve;
-        this.arm = arm;
-        this.wrist = wrist;
-        this.leds = leds;
+  public RotationTune(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
+      LEDs leds) {
+    this.poseEstimator = poseEstimator;
+    this.swerve = swerve;
+    this.arm = arm;
+    this.wrist = wrist;
+    this.leds = leds;
 
-        pathGroup = PathPlanner.loadPathGroup("rotation_tune",
-                new PathConstraints(4,
-                        3));
+    pathGroup = PathPlanner.loadPathGroup("rotation_tune_red",
+        new PathConstraints(4,
+            3));
 
-        HashMap<String, Command> eventMap = new HashMap<>();
+    HashMap<String, Command> eventMap = new HashMap<>();
 
-        autoBuilder = new SwerveAutoBuilder(poseEstimator::currentPose,
-                poseEstimator::setCurrentPose,
-                Constants.Swerve.swerveKinematics,
-                new PIDConstants(Constants.AutoConstants.translationPID.p,
-                        Constants.AutoConstants.translationPID.i,
-                        Constants.AutoConstants.translationPID.d),
-                new PIDConstants(Constants.AutoConstants.rotationPID.p,
-                        Constants.AutoConstants.rotationPID.i,
-                        Constants.AutoConstants.rotationPID.d),
-                swerve::setModuleStates,
-                eventMap,
-                true,
-                swerve);
-    }
+    autoBuilder = new SwerveAutoBuilder(poseEstimator::currentPose,
+        poseEstimator::setCurrentPose,
+        Constants.Swerve.swerveKinematics,
+        new PIDConstants(Constants.AutoConstants.translationPID.p,
+            Constants.AutoConstants.translationPID.i,
+            Constants.AutoConstants.translationPID.d),
+        new PIDConstants(Constants.AutoConstants.rotationPID.p,
+            Constants.AutoConstants.rotationPID.i,
+            Constants.AutoConstants.rotationPID.d),
+        swerve::setModuleStates,
+        eventMap,
+        false,
+        swerve);
+  }
 
-    public Pose2d getInitialHolonomicPose() {
-        return pathGroup.get(0).getInitialHolonomicPose();
-    }
+  public Pose2d getInitialHolonomicPose() {
+    return pathGroup.get(0).getInitialHolonomicPose();
+  }
 
-    public Command getCommand() {
-        return new SequentialCommandGroup(
-                new Rest(arm, wrist, leds),
-                autoBuilder.fullAuto(pathGroup));
-    }
+  public Command getCommand() {
+    return new SequentialCommandGroup(
+        new Rest(arm, wrist, leds),
+        autoBuilder.fullAuto(pathGroup));
+  }
 }

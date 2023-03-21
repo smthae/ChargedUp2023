@@ -65,7 +65,7 @@ public class FarsideConeL3 implements AutoImpl {
             Constants.AutoConstants.rotationPID.d),
         swerve::setModuleStates,
         eventMap,
-        true,
+        false,
         swerve);
   }
 
