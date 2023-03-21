@@ -37,5 +37,8 @@ def generate_red_aliance(file_name: str, directory: str):
 files = os.listdir(DIRECTORY)
 
 for file in files:
+    if file.split("_")[-1] == "red.path":
+        continue
+
     generate_red_aliance(file, DIRECTORY)
     print(f"{file.split('.')[0]}_red.path: ✅")
