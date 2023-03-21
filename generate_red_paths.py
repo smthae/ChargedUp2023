@@ -18,7 +18,10 @@ def generate_red_aliance(file_name: str, directory: str):
     for waypoint in path_data["waypoints"]:
         waypoint["anchorPoint"]["x"] = FIELD_LENGTH - \
             waypoint["anchorPoint"]["x"]
-        waypoint["holonomicAngle"] = 180 - waypoint["holonomicAngle"]
+        if 180 - waypoint["holonomicAngle"] == 0:
+            waypoint["holonomicAngle"] = -0.01
+        else:
+            waypoint["holonomicAngle"] = 180 - waypoint["holonomicAngle"]
 
         if waypoint["nextControl"] != None:
             waypoint["nextControl"]["x"] = FIELD_LENGTH - \

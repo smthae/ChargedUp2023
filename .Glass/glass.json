@@ -18,6 +18,13 @@
       "/SmartDashboard/Reset Pose Estimator": "Command",
       "/SmartDashboard/l2 cone": "Command",
       "/SmartDashboard/l3 cone": "Command"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables Settings": {

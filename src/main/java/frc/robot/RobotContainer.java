@@ -219,6 +219,10 @@ public class RobotContainer {
             FieldConstants.aprilTags.get(1).getY(), 0), new Rotation3d(0, 3.142, 0))));
 
     driver.povUp().toggleOnTrue(new DriveAt4(s_Swerve));
+    SmartDashboard.putData("set yaw", new InstantCommand(() -> {
+      double yaw = SmartDashboard.getNumber("set yaw position", 0);
+      s_Swerve.gyro.setYaw(yaw);
+    }));
   }
 
   public void sendAutoCommands() {

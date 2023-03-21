@@ -92,7 +92,9 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.s_Swerve.gyro.setYaw(180 - m_robotContainer.s_Swerve.getYaw().getDegrees());
+    if (DriverStation.getAlliance() == Alliance.Blue) {
+      m_robotContainer.s_Swerve.gyro.setYaw(m_robotContainer.s_Swerve.getYaw().getDegrees() - 180);
+    }
   }
 
   /** This function is called periodically during autonomous. */

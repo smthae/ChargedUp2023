@@ -222,21 +222,23 @@ public class Wrist extends SubsystemBase {
   }
 
   public void syncEncoders() {
-    double absoluteEncoder = this.getAbsoluteEncoder();
-    if (absoluteEncoder < 0) {
-      this.wristEncoder.setPosition(Units.radiansToDegrees(3.114573));
-      this.wristSetPoint = 3.114573;
-    } else {
-      this.wristEncoder.setPosition(Units.radiansToDegrees(this.getAbsoluteEncoder()));
-      this.wristSetPoint = this.getAbsoluteEncoder();
-    }
+    // double absoluteEncoder = this.getAbsoluteEncoder();
+    // if (absoluteEncoder < 0) {
+    // this.wristEncoder.setPosition(Units.radiansToDegrees(3.114573));
+    // this.wristSetPoint = 3.114573;
+    // } else {
+    // this.wristEncoder.setPosition(Units.radiansToDegrees(this.getAbsoluteEncoder()));
+    // this.wristSetPoint = this.getAbsoluteEncoder();
+    // }
+    this.wristEncoder.setPosition(Units.radiansToDegrees(3.114573));
+    this.wristSetPoint = 3.114573;
   }
 
   @Override
   public void periodic() {
     wristRotationPidConstants.retrieveDashboard(intakePIDController);
 
-    double power = MathUtil.clamp(this.handleMovement(), -0.5, 0.5);
+    double power = MathUtil.clamp(this.handleMovement(), -0.7, 0.7);
 
     this.wristMotor.set(power);
 

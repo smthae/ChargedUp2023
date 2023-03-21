@@ -312,13 +312,14 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
-    this.drivePIDConstants.retrieveDashboard();
+    // this.drivePIDConstants.retrieveDashboard();
 
-    for (SwerveModule mod : mSwerveMods) {
-      this.drivePIDConstants.applyPID(mod.driveController);
-      SmartDashboard.putNumber(Constants.Swerve.moduleNames[mod.moduleNumber] + " speed",
-          mod.getSpeed());
-    }
+    // for (SwerveModule mod : mSwerveMods) {
+    // this.drivePIDConstants.applyPID(mod.driveController);
+    // SmartDashboard.putNumber(Constants.Swerve.moduleNames[mod.moduleNumber] + "
+    // speed",
+    // mod.getSpeed());
+    // }
 
     SmartDashboard.putNumber("roll", getRoll().getDegrees());
     SmartDashboard.putNumber("pitch", getPitch().getDegrees());
