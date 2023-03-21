@@ -33,15 +33,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import org.photonvision.PhotonCamera;
 import org.photonvision.common.hardware.VisionLEDMode;
 
-public class TwoConeAuto implements AutoImpl {
-  private final SwerveAutoBuilder autoBuilder;
-  private final List<PathPlannerTrajectory> pathGroup;
-  private final PoseEstimator poseEstimator;
-  private final Swerve swerve;
-  private final Arm arm;
-  private final Wrist wrist;
-  private final LEDs leds;
-
+public class TwoConeAuto extends AutoBase {
   public TwoConeAuto(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
       LEDs leds) {
     this.poseEstimator = poseEstimator;
@@ -51,6 +43,9 @@ public class TwoConeAuto implements AutoImpl {
     this.leds = leds;
 
     pathGroup = PathPlanner.loadPathGroup("2 cone auto",
+        new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+    pathGroup_red = PathPlanner.loadPathGroup("2 cone auto_red",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
@@ -76,15 +71,11 @@ public class TwoConeAuto implements AutoImpl {
         swerve);
   }
 
-  public Pose2d getInitialHolonomicPose() {
-    return pathGroup.get(0).getInitialHolonomicPose();
-  }
-
   public Command getCommand() {
     return new SequentialCommandGroup(
         new Rest(arm, wrist, leds),
         new ConeL3Score(arm, wrist, leds),
-        autoBuilder.fullAuto(pathGroup),
+        autoBuilder.fullAuto(getPathGroup()),
         new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
   }
 }

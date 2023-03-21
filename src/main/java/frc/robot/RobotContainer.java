@@ -71,7 +71,7 @@ public class RobotContainer {
   public final PoseEstimator poseEstimator = new PoseEstimator(s_Swerve, camera);
 
   /* Auto */
-  Hashtable<String, AutoImpl> autoCommands = new Hashtable<String, AutoImpl>();
+  Hashtable<String, AutoBase> autoCommands = new Hashtable<String, AutoBase>();
 
   final Score score;
 
@@ -186,21 +186,28 @@ public class RobotContainer {
   }
 
   public void configureAutoCommands() {
-    this.autoCommands.put("Two cone auto", new TwoConeAuto(s_Swerve, poseEstimator, arm, wrist, leds));
-    this.autoCommands.put("Cone and Cube L2", new ConeAndCube(s_Swerve, poseEstimator, arm, wrist, leds));
-    this.autoCommands.put("Cone and Cube L3", new ConeAndCubeL3(s_Swerve, poseEstimator, arm, wrist, leds));
-    this.autoCommands.put("testpath", new TestPath(s_Swerve, poseEstimator, arm, wrist, leds));
-    this.autoCommands.put("coneandcubel3_red", new ConeAndCubeL3Red(s_Swerve, poseEstimator, arm, wrist, leds));
-    this.autoCommands.put("Cone L2 Stationary", new StationaryConeL2(arm, wrist, leds));
-    this.autoCommands.put("Cone L3 Stationary", new StationaryConeL3(arm, wrist, leds));
-    this.autoCommands.put("Cube L2 Stationary", new StationaryCubeL2(arm, wrist, leds));
-    this.autoCommands.put("Cube L3 Stationary", new StationaryCubeL3(arm, wrist, leds));
+    this.autoCommands.put("Two cone auto", new TwoConeAuto(s_Swerve,
+        poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("Cone and Cube L2", new ConeAndCube(s_Swerve,
+        poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("Cone and Cube L3", new ConeAndCubeL3(s_Swerve,
+        poseEstimator, arm, wrist, leds));
     this.autoCommands.put("L2 Cone Charge Station",
         new L2ChargeStationCone(s_Swerve, poseEstimator, arm, wrist, leds));
     this.autoCommands.put("L3 Cone Farside",
         new FarsideConeL3(s_Swerve, poseEstimator, arm, wrist, leds));
     this.autoCommands.put("L2 Cone Center Balance",
         new CenterChargeStation(s_Swerve, poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("testpath", new TestPath(s_Swerve, poseEstimator, arm,
+        wrist, leds));
+    this.autoCommands.put("Cone L2 Stationary", new StationaryConeL2(arm, wrist,
+        leds));
+    this.autoCommands.put("Cone L3 Stationary", new StationaryConeL3(arm, wrist,
+        leds));
+    this.autoCommands.put("Cube L2 Stationary", new StationaryCubeL2(arm, wrist,
+        leds));
+    this.autoCommands.put("Cube L3 Stationary", new StationaryCubeL3(arm, wrist,
+        leds));
   }
 
   public void configureTestCommands() {
@@ -220,7 +227,14 @@ public class RobotContainer {
 
     this.autoCommands.forEach((key, value) -> {
       JSONArray translation = new JSONArray();
-      Pose2d initialHolonomicPose = value.getInitialHolonomicPose();
+      Pose2d initialHolonomicPose;
+
+      if (value.getInitialHolonomicPose().getX() != 0) {
+        initialHolonomicPose = value.pathGroup.get(0).getInitialHolonomicPose();
+      } else {
+        initialHolonomicPose = value.getInitialHolonomicPose();
+
+      }
       translation.add(initialHolonomicPose.getX());
       translation.add(initialHolonomicPose.getY());
 

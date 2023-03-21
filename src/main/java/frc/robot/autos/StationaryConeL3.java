@@ -7,10 +7,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Wrist;
 
-public class StationaryConeL3 implements AutoImpl {
-  Arm arm;
-  Wrist wrist;
-  LEDs leds;
+public class StationaryConeL3 extends AutoBase {
 
   public StationaryConeL3(Arm arm, Wrist wrist, LEDs leds) {
     this.arm = arm;

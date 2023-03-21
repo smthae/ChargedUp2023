@@ -28,15 +28,7 @@ import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Wrist;
 
-public class FarsideConeL3 implements AutoImpl {
-  private final PoseEstimator poseEstimator;
-  private final Swerve swerve;
-  private final Arm arm;
-  private final Wrist wrist;
-  private final LEDs leds;
-  private final SwerveAutoBuilder autoBuilder;
-  private final List<PathPlannerTrajectory> pathGroup;
-
+public class FarsideConeL3 extends AutoBase {
   public FarsideConeL3(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
       LEDs leds) {
     this.poseEstimator = poseEstimator;
@@ -46,6 +38,11 @@ public class FarsideConeL3 implements AutoImpl {
     this.leds = leds;
 
     pathGroup = PathPlanner.loadPathGroup("l2chargestation",
+        new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared),
+        new PathConstraints(0.5, 0.5));
+
+    pathGroup_red = PathPlanner.loadPathGroup("l2chargestation_red",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared),
         new PathConstraints(0.5, 0.5));
@@ -69,14 +66,10 @@ public class FarsideConeL3 implements AutoImpl {
         swerve);
   }
 
-  public Pose2d getInitialHolonomicPose() {
-    return pathGroup.get(0).getInitialHolonomicPose();
-  }
-
   public Command getCommand() {
     return new SequentialCommandGroup(
         new Rest(arm, wrist, leds),
         new ConeL3Score(arm, wrist, leds),
-        autoBuilder.fullAuto(pathGroup));
+        autoBuilder.fullAuto(getPathGroup()));
   }
 }

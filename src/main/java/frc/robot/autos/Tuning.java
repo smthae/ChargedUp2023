@@ -22,15 +22,7 @@ import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Wrist;
 
-public class Tuning implements AutoImpl {
-  private final SwerveAutoBuilder autoBuilder;
-  private final List<PathPlannerTrajectory> pathGroup;
-  private final PoseEstimator poseEstimator;
-  private final Swerve swerve;
-  private final Wrist wrist;
-  private final Arm arm;
-  private final LEDs leds;
-
+public class Tuning extends AutoBase {
   public Tuning(Swerve swerve, PoseEstimator poseEstimator, Wrist wrist, Arm arm, LEDs leds) {
     this.swerve = swerve;
     this.poseEstimator = poseEstimator;
@@ -39,6 +31,9 @@ public class Tuning implements AutoImpl {
     this.leds = leds;
 
     pathGroup = PathPlanner.loadPathGroup("tuning",
+        new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+    pathGroup = PathPlanner.loadPathGroup("tuning_red",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
     HashMap<String, Command> eventMap = new HashMap<>();
@@ -57,13 +52,9 @@ public class Tuning implements AutoImpl {
         swerve);
   }
 
-  public Pose2d getInitialHolonomicPose() {
-    return pathGroup.get(0).getInitialHolonomicPose();
-  }
-
   public Command getCommand() {
     return new SequentialCommandGroup(
         new Rest(arm, wrist, leds),
-        autoBuilder.fullAuto(pathGroup));
+        autoBuilder.fullAuto(getPathGroup()));
   }
 }

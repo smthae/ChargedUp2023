@@ -42,15 +42,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import org.photonvision.PhotonCamera;
 import org.photonvision.common.hardware.VisionLEDMode;
 
-public class TestPath implements AutoImpl {
-  private final SwerveAutoBuilder autoBuilder;
-  private final List<PathPlannerTrajectory> pathGroup;
-  private final PoseEstimator poseEstimator;
-  private final Swerve swerve;
-  private final Arm arm;
-  private final Wrist wrist;
-  private final LEDs leds;
-
+public class TestPath extends AutoBase {
   public TestPath(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
       LEDs leds) {
     this.poseEstimator = poseEstimator;
@@ -59,7 +51,10 @@ public class TestPath implements AutoImpl {
     this.wrist = wrist;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("testpath_red",
+    pathGroup = PathPlanner.loadPathGroup("testpath",
+        new PathConstraints(1,
+            1));
+    pathGroup_red = PathPlanner.loadPathGroup("testpath_red",
         new PathConstraints(1,
             1));
 
@@ -80,13 +75,9 @@ public class TestPath implements AutoImpl {
         swerve);
   }
 
-  public Pose2d getInitialHolonomicPose() {
-    return pathGroup.get(0).getInitialHolonomicPose();
-  }
-
   public Command getCommand() {
     return new SequentialCommandGroup(
         new MoveArm(arm, 0, leds),
-        autoBuilder.fullAuto(pathGroup));
+        autoBuilder.fullAuto(getPathGroup()));
   }
 }

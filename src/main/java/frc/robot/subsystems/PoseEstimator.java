@@ -73,9 +73,9 @@ public class PoseEstimator extends SubsystemBase {
 
     if (result.getBestTarget().getPoseAmbiguity() < 0.3) {
       this.swerveDrivePoseEstimator.addVisionMeasurement(
-          AllianceFlip.apply(tag.get()
+          tag.get()
               .plus(result.getBestTarget().getBestCameraToTarget().inverse().plus(Constants.Vision.cameraToRobot))
-              .toPose2d()),
+              .toPose2d(),
           result.getTimestampSeconds());
     }
 

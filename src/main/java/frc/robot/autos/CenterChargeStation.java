@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.lib.util.Flipper;
 import frc.robot.Constants;
 import frc.robot.commands.Balance;
 import frc.robot.commands.presets.ConeL2;
@@ -26,15 +27,7 @@ import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.Wrist;
 
-public class CenterChargeStation implements AutoImpl {
-  private final PoseEstimator poseEstimator;
-  private final Swerve swerve;
-  private final Arm arm;
-  private final Wrist wrist;
-  private final LEDs leds;
-  private final SwerveAutoBuilder autoBuilder;
-  private final List<PathPlannerTrajectory> pathGroup;
-
+public class CenterChargeStation extends AutoBase {
   public CenterChargeStation(Swerve swerve, PoseEstimator poseEstimator, Arm arm, Wrist wrist,
       LEDs leds) {
     this.poseEstimator = poseEstimator;
@@ -44,6 +37,9 @@ public class CenterChargeStation implements AutoImpl {
     this.leds = leds;
 
     pathGroup = PathPlanner.loadPathGroup("centerbalance",
+        new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+            Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+    pathGroup_red = PathPlanner.loadPathGroup("centerbalance_red",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
@@ -65,14 +61,11 @@ public class CenterChargeStation implements AutoImpl {
         swerve);
   }
 
-  public Pose2d getInitialHolonomicPose() {
-    return pathGroup.get(0).getInitialHolonomicPose();
-  }
-
+  @Override
   public Command getCommand() {
     return new SequentialCommandGroup(
         new Rest(arm, wrist, leds),
         new ConeL2(arm, wrist, leds),
-        autoBuilder.fullAuto(pathGroup), new Balance(swerve, leds));
+        autoBuilder.fullAuto(getPathGroup()), new Balance(swerve, leds));
   }
 }
