@@ -102,7 +102,7 @@ public final class Constants {
     public static final double intakeInCone = -0.5;
 
     public static final double outakeConeL2 = 0.51735;
-    public static final double outakeConeL3 = 0.57;
+    public static final double outakeConeL3 = 0.45;
 
     public static final double outakeCubeL2 = -0.5;
     public static final double outakeCubeL3 = -0.6;

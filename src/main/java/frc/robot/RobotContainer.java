@@ -40,6 +40,7 @@ import frc.robot.commands.presets.ConeL3Score;
 import frc.robot.commands.presets.ConeShelf;
 import frc.robot.commands.presets.ConeStanding;
 import frc.robot.commands.presets.ConeTipped;
+import frc.robot.commands.presets.CubeHP;
 import frc.robot.commands.presets.CubeIntake;
 import frc.robot.commands.presets.CubeL1;
 import frc.robot.commands.presets.CubeL2;
@@ -176,7 +177,11 @@ public class RobotContainer {
         new IntakeIn(arm, this.wrist, PieceType.CONE, leds)));
 
     /* CUBE */
-    // Cube Human Player against ramp - TBD
+    // Cube Human Player against ramp
+    operator.leftTrigger().whileTrue(new ParallelCommandGroup(
+        new CubeHP(arm, wrist, leds),
+        new IntakeIn(arm, this.wrist, PieceType.CUBE, leds)));
+        
 
     // Cube Shelf - TBD
     operator.povRight().whileTrue(Commands.none());
