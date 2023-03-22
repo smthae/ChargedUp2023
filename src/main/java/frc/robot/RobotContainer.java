@@ -181,7 +181,6 @@ public class RobotContainer {
     operator.leftTrigger().whileTrue(new ParallelCommandGroup(
         new CubeHP(arm, wrist, leds),
         new IntakeIn(arm, this.wrist, PieceType.CUBE, leds)));
-        
 
     // Cube Shelf - TBD
     operator.povRight().whileTrue(Commands.none());
@@ -191,6 +190,9 @@ public class RobotContainer {
   }
 
   public void configureAutoCommands() {
+    this.autoCommands.put("L2 Link Farside", new FarsideL2Link(s_Swerve, poseEstimator, wrist, arm, leds));
+    this.autoCommands.put("L2 2.5 Farside + Balance", new Farside25Balance(s_Swerve, poseEstimator, wrist, arm, leds));
+
     this.autoCommands.put("Two cone auto", new TwoConeAuto(s_Swerve,
         poseEstimator, arm, wrist, leds));
     this.autoCommands.put("Cone and Cube L2", new ConeAndCube(s_Swerve,

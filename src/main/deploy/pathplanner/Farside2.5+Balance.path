@@ -16,9 +16,7 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "coneL2"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -44,9 +42,9 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "coneL2"
+          "outake"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -221,9 +219,9 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "cubeL2"
+          "outake"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -343,13 +341,11 @@
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
-      "velOverride": 2.0,
+      "velOverride": null,
       "isLocked": false,
       "isStopPoint": true,
       "stopEvent": {
-        "names": [
-          "driveslow"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -371,9 +367,7 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "balance"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -385,24 +379,41 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 0.0,
-      "names": [
-        "event",
-        "coneL2"
-      ]
-    },
-    {
       "position": 3.181818181818182,
       "names": [
-        "event",
-        "cubeintake"
+        "cubeintakeposition",
+        "intakecube"
       ]
     },
     {
-      "position": 9.7,
+      "position": 1.4254545454544936,
       "names": [
-        "event",
-        "cubeintake"
+        "rest"
+      ]
+    },
+    {
+      "position": 6.414545454545437,
+      "names": [
+        "rest"
+      ]
+    },
+    {
+      "position": 7.229090909090502,
+      "names": [
+        "cubel2"
+      ]
+    },
+    {
+      "position": 9.876363636363171,
+      "names": [
+        "standingcone",
+        "intakecone"
+      ]
+    },
+    {
+      "position": 12.116363636363097,
+      "names": [
+        "rest"
       ]
     }
   ]

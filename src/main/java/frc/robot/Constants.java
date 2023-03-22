@@ -243,10 +243,10 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 8;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI * 4;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI * 3;
+    public static final double kMaxSpeedMetersPerSecond = 4;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 4;
+    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI * 2;
+    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
     // public static final PIDConstants translationPID = new PIDConstants(0.8, 0.2,
     // 0.05);

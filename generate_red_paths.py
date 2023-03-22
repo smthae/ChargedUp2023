@@ -36,6 +36,9 @@ def generate_red_aliance(file_name: str, directory: str):
     path_data["waypoints"] = waypoints
     new_path_file.write(json.dumps(path_data))
 
+    path_file.close()
+    new_path_file.close()
+
 
 files = os.listdir(DIRECTORY)
 
