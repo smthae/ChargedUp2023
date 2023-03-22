@@ -37,8 +37,8 @@ public class Swerve extends SubsystemBase {
     /* Gyro setup */
     gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.Swerve.pigeonCanBUS);
     gyro.configFactoryDefault();
-    this.pitchOffset = -gyro.getPitch();
-    this.rollOffset = -gyro.getRoll();
+    this.pitchOffset = gyro.getPitch();
+    this.rollOffset = gyro.getRoll();
     zeroGyro();
 
     /* Custom PID controllers setup */

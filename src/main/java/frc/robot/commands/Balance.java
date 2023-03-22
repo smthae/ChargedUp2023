@@ -21,7 +21,7 @@ public class Balance extends CommandBase {
   @Override
   public void execute() {
     double power = 0;
-    power = this.balanceController.calculate(this.swerve.getPitch().getDegrees(), -3);
+    power = this.balanceController.calculate(this.swerve.getPitch().getDegrees(), 0);
 
     this.swerve.drive(new Translation2d(power, 0), 0, true, true, true, true);
 
