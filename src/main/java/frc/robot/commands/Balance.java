@@ -34,7 +34,7 @@ public class Balance extends CommandBase {
 
   public boolean isBalanced() {
     double value = this.swerve.getPitch().getDegrees();
-    return value - 3 <= Constants.Swerve.balancePID.tolerance && value + 3 >= -Constants.Swerve.balancePID.tolerance;
+    return Math.abs(value) >= Constants.Swerve.balancePID.tolerance;
   }
 
   @Override
