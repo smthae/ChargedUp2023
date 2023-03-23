@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
@@ -33,6 +35,7 @@ public class IntakeIn extends CommandBase {
 
   @Override
   public void initialize() {
+    this.wrist.intakeMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 40, 60, 0.08));
     if (this.wrist.getBeambreak()) {
       this.end(auto);
     } else {
