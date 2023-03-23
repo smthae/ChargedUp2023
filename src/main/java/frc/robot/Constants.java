@@ -47,7 +47,7 @@ public final class Constants {
   public static final class Vision {
     public static final String cameraName = "OV5647";
     public static final Transform3d cameraToRobot = new Transform3d(
-        new Translation3d(-0.22, 0.2, 0),
+        new Translation3d(-0.22, 0.35, 0),
         new Rotation3d(0, Units.degreesToRadians(0), 0));
     public static final Transform3d robotToCamera = cameraToRobot.inverse();
     public static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(10));
@@ -70,8 +70,8 @@ public final class Constants {
     public static final int leaderMotorID = 31;
     public static final int followerMotorID = 32;
     public static final int encoderDIOPort = 0;
-    public static final double encoderOffset = Units.degreesToRadians(75); // Encoder reading when the arm is parallel
-                                                                           // to the ground.
+    public static final double encoderOffset = Units.degreesToRadians(83.6); // Encoder reading when the arm is parallel
+    // to the ground.
     public static final ArmFeedforward armFF = new ArmFeedforward(0, 0.92, 1.09, 0.04); // until we have some empirical
     // measurement, kS will be added
     public static final PIDConstants armPID = new PIDConstants(1, 0, 0.05, 5);
@@ -187,7 +187,7 @@ public final class Constants {
     public static final String[] moduleNames = { "Front Left", "Front Right", "Back Left", "Back Right" }; // module #0,
     // #1, #2, #3
 
-    public static final PIDConstants drivePID = new PIDConstants(0.6, 0.003, 0.0005);
+    public static final PIDConstants drivePID = new PIDConstants(0.1, 0.00, 0.000);
 
     /* Front Left Module - Module 0 */
     public static final class Mod0 {
@@ -197,7 +197,7 @@ public final class Constants {
       public static final String cancoderCANBUS = "rio"; // change to "rio" if it's on rio
       public static final double angleOffset = 22.5;
       public static final PIDConstants anglePID = new PIDConstants(0.02, 0.0, 0.005);
-      public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.9, 0.17176);
+      public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.67, 0.17176);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
     }
@@ -210,7 +210,7 @@ public final class Constants {
       public static final String cancoderCANBUS = "rio";
       public static final double angleOffset = 237.0;
       public static final PIDConstants anglePID = new PIDConstants(0.02, 0.0, 0.005);
-      public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.9, 0.17176);
+      public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.67, 0.17176);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
     }
@@ -223,7 +223,7 @@ public final class Constants {
       public static final String cancoderCANBUS = "rio";
       public static final double angleOffset = 181.0;
       public static final PIDConstants anglePID = new PIDConstants(0.02, 0.0, 0.005);
-      public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.9, 0.17176);
+      public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.67, 0.17176);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
     }
@@ -236,7 +236,7 @@ public final class Constants {
       public static final String cancoderCANBUS = "rio";
       public static final double angleOffset = 52.0;
       public static final PIDConstants anglePID = new PIDConstants(0.02, 0.0, 0.005);
-      public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.9, 0.17176);
+      public static final SVAConstants driveSVA = new SVAConstants(0.13522, 2.67, 0.17176);
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, cancoderCANBUS, angleOffset, anglePID, drivePID, driveSVA);
     }
@@ -250,8 +250,8 @@ public final class Constants {
 
     // public static final PIDConstants translationPID = new PIDConstants(0.8, 0.2,
     // 0.05);
-    public static final PIDConstants translationPID = new PIDConstants(0.8, 0.2, 0);
-    public static final PIDConstants rotationPID = new PIDConstants(0, 0, 0.05);
+    public static final PIDConstants translationPID = new PIDConstants(3, 0.05, 0);
+    public static final PIDConstants rotationPID = new PIDConstants(1, 0, 0.05);
 
     // Constraint for the motion profilied robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

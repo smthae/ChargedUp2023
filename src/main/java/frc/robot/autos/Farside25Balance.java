@@ -12,6 +12,7 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Constants.PieceType;
@@ -39,15 +40,16 @@ public class Farside25Balance extends AutoBase {
     this.arm = arm;
     this.leds = leds;
 
-    pathGroup = PathPlanner.loadPathGroup("Farside2.5+Balance",
+    pathGroup = PathPlanner.loadPathGroup("Farside25Balance",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
-    pathGroup_red = PathPlanner.loadPathGroup("Farside2.5+Balance_red",
+    pathGroup_red = PathPlanner.loadPathGroup("Farside25Balance_red",
         new PathConstraints(Constants.AutoConstants.kMaxSpeedMetersPerSecond,
             Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
     HashMap<String, Command> eventMap = new HashMap<>();
-    eventMap.put("outake", new SequentialCommandGroup(new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds)));
+    eventMap.put("outake", new SequentialCommandGroup(new IntakeOut(arm, wrist, leds),
+        new Rest(arm, wrist, leds)));
     eventMap.put("rest", new Rest(arm, wrist, leds));
     eventMap.put("intakecube", new IntakeIn(arm, wrist, PieceType.CUBE, leds));
     eventMap.put("cubeintakeposition", new CubeIntake(arm, wrist, leds));
@@ -76,6 +78,9 @@ public class Farside25Balance extends AutoBase {
         new Rest(arm, wrist, leds),
         new ConeL2(arm, wrist, leds),
         autoBuilder.fullAuto(getPathGroup()),
+        new InstantCommand(() -> {
+          swerve.resetHold();
+        }),
         new Balance(swerve, leds));
   }
 }

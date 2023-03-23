@@ -19,6 +19,14 @@
       "/SmartDashboard/l2 cone": "Command",
       "/SmartDashboard/l3 cone": "Command",
       "/SmartDashboard/set yaw": "Command"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "image": "C:\\Users\\pooria\\Desktop\\pathplanner\\data\\flutter_assets\\images\\field23.png",
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables Settings": {
@@ -139,7 +147,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     }
   }
 }

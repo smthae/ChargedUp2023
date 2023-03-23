@@ -205,8 +205,6 @@ public class RobotContainer {
         new FarsideConeL3(s_Swerve, poseEstimator, arm, wrist, leds));
     this.autoCommands.put("L2 Cone Center Balance",
         new CenterChargeStation(s_Swerve, poseEstimator, arm, wrist, leds));
-    this.autoCommands.put("testpath", new TestPath(s_Swerve, poseEstimator, arm,
-        wrist, leds));
     this.autoCommands.put("Cone L2 Stationary", new StationaryConeL2(arm, wrist,
         leds));
     this.autoCommands.put("Cone L3 Stationary", new StationaryConeL3(arm, wrist,
@@ -264,8 +262,7 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     String selectedAuto = SmartDashboard.getString("selectedAuto", "default");
     if (selectedAuto.equals("default") || !this.autoCommands.containsKey(selectedAuto)) {
-      // return new DefaultAuto(arm, wrist, leds).getCommand();
-      return new RotationTune(s_Swerve, poseEstimator, arm, wrist, leds).getCommand();
+      return new DefaultAuto(arm, wrist, leds).getCommand();
     }
 
     return this.autoCommands.get(selectedAuto).getCommand();

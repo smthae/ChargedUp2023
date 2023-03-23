@@ -47,4 +47,4 @@ for file in files:
         continue
 
     generate_red_aliance(file, DIRECTORY)
-    print(f"{file.split('.')[0]}_red.path: ✅")
+    print(f"{file}_red.path: ✅")

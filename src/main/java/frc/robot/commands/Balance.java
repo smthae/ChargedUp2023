@@ -2,7 +2,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.lib.util.Flipper;
 import frc.robot.Constants;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Swerve;
@@ -22,7 +24,9 @@ public class Balance extends CommandBase {
   public void execute() {
     double power = 0;
     power = this.balanceController.calculate(this.swerve.getPitch().getDegrees(), 0);
-
+    if (Flipper.shouldFlip()) {
+      power = -power;
+    }
     this.swerve.drive(new Translation2d(power, 0), 0, true, true, true, true);
 
     if (isBalanced()) {

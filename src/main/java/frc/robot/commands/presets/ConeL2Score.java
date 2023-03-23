@@ -13,6 +13,6 @@ public class ConeL2Score extends SequentialCommandGroup {
         addCommands(
                 new ConeL2(arm, wrist, leds),
                 Commands.waitSeconds(1),
-                new IntakeOut(arm, wrist, leds), new Rest(arm, wrist, leds));
+                new IntakeOut(arm, wrist, leds));
     }
 }
