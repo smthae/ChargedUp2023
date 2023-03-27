@@ -70,7 +70,8 @@ public final class Constants {
     public static final int leaderMotorID = 31;
     public static final int followerMotorID = 32;
     public static final int encoderDIOPort = 0;
-    public static final double encoderOffset = Units.degreesToRadians(83.6); // Encoder reading when the arm is parallel
+    public static final double encoderOffset = Units.degreesToRadians(83.6 + 6.2); // En`coder reading when the arm is
+                                                                                   // parallel
     // to the ground.
     public static final ArmFeedforward armFF = new ArmFeedforward(0, 0.92, 1.09, 0.04); // until we have some empirical
     // measurement, kS will be added

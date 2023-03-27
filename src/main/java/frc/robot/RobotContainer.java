@@ -192,6 +192,8 @@ public class RobotContainer {
   public void configureAutoCommands() {
     this.autoCommands.put("L2 Link Farside", new FarsideL2Link(s_Swerve, poseEstimator, wrist, arm, leds));
     this.autoCommands.put("L2 2.5 Farside + Balance", new Farside25Balance(s_Swerve, poseEstimator, wrist, arm, leds));
+    this.autoCommands.put("Cable Side L2", new CableSideL2(s_Swerve, poseEstimator, arm, wrist, leds));
+    this.autoCommands.put("Cable Side L3", new CableSideL3(s_Swerve, poseEstimator, arm, wrist, leds));
 
     this.autoCommands.put("Two cone auto", new TwoConeAuto(s_Swerve,
         poseEstimator, arm, wrist, leds));

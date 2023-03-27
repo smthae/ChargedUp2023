@@ -9,6 +9,7 @@ import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoMode.PixelFormat;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -47,7 +48,8 @@ public class Robot extends TimedRobot {
     camera.setPixelFormat(PixelFormat.kYUYV);
     camera.setResolution(320, 240);
 
-    PathPlannerServer.startServer(5811);
+    // PathPlannerServer.startServer(5811);
+    // PortForwarder.add(5800, "photonvision.local", \)
   }
 
   @Override
